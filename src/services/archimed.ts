@@ -15,6 +15,8 @@ import { mockDoctors, mockBranches } from '../data/mockDoctors';
 // Archimed API configuration
 const ARCHIMED_API_URL = import.meta.env.VITE_ARCHIMED_API_URL || 'https://newapi.archimed-soft.ru/api/v5';
 const ARCHIMED_API_TOKEN = import.meta.env.VITE_ARCHIMED_API_TOKEN || '';
+// Public gateway (proxy) that may already aggregate Archimed doctors for this site
+const PUBLIC_DOCTORS_URL = 'https://aldan.yurta.site/api/archimed/doctors';
 
 console.log('Environment variables:');
 console.log('VITE_ARCHIMED_API_URL:', import.meta.env.VITE_ARCHIMED_API_URL);
@@ -30,6 +32,8 @@ const SERVICES_CACHE_KEY = 'archimed_services_v1';
 const DOCTORS_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 const SERVICES_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 const DEFAULT_REQUEST_TIMEOUT_MS = 20000; // 20s
+const DEFAULT_API_PAGE_LIMIT = 200; // request large page size to reduce pagination
+const MAX_API_PAGES = 50; // hard cap to prevent runaway loops
 
 class ArchimedService {
   private baseUrl: string;
@@ -49,10 +53,15 @@ class ArchimedService {
 
     // Warm caches from localStorage on startup for instant UI
     try {
-      const doctorsFromStorage = this.readFromStorage<ArchimedDoctor[]>(DOCTORS_CACHE_KEY, DOCTORS_CACHE_TTL_MS);
-      if (doctorsFromStorage) {
+      const doctorsFromStorage = this.readFromStorage<unknown>(DOCTORS_CACHE_KEY, DOCTORS_CACHE_TTL_MS);
+      if (Array.isArray(doctorsFromStorage)) {
         console.log('Loaded doctors from storage:', doctorsFromStorage.length);
-        this.doctorsCache = doctorsFromStorage;
+        this.doctorsCache = doctorsFromStorage as ArchimedDoctor[];
+      } else if (doctorsFromStorage && typeof doctorsFromStorage === 'object' && Array.isArray((doctorsFromStorage as any).data)) {
+        const normalized = (doctorsFromStorage as any).data as ArchimedDoctor[];
+        console.log('Loaded doctors from storage (normalized from .data):', normalized.length);
+        this.doctorsCache = normalized;
+        this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
       }
       const servicesFromStorage = this.readFromStorage<ApiService[]>(SERVICES_CACHE_KEY, SERVICES_CACHE_TTL_MS);
       if (servicesFromStorage) {
@@ -136,29 +145,81 @@ class ArchimedService {
       return this.doctorsCache;
     }
 
-    const fromStorage = this.readFromStorage<ArchimedDoctor[]>(DOCTORS_CACHE_KEY, DOCTORS_CACHE_TTL_MS);
-    if (fromStorage && fromStorage.length > 0) {
+    const fromStorage = this.readFromStorage<unknown>(DOCTORS_CACHE_KEY, DOCTORS_CACHE_TTL_MS);
+    if (Array.isArray(fromStorage) && fromStorage.length > 0) {
       console.log('Loading doctors from storage:', fromStorage.length);
-      this.doctorsCache = fromStorage;
+      this.doctorsCache = fromStorage as ArchimedDoctor[];
       // refresh in background
       this.refreshDoctors();
       return this.doctorsCache;
     }
+    if (fromStorage && typeof fromStorage === 'object' && Array.isArray((fromStorage as any).data)) {
+      const normalized = (fromStorage as any).data as ArchimedDoctor[];
+      console.log('Loading doctors from storage (normalized from .data):', normalized.length);
+      this.doctorsCache = normalized;
+      this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
+      this.refreshDoctors();
+      return this.doctorsCache;
+    }
 
-    console.log('No cached data, trying API...');
+    console.log('No cached data, trying public site API, then Archimed API, then local file...');
     try {
-      const response = await this.request<{ data: ArchimedDoctor[]; total: number; page: number; limit: number }>('/doctors');
-      console.log('API returned doctors:', response.data?.length || 0);
-      this.doctorsCache = response.data || [];
+      // 1) Try public gateway first (absolute URL)
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort('timeout'), DEFAULT_REQUEST_TIMEOUT_MS);
+      const publicUrl = `${PUBLIC_DOCTORS_URL}?limit=${DEFAULT_API_PAGE_LIMIT}`;
+      const siteResp = await fetch(publicUrl, { signal: controller.signal });
+      window.clearTimeout(timeoutId);
+      if (siteResp.ok) {
+        const siteJson = await siteResp.json();
+        const publicData = Array.isArray(siteJson) ? siteJson : (siteJson?.data || []);
+        let bestData: ArchimedDoctor[] = Array.isArray(publicData) ? (publicData as ArchimedDoctor[]) : [];
+
+        // Try to fetch full list directly from Archimed API; prefer larger dataset if available
+        try {
+          const apiAll = await this.fetchAllDoctorsFromAPI();
+          if (Array.isArray(apiAll) && apiAll.length > bestData.length) {
+            bestData = apiAll;
+          }
+        } catch (e) {
+          console.warn('Failed to enrich doctors from Archimed API, using public data if present:', e);
+        }
+
+        if (bestData.length > 0) {
+          console.log('Using doctors dataset, count:', bestData.length);
+          this.doctorsCache = bestData;
+          this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
+          return this.doctorsCache;
+        }
+      }
+
+      // 2) Fallback to Archimed API directly
+      const allDoctors = await this.fetchAllDoctorsFromAPI();
+      console.log('Archimed API returned doctors:', allDoctors?.length || 0);
+      this.doctorsCache = allDoctors || [];
       this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
       return this.doctorsCache;
     } catch (error) {
-      console.warn('API недоступен, используем моковые данные для врачей:', error);
-      // Используем моковые данные при ошибке API
-      this.doctorsCache = mockDoctors;
-      this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
-      console.log('Using mock doctors:', this.doctorsCache.length);
-      return this.doctorsCache;
+      console.warn('API недоступен, пробуем загрузить локальный файл doctors.json. Ошибка:', error);
+      try {
+        // 3) Fallback to local doctors.json (real data snapshot)
+        const localModule = await import('../data/doctors.json');
+        const raw = (localModule as any).default;
+        const localDoctors: ArchimedDoctor[] = Array.isArray(raw)
+          ? (raw as ArchimedDoctor[])
+          : (Array.isArray(raw?.data) ? (raw.data as ArchimedDoctor[]) : []);
+        this.doctorsCache = localDoctors;
+        this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
+        console.log('Using local doctors.json:', this.doctorsCache.length);
+        return this.doctorsCache;
+      } catch (e) {
+        console.warn('Не удалось загрузить doctors.json, используем mockDoctors. Ошибка:', e);
+        // 4) Last resort – mock data
+        this.doctorsCache = mockDoctors;
+        this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
+        console.log('Using mock doctors:', this.doctorsCache.length);
+        return this.doctorsCache;
+      }
     }
   }
 
@@ -278,17 +339,54 @@ class ArchimedService {
   // Background refreshers (stale-while-revalidate)
   private async refreshDoctors(): Promise<void> {
     try {
-      const response = await this.request<{ data: ArchimedDoctor[]; total: number; page: number; limit: number }>(
-        '/doctors',
-        { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
-      );
-      if (Array.isArray(response?.data) && response.data.length > 0) {
-        this.doctorsCache = response.data;
+      const allDoctors = await this.fetchAllDoctorsFromAPI();
+      if (Array.isArray(allDoctors) && allDoctors.length > 0) {
+        this.doctorsCache = allDoctors;
         this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
       }
     } catch {
       // keep stale cache on failure
     }
+  }
+
+  private async fetchAllDoctorsFromAPI(): Promise<ArchimedDoctor[]> {
+    const all: ArchimedDoctor[] = [];
+    let page = 1;
+
+    // If base URL is not configured, short-circuit
+    if (!this.baseUrl) return all;
+
+    // Try to fetch a large single page first
+    try {
+      const first = await this.request<{ data: ArchimedDoctor[]; total: number; page: number; limit: number }>(
+        `/doctors?page=${page}&limit=${DEFAULT_API_PAGE_LIMIT}`,
+        { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
+      );
+      const total = (first as any)?.total ?? (first?.data?.length ?? 0);
+      const limit = (first as any)?.limit ?? DEFAULT_API_PAGE_LIMIT;
+      if (Array.isArray(first?.data)) {
+        all.push(...first.data);
+      }
+      const totalPages = limit > 0 ? Math.ceil((total || all.length) / limit) : 1;
+
+      // Fetch remaining pages if needed
+      for (page = 2; page <= Math.min(totalPages, MAX_API_PAGES); page++) {
+        const next = await this.request<{ data: ArchimedDoctor[]; total: number; page: number; limit: number }>(
+          `/doctors?page=${page}&limit=${limit}`,
+          { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
+        );
+        if (Array.isArray(next?.data) && next.data.length > 0) {
+          all.push(...next.data);
+          if (next.data.length < limit) break; // last page
+        } else {
+          break;
+        }
+      }
+    } catch (e) {
+      console.warn('Error fetching all doctors from API:', e);
+    }
+
+    return all;
   }
 
   private async refreshServices(): Promise<void> {
