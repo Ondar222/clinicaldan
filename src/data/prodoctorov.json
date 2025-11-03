@@ -171,5 +171,20 @@
     "fullName": "Шыырап Алимаа Эресоловна",
     "specialty": "Невролог",
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/638812/1935918-638812-shyyrap_square_small.jpg"
+  },
+  {
+    "fullName": "Оюн Аюжана Орлановна",
+    "specialty": "Врач нефролог",
+    "experienceStartYear": 2016,
+    "extraSpecialties": [
+      "педиатр"
+    ],
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037199/3152169-1037199-oyun_square_small.jpg"
+  },
+  {
+    "fullName": "Монгуш Солангы Борисовна",
+    "specialty": "Врач-кардиолог",
+    "category": "Вторая категория",
+    "experienceStartYear": 2018
   }
 ]
