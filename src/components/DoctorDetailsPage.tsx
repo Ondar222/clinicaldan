@@ -1,9 +1,9 @@
-import type React from 'react';
-import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import archimedService from '../services/archimed';
-import type { ArchimedDoctor } from '../types/cms';
-import AppointmentModal from './AppointmentModal';
+import type React from "react";
+import { useEffect, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import archimedService from "../services/archimed";
+import type { ArchimedDoctor } from "../types/cms";
+import AppointmentModal from "./AppointmentModal";
 
 const DoctorDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,13 +15,13 @@ const DoctorDetailsPage: React.FC = () => {
     isOpen: boolean;
     doctor?: ArchimedDoctor;
   }>({
-    isOpen: false
+    isOpen: false,
   });
 
   useEffect(() => {
     const loadDoctor = async () => {
       if (!id) {
-        setError('ID врача не указан');
+        setError("ID врача не указан");
         setIsLoading(false);
         return;
       }
@@ -29,11 +29,13 @@ const DoctorDetailsPage: React.FC = () => {
       try {
         setIsLoading(true);
         setError(null);
-        
+
         // Сначала проверяем кэш
         const cachedDoctors = archimedService.getDoctorsCache();
-        const cachedDoctor = cachedDoctors.find(d => d.id === Number.parseInt(id));
-        
+        const cachedDoctor = cachedDoctors.find(
+          (d) => d.id === Number.parseInt(id)
+        );
+
         if (cachedDoctor) {
           setDoctor(cachedDoctor);
           setIsLoading(false);
@@ -44,8 +46,8 @@ const DoctorDetailsPage: React.FC = () => {
         const doctorData = await archimedService.getDoctor(Number.parseInt(id));
         setDoctor(doctorData);
       } catch (e) {
-        console.error('Error loading doctor:', e);
-        setError('Не удалось загрузить информацию о враче');
+        console.error("Error loading doctor:", e);
+        setError("Не удалось загрузить информацию о враче");
       } finally {
         setIsLoading(false);
       }
@@ -58,13 +60,13 @@ const DoctorDetailsPage: React.FC = () => {
     if (doctor) {
       setAppointmentModal({
         isOpen: true,
-        doctor
+        doctor,
       });
     }
   };
 
   const handleAppointmentSuccess = () => {
-    console.log('Appointment created successfully');
+    console.log("Appointment created successfully");
   };
 
   const getDoctorFullName = (doctor: ArchimedDoctor) => {
@@ -73,6 +75,18 @@ const DoctorDetailsPage: React.FC = () => {
 
   const getDoctorInitials = (doctor: ArchimedDoctor) => {
     return `${doctor.name} ${doctor.name1?.charAt(0)}. ${doctor.name2?.charAt(0)}.`;
+  };
+
+  const formatSpecialtyName = (raw: string | undefined | null): string => {
+    const s = (raw || "").trim();
+    if (!s) return "Врач";
+    if (/^врач/i.test(s)) {
+      return `Врач${s.slice(5)}`;
+    }
+    if (/функционал/i.test(s) && /диагност/i.test(s)) {
+      return "Врач функциональной диагностики";
+    }
+    return `Врач ${s}`;
   };
 
   if (isLoading) {
@@ -90,10 +104,14 @@ const DoctorDetailsPage: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4 text-gray-900">Врач не найден</h1>
-          <p className="text-gray-600 mb-6">{error || 'Информация о враче недоступна'}</p>
-          <Link 
-            to="/doctors" 
+          <h1 className="text-2xl font-bold mb-4 text-gray-900">
+            Врач не найден
+          </h1>
+          <p className="text-gray-600 mb-6">
+            {error || "Информация о враче недоступна"}
+          </p>
+          <Link
+            to="/doctors"
             className="px-6 py-2 bg-primary text-white rounded hover:bg-primaryDark transition-colors"
           >
             Вернуться к списку врачей
@@ -109,9 +127,13 @@ const DoctorDetailsPage: React.FC = () => {
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-4">
           <nav className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link to="/" className="hover:text-primary">Главная</Link>
+            <Link to="/" className="hover:text-primary">
+              Главная
+            </Link>
             <span>/</span>
-            <Link to="/doctors" className="hover:text-primary">Врачи</Link>
+            <Link to="/doctors" className="hover:text-primary">
+              Врачи
+            </Link>
             <span>/</span>
             <span className="text-gray-900">{getDoctorInitials(doctor)}</span>
           </nav>
@@ -129,21 +151,37 @@ const DoctorDetailsPage: React.FC = () => {
                   {doctor.photo ? (
                     <>
                       <img
-                        src={doctor.photo.startsWith('data:') ? doctor.photo : doctor.photo}
+                        src={
+                          doctor.photo.startsWith("data:")
+                            ? doctor.photo
+                            : doctor.photo
+                        }
                         alt={getDoctorFullName(doctor)}
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                          e.currentTarget.style.display = "none";
+                          const nextElement = e.currentTarget
+                            .nextElementSibling as HTMLElement;
                           if (nextElement) {
-                            nextElement.style.display = 'flex';
+                            nextElement.style.display = "flex";
                           }
                         }}
                       />
-                      <div className="w-full h-full flex items-center justify-center text-gray-400" style={{display: 'none'}}>
+                      <div
+                        className="w-full h-full flex items-center justify-center text-gray-400"
+                        style={{ display: "none" }}
+                      >
                         <div className="text-center">
-                          <svg className="w-16 h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                          <svg
+                            className="w-16 h-16 mx-auto mb-2"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                           <p className="text-sm">Фото недоступно</p>
                         </div>
@@ -152,8 +190,16 @@ const DoctorDetailsPage: React.FC = () => {
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400">
                       <div className="text-center">
-                        <svg className="w-16 h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                        <svg
+                          className="w-16 h-16 mx-auto mb-2"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                         <p>Фото отсутствует</p>
                       </div>
@@ -167,18 +213,24 @@ const DoctorDetailsPage: React.FC = () => {
                 <h1 className="text-3xl font-bold text-gray-900 mb-4">
                   {getDoctorFullName(doctor)}
                 </h1>
-                
+
                 <div className="space-y-4">
                   {/* Основная специализация */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Специализация</h3>
-                    <p className="text-gray-700">{doctor.type}</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Специализация
+                    </h3>
+                    <p className="text-gray-700">
+                      {formatSpecialtyName(doctor.type)}
+                    </p>
                   </div>
 
                   {/* Категория */}
                   {doctor.category && (
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Категория</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Категория
+                      </h3>
                       <p className="text-gray-700">{doctor.category}</p>
                     </div>
                   )}
@@ -186,15 +238,21 @@ const DoctorDetailsPage: React.FC = () => {
                   {/* Ученая степень */}
                   {doctor.scientific_degree && (
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Ученая степень</h3>
-                      <p className="text-gray-700">{doctor.scientific_degree}</p>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Ученая степень
+                      </h3>
+                      <p className="text-gray-700">
+                        {doctor.scientific_degree}
+                      </p>
                     </div>
                   )}
 
                   {/* Время приема по умолчанию */}
                   {doctor.max_time && (
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Время приема</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Время приема
+                      </h3>
                       <p className="text-gray-700">{doctor.max_time} минут</p>
                     </div>
                   )}
@@ -202,7 +260,9 @@ const DoctorDetailsPage: React.FC = () => {
                   {/* Отделение */}
                   {doctor.branch && (
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Отделение</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Отделение
+                      </h3>
                       <p className="text-gray-700">{doctor.branch}</p>
                     </div>
                   )}
@@ -210,7 +270,9 @@ const DoctorDetailsPage: React.FC = () => {
                   {/* Адрес */}
                   {doctor.address && (
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Адрес</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Адрес
+                      </h3>
                       <p className="text-gray-700">{doctor.address}</p>
                     </div>
                   )}
@@ -218,8 +280,12 @@ const DoctorDetailsPage: React.FC = () => {
                   {/* Дополнительная информация */}
                   {doctor.info && (
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Дополнительная информация</h3>
-                      <p className="text-gray-700 whitespace-pre-line">{doctor.info}</p>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Дополнительная информация
+                      </h3>
+                      <p className="text-gray-700 whitespace-pre-line">
+                        {doctor.info}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -244,11 +310,18 @@ const DoctorDetailsPage: React.FC = () => {
         <section className="py-12 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold text-gray-900 mb-8">Все специализации</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-8">
+                Все специализации
+              </h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {doctor.types.map((type) => (
-                  <div key={type.id} className="bg-white p-4 rounded-lg shadow-sm">
-                    <p className="text-gray-700">{type.name}</p>
+                  <div
+                    key={type.id}
+                    className="bg-white p-4 rounded-lg shadow-sm"
+                  >
+                    <p className="text-gray-700">
+                      {formatSpecialtyName(type.name)}
+                    </p>
                   </div>
                 ))}
               </div>

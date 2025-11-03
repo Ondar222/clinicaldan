@@ -225,6 +225,41 @@ export const servicesData: ServiceDirection[] = [
             },
         ],
     },
+    {
+        id: 13,
+        slug: "phlebology",
+        title: "Флебология",
+        shortDescription: "Диагностика и лечение варикозной болезни вен.",
+        fullDescription:
+            "Современные методики диагностики и лечения варикоза: лазерные технологии, УЗИ-навигация и компрессионная терапия.",
+        heroImage: "/bg-hero2.jpg",
+        services: [
+            {
+                id: 1301,
+                name: "Лечение варикоза лазером FiberLase-VT",
+                description: "Лазерная коагуляция вен на аппарате FiberLase-VT (см. fiberlase-vt.ru). Для лечения варикоза.",
+                price: 0,
+            },
+            {
+                id: 1302,
+                name: "Лечение варикоза лазером Fotona Dynamis Pro",
+                description: "Лазерная терапия на аппарате Fotona Dynamis Pro (см. fotona.ru). Для лечения варикоза.",
+                price: 0,
+            },
+            {
+                id: 1303,
+                name: "УЗИ вен (Mindray DC-90 / Mindray MX7)",
+                description: "Диагностика варикоза на УЗИ Mindray DC-90 и Mindray MX7.",
+                price: 0,
+            },
+            {
+                id: 1304,
+                name: "Компрессионная терапия (чулки)",
+                description: "Подбор и рекомендации по ношению компрессионного трикотажа.",
+                price: 0,
+            },
+        ],
+    },
 ];
 
 export const doctors: Doctor[] = [

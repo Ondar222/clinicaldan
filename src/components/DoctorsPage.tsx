@@ -170,6 +170,33 @@ export default function DoctorsPage() {
     return `${doctor?.name} ${doctor?.name1?.charAt(0)}. ${doctor?.name2?.charAt(0)}.`;
   };
 
+  const getExperienceYears = (doctor: ArchimedDoctor): number | undefined => {
+    const info = doctor?.info || "";
+    const m =
+      info.match(/стаж\s+с\s+(\d{4})/i) ||
+      info.match(/Врачебный\s+стаж\s+с\s+(\d{4})/i);
+    if (m && m[1]) {
+      const start = parseInt(m[1], 10);
+      if (!isNaN(start) && start > 1900 && start <= new Date().getFullYear()) {
+        return Math.max(0, new Date().getFullYear() - start);
+      }
+    }
+    return undefined;
+  };
+
+  const formatSpecialtyName = (raw: string | undefined | null): string => {
+    const s = (raw || "").trim();
+    if (!s) return "Врач";
+    if (/^врач/i.test(s)) {
+      // Нормализуем первую букву
+      return `Врач${s.slice(5)}`;
+    }
+    if (/функционал/i.test(s) && /диагност/i.test(s)) {
+      return "Врач функциональной диагностики";
+    }
+    return `Врач ${s}`;
+  };
+
   const handleAppointmentClick = (doctor?: ArchimedDoctor) => {
     setAppointmentModal({
       isOpen: true,
@@ -413,7 +440,7 @@ export default function DoctorsPage() {
                       {getDoctorInitials(doctor)}
                     </h3>
                     <p className="text-primary font-medium mb-2 text-xs sm:text-sm">
-                      {doctor.type}
+                      {formatSpecialtyName(doctor.type)}
                     </p>
 
                     <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-600 mb-3 flex-grow">
@@ -451,6 +478,30 @@ export default function DoctorsPage() {
                           {doctor.category}
                         </span>
                       </div>
+                      {(() => {
+                        const years = getExperienceYears(doctor);
+                        if (!years && years !== 0) return null;
+                        return (
+                          <div className="flex items-center">
+                            <svg
+                              className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                            </svg>
+                            <span className="leading-relaxed">
+                              Стаж: {years} лет
+                            </span>
+                          </div>
+                        );
+                      })()}
                       {doctor.scientific_degree &&
                         doctor.scientific_degree !== "Без степени" && (
                           <div className="flex items-center">
