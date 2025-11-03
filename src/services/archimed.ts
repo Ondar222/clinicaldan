@@ -417,7 +417,15 @@ class ArchimedService {
     try {
       const module = await import('../data/prodoctorov.json');
       const raw = (module as any).default;
-      const list: Array<{ fullName: string; specialty: string; photo?: string }>
+      const list: Array<{
+        fullName: string;
+        specialty: string;
+        photo?: string;
+        category?: string;
+        scientific_degree?: string;
+        experienceStartYear?: number;
+        extraSpecialties?: string[];
+      }>
         = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
       if (!Array.isArray(list) || list.length === 0) return [];
       const mapped: ArchimedDoctor[] = list.map((item, idx) => this.mapProdoctorovToArchimed(item, idx));
@@ -428,14 +436,27 @@ class ArchimedService {
   }
 
   private mapProdoctorovToArchimed(
-    item: { fullName: string; specialty: string; photo?: string },
+    item: {
+      fullName: string;
+      specialty: string;
+      photo?: string;
+      category?: string;
+      scientific_degree?: string;
+      experienceStartYear?: number;
+      extraSpecialties?: string[];
+    },
     index: number
   ): ArchimedDoctor {
     const [lastName = '', firstName = '', middleName = ''] = item.fullName.split(/\s+/);
     const typeName = item.specialty || 'Врач';
     const id = 100000 + index; // avoid id collisions
     const defaultBranch = 'Клиника Алдан';
-    const defaultCategory = typeName;
+    const defaultCategory = item.category || typeName;
+    const degree = item.scientific_degree || 'Без степени';
+    const extraTypes = Array.isArray(item.extraSpecialties) ? item.extraSpecialties : [];
+    const experienceInfo = item.experienceStartYear ? `Врачебный стаж с ${item.experienceStartYear} г.` : '';
+    const extraInfo = extraTypes.length > 0 ? `Смежные специальности: ${extraTypes.join(', ')}` : '';
+    const info = [experienceInfo, extraInfo].filter(Boolean).join('\n');
     return {
       id,
       name: lastName,
@@ -446,7 +467,7 @@ class ArchimedService {
       max_time: '30',
       phone: '',
       snils: '',
-      info: '',
+      info,
       zone_id: 0,
       zone: '',
       branch_id: 0,
@@ -454,14 +475,14 @@ class ArchimedService {
       category_id: 0,
       category: defaultCategory,
       scientific_degree_id: 0,
-      scientific_degree: 'Без степени',
+      scientific_degree: degree,
       user_id: 0,
       photo: item.photo || null,
       address: 'г. Кызыл, ул. Ленина, 60',
       building_name: 'Поликлиника №1',
       building_web_name: 'Поликлиника №1',
       primary_type_id: 0,
-      types: [{ id: 0, name: typeName }]
+      types: [{ id: 0, name: typeName }, ...extraTypes.map((n, i) => ({ id: i + 1, name: n }))]
     };
   }
 
