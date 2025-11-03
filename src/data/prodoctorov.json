@@ -1,36 +1,175 @@
 [
-  { "fullName": "Кочкаров Канамат Татарханович", "specialty": "Флеболог" },
-  { "fullName": "Донгак Альберт Владимирович", "specialty": "Травматолог ортопед" },
-  { "fullName": "Маскыр Мария Опей-ооловна", "specialty": "Акушер гинеколог" },
-  { "fullName": "Суге-Маадыр Виктория Владимировна", "specialty": "Функциональный диагност" },
-  { "fullName": "Бадарчы Тайгана Байланооловна", "specialty": "Онколог" },
-  { "fullName": "Биче-Кыс Айлана Ортун-ооловна", "specialty": "Дерматовенеролог" },
-  { "fullName": "Даваа Ай-Суу Аясовна", "specialty": "Детский гематолог" },
-  { "fullName": "Дагбы Чечек Андреевна", "specialty": "Кардиолог" },
-  { "fullName": "Донгак Начын Олегович", "specialty": "Массажист" },
-  { "fullName": "Доюндуп Чойгана Хереловна", "specialty": "Гинеколог акушер" },
-  { "fullName": "Дундуй Аяна Васильевна", "specialty": "Гинеколог" },
-  { "fullName": "Идам-сюрюн Азимаа Момбужаевна", "specialty": "Гинеколог" },
-  { "fullName": "Иргит Владимир Владимирович", "specialty": "Нейрохирург" },
-  { "fullName": "Кара-Оол Аяна Анатольевна", "specialty": "Педиатр" },
-  { "fullName": "Кочаа Азияна Сержиевна", "specialty": "Функциональный диагност" },
-  { "fullName": "Кужугет Росси Александрович", "specialty": "Врач сердечно-сосудистый хирург", "category": "Высшая категория", "scientific_degree": "Кандидат медицинских наук", "experienceStartYear": 2005, "extraSpecialties": ["врач УЗИ", "врач хирург", "организация здравоохранения и общественное здоровье"] },
-  { "fullName": "Кулдун Сайлык Геннадьевна", "specialty": "Терапевт" },
-  { "fullName": "Кыргыс Айзана Александровна", "specialty": "Врач УЗИ функциональный диагност" },
-  { "fullName": "Саая Таймира Владимировна", "specialty": "Ревматолог" },
-  { "fullName": "Салчак Айыс Романовна", "specialty": "Врач-косметолог дерматовенеролог" },
-  { "fullName": "Салчак Урана Седеновна", "specialty": "Акушер гинеколог" },
-  { "fullName": "Саны-Хоо Чойган Калчановна", "specialty": "Функциональный диагност" },
-  { "fullName": "Сарыглар Саида Октябрьовна", "specialty": "Функциональный диагност невролог" },
-  { "fullName": "Сарым-Оол Алла Николаевна", "specialty": "Гематолог" },
-  { "fullName": "Сенди Начын Владимирович", "specialty": "Врач УЗИ" },
-  { "fullName": "Сенди Саида Сергеевна", "specialty": "Детский ревматолог" },
-  { "fullName": "Тантакова Кежикмаа Кудеровна", "specialty": "Эндокринолог" },
-  { "fullName": "Тойбу-Хаа Чодураа Владимировна", "specialty": "Детский нефролог семейный врач педиатр" },
-  { "fullName": "Хайжок Чодураа Викторовна", "specialty": "Врач-косметолог дерматовенеролог" },
-  { "fullName": "Хирлиг-оол Салбак Хомушкуевна", "specialty": "Онколог-маммолог" },
-  { "fullName": "Хорбаа Анжела Тарасовна", "specialty": "Невролог" },
-  { "fullName": "Чадамба Сайлык Николаевна", "specialty": "Массажист" },
-  { "fullName": "Шыырап Алимаа Эресоловна", "specialty": "Невролог" }
+  {
+    "fullName": "Кочкаров Канамат Татарханович",
+    "specialty": "Флеболог",
+    "photo": "https://prodoctorov.ru/media/photo/abakan/doctorimage/890838/3012443-890838-kochkarov_square_small.jpg"
+  },
+  {
+    "fullName": "Донгак Альберт Владимирович",
+    "specialty": "Травматолог ортопед",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037170/1936818-1037170-dongak_square_small.jpg"
+  },
+  {
+    "fullName": "Маскыр Мария Опей-ооловна",
+    "specialty": "Акушер гинеколог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/869992/1936848-869992-maskyr_square_small.jpg"
+  },
+  {
+    "fullName": "Суге-Маадыр Виктория Владимировна",
+    "specialty": "Функциональный диагност",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037151/1936742-1037151-suge-maadyr_square_small.jpg"
+  },
+  {
+    "fullName": "Бадарчы Тайгана Байланооловна",
+    "specialty": "Онколог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/639183/3152068-639183-badarchy_square_small.jpg"
+  },
+  {
+    "fullName": "Биче-Кыс Айлана Ортун-ооловна",
+    "specialty": "Дерматовенеролог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1220351/3151975-1220351-biche-kys_square_small.jpg"
+  },
+  {
+    "fullName": "Даваа Ай-Суу Аясовна",
+    "specialty": "Детский гематолог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1219778/3152165-1219778-davaa_square_small.jpg"
+  },
+  {
+    "fullName": "Дагбы Чечек Андреевна",
+    "specialty": "Кардиолог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037031/1935966-1037031-dagby_square_small.jpg"
+  },
+  {
+    "fullName": "Донгак Начын Олегович",
+    "specialty": "Массажист",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1220392/3152128-1220392-dongak_square_small.jpg"
+  },
+  {
+    "fullName": "Доюндуп Чойгана Хереловна",
+    "specialty": "Гинеколог акушер",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037177/1936886-1037177-doyundup_square_small.jpg"
+  },
+  {
+    "fullName": "Дундуй Аяна Васильевна",
+    "specialty": "Гинеколог",
+    "photo": "https://prodoctorov.ru/static/_v1/pd/icons/ui-kit/photo/no-avatar.svg"
+  },
+  {
+    "fullName": "Идам-сюрюн Азимаа Момбужаевна",
+    "specialty": "Гинеколог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/431924/840504-431924-idam-syuryun_square_small.jpg"
+  },
+  {
+    "fullName": "Иргит Владимир Владимирович",
+    "specialty": "Нейрохирург",
+    "photo": "https://prodoctorov.ru/static/_v1/pd/icons/ui-kit/photo/no-avatar.svg"
+  },
+  {
+    "fullName": "Кара-Оол Аяна Анатольевна",
+    "specialty": "Педиатр",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1220357/3151994-1220357-kara-ool_square_small.jpg"
+  },
+  {
+    "fullName": "Кочаа Азияна Сержиевна",
+    "specialty": "Функциональный диагност",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037142/1936695-1037142-kochaa_square_small.jpg"
+  },
+  {
+    "fullName": "Кужугет Росси Александрович",
+    "specialty": "Врач сердечно-сосудистый хирург",
+    "category": "Высшая категория",
+    "scientific_degree": "Кандидат медицинских наук",
+    "experienceStartYear": 2005,
+    "extraSpecialties": [
+      "врач УЗИ",
+      "врач хирург",
+      "организация здравоохранения и общественное здоровье"
+    ],
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037169/1936811-1037169-kuzhuget_square_small.jpg"
+  },
+  {
+    "fullName": "Кулдун Сайлык Геннадьевна",
+    "specialty": "Терапевт",
+    "photo": "https://prodoctorov.ru/static/_v1/pd/icons/ui-kit/photo/no-avatar.svg"
+  },
+  {
+    "fullName": "Кыргыс Айзана Александровна",
+    "specialty": "Врач УЗИ функциональный диагност",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/869998/3622315-869998-kyrgys_square_small.jpg"
+  },
+  {
+    "fullName": "Саая Таймира Владимировна",
+    "specialty": "Ревматолог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/638853/1935960-638853-saaya_square_small.jpg"
+  },
+  {
+    "fullName": "Салчак Айыс Романовна",
+    "specialty": "Врач-косметолог дерматовенеролог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037161/1936796-1037161-salchak_square_small.jpg"
+  },
+  {
+    "fullName": "Салчак Урана Седеновна",
+    "specialty": "Акушер гинеколог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/431949/1936872-431949-salchak_square_small.jpg"
+  },
+  {
+    "fullName": "Саны-Хоо Чойган Калчановна",
+    "specialty": "Функциональный диагност",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1220386/3152111-1220386-sany-hoo_square_small.jpg"
+  },
+  {
+    "fullName": "Сарыглар Саида Октябрьовна",
+    "specialty": "Функциональный диагност невролог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/638708/3152003-638708-saryglar_square_small.jpg"
+  },
+  {
+    "fullName": "Сарым-Оол Алла Николаевна",
+    "specialty": "Гематолог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037026/1935946-1037026-sarym-ool_square_small.jpg"
+  },
+  {
+    "fullName": "Сенди Начын Владимирович",
+    "specialty": "Врач УЗИ",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037155/1936766-1037155-sendi_square_small.jpg"
+  },
+  {
+    "fullName": "Сенди Саида Сергеевна",
+    "specialty": "Детский ревматолог",
+    "photo": "https://prodoctorov.ru/static/_v1/pd/icons/ui-kit/photo/no-avatar.svg"
+  },
+  {
+    "fullName": "Тантакова Кежикмаа Кудеровна",
+    "specialty": "Эндокринолог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1220358/3151995-1220358-tantakova_square_small.jpg"
+  },
+  {
+    "fullName": "Тойбу-Хаа Чодураа Владимировна",
+    "specialty": "Детский нефролог семейный врач педиатр",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1220362/3622314-1220362-toybu-haa_square_small.jpg"
+  },
+  {
+    "fullName": "Хайжок Чодураа Викторовна",
+    "specialty": "Врач-косметолог дерматовенеролог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037160/1936780-1037160-hayzhok_square_small.jpg"
+  },
+  {
+    "fullName": "Хирлиг-оол Салбак Хомушкуевна",
+    "specialty": "Онколог-маммолог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/420295/1936854-420295-hirlig-ool_square_small.jpg"
+  },
+  {
+    "fullName": "Хорбаа Анжела Тарасовна",
+    "specialty": "Невролог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037028/1935952-1037028-horbaa_square_small.jpg"
+  },
+  {
+    "fullName": "Чадамба Сайлык Николаевна",
+    "specialty": "Массажист",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1220399/3152143-1220399-chadamba_square_small.jpg"
+  },
+  {
+    "fullName": "Шыырап Алимаа Эресоловна",
+    "specialty": "Невролог",
+    "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/638812/1935918-638812-shyyrap_square_small.jpg"
+  }
 ]
-

@@ -116,6 +116,11 @@ export default function DoctorsPage() {
   const safeDoctors: ArchimedDoctor[] = Array.isArray(doctors) ? doctors : [];
   const filteredDoctors: ArchimedDoctor[] = safeDoctors.filter(
     (doctor: ArchimedDoctor) => {
+      // Hide massage therapists
+      const isMassage =
+        /массажист/i.test(doctor?.type || "") ||
+        (doctor?.types || []).some((t) => /массажист/i.test(t.name || ""));
+      if (isMassage) return false;
       const matchesBranch =
         selectedBranch === "all" ||
         String(doctor?.branch_id) === selectedBranch;
