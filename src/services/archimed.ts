@@ -197,6 +197,15 @@ class ArchimedService {
       const allDoctors = await this.fetchAllDoctorsFromAPI();
       console.log('Archimed API returned doctors:', allDoctors?.length || 0);
       this.doctorsCache = allDoctors || [];
+
+      // If API returned too few, try to enrich from ProDoctorov local snapshot
+      if (this.doctorsCache.length < 10) {
+        const proDocs = await this.loadProdoctorovSnapshot();
+        if (proDocs.length > 0) {
+          console.log('Enriching doctors with ProDoctorov snapshot:', proDocs.length);
+          this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
+        }
+      }
       this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
       return this.doctorsCache;
     } catch (error) {
@@ -209,6 +218,15 @@ class ArchimedService {
           ? (raw as ArchimedDoctor[])
           : (Array.isArray(raw?.data) ? (raw.data as ArchimedDoctor[]) : []);
         this.doctorsCache = localDoctors;
+
+        // Enrich from ProDoctorov snapshot if available
+        if (this.doctorsCache.length < 10) {
+          const proDocs = await this.loadProdoctorovSnapshot();
+          if (proDocs.length > 0) {
+            console.log('Enriching local doctors.json with ProDoctorov snapshot:', proDocs.length);
+            this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
+          }
+        }
         this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
         console.log('Using local doctors.json:', this.doctorsCache.length);
         return this.doctorsCache;
@@ -216,6 +234,11 @@ class ArchimedService {
         console.warn('Не удалось загрузить doctors.json, используем mockDoctors. Ошибка:', e);
         // 4) Last resort – mock data
         this.doctorsCache = mockDoctors;
+        const proDocs = await this.loadProdoctorovSnapshot();
+        if (proDocs.length > 0) {
+          console.log('Enriching mock doctors with ProDoctorov snapshot:', proDocs.length);
+          this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
+        }
         this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
         console.log('Using mock doctors:', this.doctorsCache.length);
         return this.doctorsCache;
@@ -387,6 +410,106 @@ class ArchimedService {
     }
 
     return all;
+  }
+
+  // Load and map ProDoctorov snapshot if present
+  private async loadProdoctorovSnapshot(): Promise<ArchimedDoctor[]> {
+    try {
+      const module = await import('../data/prodoctorov.json');
+      const raw = (module as any).default;
+      const list: Array<{ fullName: string; specialty: string; photo?: string }>
+        = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
+      if (!Array.isArray(list) || list.length === 0) return [];
+      const mapped: ArchimedDoctor[] = list.map((item, idx) => this.mapProdoctorovToArchimed(item, idx));
+      return mapped;
+    } catch {
+      return [];
+    }
+  }
+
+  private mapProdoctorovToArchimed(
+    item: { fullName: string; specialty: string; photo?: string },
+    index: number
+  ): ArchimedDoctor {
+    const [lastName = '', firstName = '', middleName = ''] = item.fullName.split(/\s+/);
+    const typeName = item.specialty || 'Врач';
+    const id = 100000 + index; // avoid id collisions
+    const defaultBranch = 'Клиника Алдан';
+    const defaultCategory = typeName;
+    return {
+      id,
+      name: lastName,
+      name1: firstName,
+      name2: middleName,
+      type: typeName,
+      code: '',
+      max_time: '30',
+      phone: '',
+      snils: '',
+      info: '',
+      zone_id: 0,
+      zone: '',
+      branch_id: 0,
+      branch: defaultBranch,
+      category_id: 0,
+      category: defaultCategory,
+      scientific_degree_id: 0,
+      scientific_degree: 'Без степени',
+      user_id: 0,
+      photo: item.photo || null,
+      address: 'г. Кызыл, ул. Ленина, 60',
+      building_name: 'Поликлиника №1',
+      building_web_name: 'Поликлиника №1',
+      primary_type_id: 0,
+      types: [{ id: 0, name: typeName }]
+    };
+  }
+
+  private mergeDoctors(primary: ArchimedDoctor[], extra: ArchimedDoctor[]): ArchimedDoctor[] {
+    const byKey = new Map<string, ArchimedDoctor>();
+    const makeKey = (d: ArchimedDoctor) => `${(d.name || '').toLowerCase()}|${(d.name1 || '').toLowerCase()}|${(d.name2 || '').toLowerCase()}|${(d.type || '').toLowerCase()}`;
+    for (const d of primary) byKey.set(makeKey(d), d);
+    for (const d of extra) if (!byKey.has(makeKey(d))) byKey.set(makeKey(d), d);
+    return Array.from(byKey.values());
+  }
+
+  // Public helpers to link services with doctors
+  async getDoctorsWithServices(): Promise<Array<ArchimedDoctor & { services?: ApiService[] }>> {
+    const [doctors, services] = await Promise.all([
+      this.getDoctors(),
+      this.getServices().catch(() => [] as ApiService[])
+    ]);
+    const normalized = (s: string) => (s || '').toLowerCase().replace(/ё/g, 'е');
+    const tokenize = (s: string) => normalized(s).split(/\s+/).filter(Boolean);
+    const result = doctors.map(d => {
+      const docTokens = new Set<string>([...tokenize(d.type), ...(d.types || []).flatMap(t => tokenize(t.name))]);
+      const matched = services.filter(svc => {
+        const svcTokens = new Set<string>([...tokenize(svc.group_name), ...tokenize(svc.name)]);
+        for (const t of docTokens) if (svcTokens.has(t)) return true;
+        return false;
+      });
+      return { ...d, services: matched };
+    });
+    return result;
+  }
+
+  async getServicesWithDoctors(): Promise<Array<ApiService & { doctors?: ArchimedDoctor[] }>> {
+    const [doctors, services] = await Promise.all([
+      this.getDoctors(),
+      this.getServices().catch(() => [] as ApiService[])
+    ]);
+    const normalized = (s: string) => (s || '').toLowerCase().replace(/ё/g, 'е');
+    const tokenize = (s: string) => normalized(s).split(/\s+/).filter(Boolean);
+    const svcWithDocs = services.map(svc => {
+      const svcTokens = new Set<string>([...tokenize(svc.group_name), ...tokenize(svc.name)]);
+      const matched = doctors.filter(d => {
+        const docTokens = new Set<string>([...tokenize(d.type), ...(d.types || []).flatMap(t => tokenize(t.name))]);
+        for (const t of docTokens) if (svcTokens.has(t)) return true;
+        return false;
+      });
+      return { ...svc, doctors: matched };
+    });
+    return svcWithDocs;
   }
 
   private async refreshServices(): Promise<void> {

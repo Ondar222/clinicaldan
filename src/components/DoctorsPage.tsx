@@ -4,6 +4,7 @@ import type {
   ArchimedDoctor,
   ArchimedBranch,
   ArchimedCategory,
+  ApiService,
 } from "../types/cms";
 import archimedService from "../services/archimed";
 import ErrorComponent from "./ErrorComponent";
@@ -20,6 +21,9 @@ export default function DoctorsPage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 12;
+  const [doctorServicesCount, setDoctorServicesCount] = useState<
+    Record<number, number>
+  >({});
   const [appointmentModal, setAppointmentModal] = useState<{
     isOpen: boolean;
     service?: import("../types/cms").ApiService;
@@ -36,13 +40,17 @@ export default function DoctorsPage() {
 
         console.log("Начинаем загрузку данных...");
 
-        const [doctorsData, branchesData, categoriesData] = await Promise.all([
-          archimedService.getDoctors(),
-          archimedService.getBranches(),
-          archimedService
-            .getCategories()
-            .catch(() => [] as unknown as ArchimedCategory[]),
-        ]);
+        const [doctorsData, branchesData, categoriesData, servicesData] =
+          await Promise.all([
+            archimedService.getDoctors(),
+            archimedService.getBranches(),
+            archimedService
+              .getCategories()
+              .catch(() => [] as unknown as ArchimedCategory[]),
+            archimedService
+              .getServices()
+              .catch(() => [] as unknown as ApiService[]),
+          ]);
 
         console.log("Loaded doctors:", doctorsData);
         console.log("Loaded branches:", branchesData);
@@ -52,6 +60,36 @@ export default function DoctorsPage() {
         setDoctors(doctorsData || []);
         setBranches(branchesData || []);
         setCategories(categoriesData || []);
+        // Build simple specialty-based mapping of services to doctors
+        try {
+          const norm = (s: string) =>
+            (s || "").toLowerCase().replace(/ё/g, "е");
+          const toks = (s: string) => norm(s).split(/\s+/).filter(Boolean);
+          const svcTokensList = (servicesData as ApiService[]).map((s) => ({
+            s,
+            set: new Set<string>([...toks(s.group_name), ...toks(s.name)]),
+          }));
+          const counts: Record<number, number> = {};
+          (doctorsData || []).forEach((d: ArchimedDoctor) => {
+            const docTokens = new Set<string>([
+              ...toks(d.type),
+              ...(d.types || []).flatMap((t) => toks(t.name)),
+            ]);
+            let count = 0;
+            for (const { set } of svcTokensList) {
+              let matched = false;
+              for (const t of docTokens) {
+                if (set.has(t)) {
+                  matched = true;
+                  break;
+                }
+              }
+              if (matched) count++;
+            }
+            if (count > 0) counts[d.id] = count;
+          });
+          setDoctorServicesCount(counts);
+        } catch {}
       } catch (err) {
         console.error("Ошибка загрузки данных:", err);
         setError("Не удалось загрузить данные о врачах. Попробуйте позже.");
@@ -447,6 +485,26 @@ export default function DoctorsPage() {
                           Прием: {doctor.max_time} мин
                         </span>
                       </div>
+                      {doctorServicesCount[doctor.id] && (
+                        <div className="flex items-center">
+                          <svg
+                            className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0l-8 5-8-5"
+                            />
+                          </svg>
+                          <span className="leading-relaxed">
+                            Услуг: {doctorServicesCount[doctor.id]}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     {doctor.info && (
