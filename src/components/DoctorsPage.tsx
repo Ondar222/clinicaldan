@@ -187,9 +187,11 @@ export default function DoctorsPage() {
   const formatSpecialtyName = (raw: string | undefined | null): string => {
     const s = (raw || "").trim();
     if (!s) return "Врач";
+    // Гарантируем, что есть пробел после слова "Врач"
     if (/^врач/i.test(s)) {
-      // Нормализуем первую букву
-      return `Врач${s.slice(5)}`;
+      const tail = s.slice(5);
+      const spaced = tail.replace(/^([^\s-])/u, " $1");
+      return `Врач${spaced}`;
     }
     if (/функционал/i.test(s) && /диагност/i.test(s)) {
       return "Врач функциональной диагностики";
@@ -475,7 +477,7 @@ export default function DoctorsPage() {
                           />
                         </svg>
                         <span className="leading-relaxed">
-                          {doctor.category}
+                          {formatSpecialtyName(doctor.category)}
                         </span>
                       </div>
                       {(() => {

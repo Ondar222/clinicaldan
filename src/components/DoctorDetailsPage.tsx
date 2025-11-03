@@ -81,7 +81,9 @@ const DoctorDetailsPage: React.FC = () => {
     const s = (raw || "").trim();
     if (!s) return "Врач";
     if (/^врач/i.test(s)) {
-      return `Врач${s.slice(5)}`;
+      const tail = s.slice(5);
+      const spaced = tail.replace(/^([^\s-])/u, " $1");
+      return `Врач${spaced}`;
     }
     if (/функционал/i.test(s) && /диагност/i.test(s)) {
       return "Врач функциональной диагностики";
@@ -231,7 +233,9 @@ const DoctorDetailsPage: React.FC = () => {
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">
                         Категория
                       </h3>
-                      <p className="text-gray-700">{doctor.category}</p>
+                      <p className="text-gray-700">
+                        {formatSpecialtyName(doctor.category)}
+                      </p>
                     </div>
                   )}
 
