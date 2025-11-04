@@ -487,11 +487,75 @@ class ArchimedService {
   }
 
   private mergeDoctors(primary: ArchimedDoctor[], extra: ArchimedDoctor[]): ArchimedDoctor[] {
-    const byKey = new Map<string, ArchimedDoctor>();
-    const makeKey = (d: ArchimedDoctor) => `${(d.name || '').toLowerCase()}|${(d.name1 || '').toLowerCase()}|${(d.name2 || '').toLowerCase()}|${(d.type || '').toLowerCase()}`;
-    for (const d of primary) byKey.set(makeKey(d), d);
-    for (const d of extra) if (!byKey.has(makeKey(d))) byKey.set(makeKey(d), d);
-    return Array.from(byKey.values());
+    const normalize = (s: string) => (s || '').toLowerCase().replace(/ё/g, 'е').trim();
+    const makeNameKey = (d: ArchimedDoctor) => `${normalize(d.name)}|${normalize(d.name1)}|${normalize(d.name2)}`;
+
+    const byName = new Map<string, ArchimedDoctor>();
+    for (const d of primary) byName.set(makeNameKey(d), d);
+
+    const mergeOne = (base: ArchimedDoctor, add: ArchimedDoctor): ArchimedDoctor => {
+      const isEmpty = (v: unknown) => v === undefined || v === null || (typeof v === 'string' && v.trim() === '');
+
+      const merged: ArchimedDoctor = { ...base };
+
+      // Photo
+      if ((!base.photo || base.photo === '') && add.photo) merged.photo = add.photo;
+
+      // Scientific degree
+      const baseDeg = normalize(base.scientific_degree || '');
+      const addDeg = normalize(add.scientific_degree || '');
+      if ((isEmpty(base.scientific_degree) || baseDeg === 'без степени') && addDeg && addDeg !== 'без степени') {
+        merged.scientific_degree = add.scientific_degree;
+      }
+
+      // Category: prefer explicit categories like "Высшая категория", "Первая категория", etc.
+      const looksLikeCategory = (s: string) => /(категор)/i.test(s);
+      if ((isEmpty(base.category) || !looksLikeCategory(base.category)) && looksLikeCategory(add.category)) {
+        merged.category = add.category;
+      }
+
+      // Info: append experience and extras if missing
+      const infoText = base.info || '';
+      const addInfo = add.info || '';
+      const hasExperience = /стаж\s+с\s+\d{4}/i.test(infoText) || /врачебный\s+стаж\s+с\s+\d{4}/i.test(infoText);
+      const addHasExperience = /стаж\s+с\s+\d{4}/i.test(addInfo) || /врачебный\s+стаж\s+с\s+\d{4}/i.test(addInfo);
+      const parts: string[] = [];
+      if (infoText) parts.push(infoText);
+      if (!hasExperience && addHasExperience) parts.push(addInfo.split(/\n+/)[0]);
+      // Include extra specialties line if present in add.info and not already present
+      const addExtrasLine = addInfo.split(/\n+/).find((l) => /Смежные специальности/i.test(l));
+      if (addExtrasLine && !/Смежные специальности/i.test(infoText)) parts.push(addExtrasLine);
+      merged.info = parts.filter(Boolean).join('\n');
+
+      // Types: merge unique type names
+      const baseTypeNames = new Set<string>([normalize(base.type), ...(base.types || []).map((t) => normalize(t.name))]);
+      const addTypeNames = new Set<string>([normalize(add.type), ...(add.types || []).map((t) => normalize(t.name))]);
+      const mergedTypeNames = new Set<string>([...baseTypeNames]);
+      for (const n of addTypeNames) if (n && !mergedTypeNames.has(n)) mergedTypeNames.add(n);
+      const materialized = Array.from(mergedTypeNames)
+        .filter(Boolean)
+        .map((name, idx) => ({ id: idx, name } as ArchimedDoctor['types'][number])) as ArchimedDoctor['types'];
+      if (materialized.length > 0) {
+        merged.types = materialized.map((t, i) => ({ id: i, name: t.name }));
+        // Keep primary type as the first humanized type name
+        const first = materialized[0]?.name || base.type;
+        if (first) merged.type = first;
+      }
+
+      return merged;
+    };
+
+    for (const add of extra) {
+      const key = makeNameKey(add);
+      const existing = byName.get(key);
+      if (existing) {
+        byName.set(key, mergeOne(existing, add));
+      } else {
+        byName.set(key, add);
+      }
+    }
+
+    return Array.from(byName.values());
   }
 
   // Public helpers to link services with doctors

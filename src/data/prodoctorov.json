@@ -7,26 +7,43 @@
   {
     "fullName": "Донгак Альберт Владимирович",
     "specialty": "Травматолог ортопед",
+    "category": "Высшая категория",
+    "scientific_degree": "Кандидат медицинских наук",
+    "experienceStartYear": 1997,
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037170/1936818-1037170-dongak_square_small.jpg"
   },
   {
     "fullName": "Маскыр Мария Опей-ооловна",
     "specialty": "Акушер гинеколог",
+    "category": "Высшая категория",
+    "experienceStartYear": 2011,
+    "extraSpecialties": [
+      "врач УЗИ"
+    ],
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/869992/1936848-869992-maskyr_square_small.jpg"
   },
   {
     "fullName": "Суге-Маадыр Виктория Владимировна",
     "specialty": "Функциональный диагност",
+    "category": "Первая категория",
+    "experienceStartYear": 2008,
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037151/1936742-1037151-suge-maadyr_square_small.jpg"
   },
   {
     "fullName": "Бадарчы Тайгана Байланооловна",
     "specialty": "Онколог",
+    "category": "Вторая категория",
+    "experienceStartYear": 2012,
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/639183/3152068-639183-badarchy_square_small.jpg"
   },
   {
     "fullName": "Биче-Кыс Айлана Ортун-ооловна",
     "specialty": "Дерматовенеролог",
+    "experienceStartYear": 1994,
+    "extraSpecialties": [
+      "дерматоскопия",
+      "биопсия при кожных заболеваниях"
+    ],
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1220351/3151975-1220351-biche-kys_square_small.jpg"
   },
   {
@@ -37,6 +54,10 @@
   {
     "fullName": "Дагбы Чечек Андреевна",
     "specialty": "Кардиолог",
+    "experienceStartYear": 2018,
+    "extraSpecialties": [
+      "врач функциональной диагностики"
+    ],
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037031/1935966-1037031-dagby_square_small.jpg"
   },
   {
@@ -52,11 +73,15 @@
   {
     "fullName": "Дундуй Аяна Васильевна",
     "specialty": "Гинеколог",
+    "category": "Высшая категория",
+    "experienceStartYear": 2002,
     "photo": "https://prodoctorov.ru/static/_v1/pd/icons/ui-kit/photo/no-avatar.svg"
   },
   {
     "fullName": "Идам-сюрюн Азимаа Момбужаевна",
     "specialty": "Гинеколог",
+    "category": "Высшая категория",
+    "experienceStartYear": 2001,
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/431924/840504-431924-idam-syuryun_square_small.jpg"
   },
   {
@@ -100,6 +125,8 @@
   {
     "fullName": "Саая Таймира Владимировна",
     "specialty": "Ревматолог",
+    "category": "Высшая категория",
+    "experienceStartYear": 2012,
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/638853/1935960-638853-saaya_square_small.jpg"
   },
   {
@@ -110,16 +137,31 @@
   {
     "fullName": "Салчак Урана Седеновна",
     "specialty": "Акушер гинеколог",
+    "category": "Высшая категория",
+    "experienceStartYear": 1999,
+    "extraSpecialties": [
+      "врач УЗИ",
+      "гинекологическая эндокринология",
+      "кольпоскопия",
+      "диагностика и лечение патологии шейки матки",
+      "эстетическая гинекология"
+    ],
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/431949/1936872-431949-salchak_square_small.jpg"
   },
   {
     "fullName": "Саны-Хоо Чойган Калчановна",
     "specialty": "Функциональный диагност",
+    "experienceStartYear": 2011,
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1220386/3152111-1220386-sany-hoo_square_small.jpg"
   },
   {
     "fullName": "Сарыглар Саида Октябрьовна",
     "specialty": "Функциональный диагност невролог",
+    "category": "Высшая категория",
+    "experienceStartYear": 2001,
+    "extraSpecialties": [
+      "врач невролог"
+    ],
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/638708/3152003-638708-saryglar_square_small.jpg"
   },
   {
@@ -130,6 +172,10 @@
   {
     "fullName": "Сенди Начын Владимирович",
     "specialty": "Врач УЗИ",
+    "experienceStartYear": 2013,
+    "extraSpecialties": [
+      "врач рентгенолог"
+    ],
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037155/1936766-1037155-sendi_square_small.jpg"
   },
   {
@@ -140,6 +186,12 @@
   {
     "fullName": "Тантакова Кежикмаа Кудеровна",
     "specialty": "Эндокринолог",
+    "experienceStartYear": 2019,
+    "extraSpecialties": [
+      "врач-диетолог",
+      "врач-терапевт",
+      "организация здравоохранения и общественное здоровье"
+    ],
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1220358/3151995-1220358-tantakova_square_small.jpg"
   },
   {
@@ -173,6 +225,8 @@
   {
     "fullName": "Шыырап Алимаа Эресоловна",
     "specialty": "Невролог",
+    "category": "Высшая категория",
+    "experienceStartYear": 2005,
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/638812/1935918-638812-shyyrap_square_small.jpg"
   },
   {
@@ -189,5 +243,123 @@
     "specialty": "Врач-кардиолог",
     "category": "Вторая категория",
     "experienceStartYear": 2018
+  },
+  {
+    "fullName": "Кыргыс Айдыс Владимирович",
+    "specialty": "Невролог",
+    "category": "Первая категория",
+    "experienceStartYear": 2015,
+    "extraSpecialties": [
+      "врач нейрофизиолог",
+      "физическая и реабилитационная медицина"
+    ]
+  },
+  {
+    "fullName": "Ондар Инна Андреевна",
+    "specialty": "Хирург",
+    "category": "Высшая категория",
+    "experienceStartYear": 2006,
+    "extraSpecialties": [
+      "колоректальный хирург"
+    ]
+  },
+  {
+    "fullName": "Ховалыг Аржаана Адыгжыевна",
+    "specialty": "Врач УЗИ",
+    "experienceStartYear": 2016
+  },
+  {
+    "fullName": "Кыргыс Саглаш Васильевна",
+    "specialty": "Сурдолог-оториноларинголог",
+    "category": "Первая категория",
+    "experienceStartYear": 2011
+  },
+  {
+    "fullName": "Ондар Сай-Суу Хеймеровна",
+    "specialty": "Невролог",
+    "experienceStartYear": 2017,
+    "extraSpecialties": [
+      "детская неврология",
+      "эпилептология",
+      "нервно-мышечные заболевания",
+      "врач функциональной диагностики"
+    ]
+  },
+  {
+    "fullName": "Ондар Айлаана Орус-ооловна",
+    "specialty": "Детский кардиолог",
+    "category": "Высшая категория",
+    "experienceStartYear": 2005,
+    "extraSpecialties": [
+      "Функциональная диагностика",
+      "Ультразвуковая диагностика"
+    ]
+  },
+  {
+    "fullName": "Олевуези Джастин Чуквуди",
+    "specialty": "Пластический хирург",
+    "experienceStartYear": 2021
+  },
+  {
+    "fullName": "Норбу Ай-Суу Леонидовна",
+    "specialty": "Акушер гинеколог",
+    "category": "Вторая категория",
+    "experienceStartYear": 2017,
+    "extraSpecialties": [
+      "врач УЗИ",
+      "организация здравоохранения и общественное здоровье"
+    ]
+  },
+  {
+    "fullName": "Ханды Селенга Алексеевна",
+    "specialty": "Врач ультразвуковой диагностики",
+    "category": "Высшая категория",
+    "experienceStartYear": 1998,
+    "extraSpecialties": [
+      "врач акушер-гинеколог"
+    ]
+  },
+  {
+    "fullName": "Соян Сайзана Шолбановна",
+    "specialty": "Кардиолог",
+    "category": "Вторая категория",
+    "experienceStartYear": 2018
+  },
+  {
+    "fullName": "Ооржак Сюзана Эресовна",
+    "specialty": "Гематолог",
+    "experienceStartYear": 2021
+  },
+  {
+    "fullName": "Сарым-Оол Алла Николаевна",
+    "specialty": "Гематолог",
+    "category": "Высшая категория",
+    "experienceStartYear": 2007,
+    "extraSpecialties": [
+      "врач терапевт"
+    ]
+  },
+  {
+    "fullName": "Кенен Надежда Андреевна",
+    "specialty": "Психиатр",
+    "category": "Вторая категория",
+    "experienceStartYear": 2016,
+    "extraSpecialties": [
+      "детский психиатр"
+    ]
+  },
+  {
+    "fullName": "Саая Алла Андреевна",
+    "specialty": "Аллерголог-иммунолог",
+    "experienceStartYear": 2019,
+    "extraSpecialties": [
+      "педиатр",
+      "аллерголог с 2021"
+    ]
+  },
+  {
+    "fullName": "Оюн Чойгана Чкалововна",
+    "specialty": "Пластический хирург",
+    "experienceStartYear": 2021
   }
 ]
