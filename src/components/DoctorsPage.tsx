@@ -442,44 +442,52 @@ export default function DoctorsPage() {
                       {getDoctorInitials(doctor)}
                     </h3>
                     <p className="text-primary font-medium mb-2 text-xs sm:text-sm">
-                      {formatSpecialtyName(doctor.type)}
+                      Направление: {normalize(doctor.type)}
                     </p>
 
                     <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-600 mb-3 flex-grow">
-                      <div className="flex items-center">
-                        <svg
-                          className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                          />
-                        </svg>
-                        <span className="leading-relaxed">{doctor.branch}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <svg
-                          className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <span className="leading-relaxed">
-                          {formatSpecialtyName(doctor.category)}
-                        </span>
-                      </div>
+                      {doctor.branch && !/алдан/i.test(doctor.branch || "") && (
+                        <div className="flex items-center">
+                          <svg
+                            className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                            />
+                          </svg>
+                          <span className="leading-relaxed">
+                            {doctor.branch}
+                          </span>
+                        </div>
+                      )}
+                      {doctor.category &&
+                        /категор/i.test(doctor.category) &&
+                        !/отсутств/i.test(doctor.category) && (
+                          <div className="flex items-center">
+                            <svg
+                              className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                            </svg>
+                            <span className="leading-relaxed">
+                              Квалификационная категория: {doctor.category}
+                            </span>
+                          </div>
+                        )}
                       {(() => {
                         const years = getExperienceYears(doctor);
                         if (!years && years !== 0) return null;
@@ -521,7 +529,7 @@ export default function DoctorsPage() {
                               />
                             </svg>
                             <span className="leading-relaxed">
-                              {doctor.scientific_degree}
+                              Ученая степень: {doctor.scientific_degree}
                             </span>
                           </div>
                         )}
