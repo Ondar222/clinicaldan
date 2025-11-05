@@ -389,7 +389,7 @@ export default function DoctorsPage() {
                               : doctor.photo
                           }
                           alt={getDoctorFullName(doctor)}
-                          className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover object-[50%_30%] border-3 sm:border-4 border-white"
+                          className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover object-[50%_30%] border-3 sm:border-4 border-white"
                           onError={(e) => {
                             e.currentTarget.style.display = "none";
                             const nextElement = e.currentTarget
