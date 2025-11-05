@@ -458,7 +458,7 @@ const ServicePage: React.FC = () => {
                           (new Image().src = `data:image/png;base64,${doctor.photo}`) as unknown as string
                         }
                         alt={getDoctorInitials(doctor)}
-                        className="w-full h-48 sm:h-56 md:h-64 object-cover object-center"
+                        className="w-full h-48 sm:h-56 md:h-64 object-cover object-[50%_30%]"
                       />
                     ) : (
                       <div className="text-gray-400 text-sm sm:text-base">
