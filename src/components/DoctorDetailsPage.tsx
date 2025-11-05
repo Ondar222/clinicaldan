@@ -159,7 +159,7 @@ const DoctorDetailsPage: React.FC = () => {
                             : doctor.photo
                         }
                         alt={getDoctorFullName(doctor)}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover object-center"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
                           const nextElement = e.currentTarget
