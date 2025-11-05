@@ -121,6 +121,11 @@ export default function DoctorsPage() {
         /массажист/i.test(doctor?.type || "") ||
         (doctor?.types || []).some((t) => /массажист/i.test(t.name || ""));
       if (isMassage) return false;
+
+      // Hide admin/test entries (e.g., Администратор ArchiMed+, Арбаев)
+      const nameBlob =
+        `${doctor?.name || ""} ${doctor?.name1 || ""} ${doctor?.name2 || ""} ${doctor?.info || ""}`.toLowerCase();
+      if (/(администратор|archimed|арбаев)/i.test(nameBlob)) return false;
       const matchesBranch =
         selectedBranch === "all" ||
         String(doctor?.branch_id) === selectedBranch;
@@ -439,7 +444,7 @@ export default function DoctorsPage() {
 
                   <div className="p-3 sm:p-5 flex flex-col flex-grow">
                     <h3 className="text-base sm:text-lg font-semibold text-dark mb-1.5">
-                      {getDoctorInitials(doctor)}
+                      {getDoctorFullName(doctor)}
                     </h3>
                     <p className="text-primary font-medium mb-2 text-xs sm:text-sm">
                       Направление: {normalize(doctor.type)}

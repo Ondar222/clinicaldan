@@ -142,6 +142,29 @@ const DoctorDetailsPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Back to doctors list */}
+      <div className="container mx-auto px-4 py-3">
+        <Link
+          to="/doctors"
+          className="inline-flex items-center text-primary hover:text-primaryDark text-sm"
+        >
+          <svg
+            className="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Назад к врачам
+        </Link>
+      </div>
+
       {/* Основная информация о враче */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
