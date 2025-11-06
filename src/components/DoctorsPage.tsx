@@ -167,6 +167,19 @@ export default function DoctorsPage() {
   const paginatedDoctors =
     filteredDoctors?.slice(pageStartIndex, pageEndIndex) || [];
 
+  const scrollToTop = () => {
+    try {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    scrollToTop();
+  };
+
   const getDoctorFullName = (doctor: ArchimedDoctor) => {
     return `${doctor.name} ${doctor.name1} ${doctor.name2}`;
   };
@@ -603,7 +616,7 @@ export default function DoctorsPage() {
           <div className="mt-6 sm:mt-8 flex items-center justify-center gap-2 sm:gap-3">
             <button
               className="px-3 py-1.5 sm:px-4 sm:py-2 border border-gray-300 rounded text-sm sm:text-base disabled:opacity-50"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              onClick={() => goToPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
             >
               Назад
@@ -617,7 +630,7 @@ export default function DoctorsPage() {
                     <button
                       key={`page-${page}`}
                       className={`min-w-8 px-2 sm:px-3 py-1 sm:py-1.5 rounded text-sm sm:text-base ${page === currentPage ? "bg-primary text-white" : "border border-gray-300"}`}
-                      onClick={() => setCurrentPage(page)}
+                      onClick={() => goToPage(page)}
                     >
                       {page}
                     </button>
@@ -629,7 +642,7 @@ export default function DoctorsPage() {
               {totalPages > 7 && (
                 <button
                   className={`min-w-8 px-2 sm:px-3 py-1 sm:py-1.5 rounded text-sm sm:text-base ${totalPages === currentPage ? "bg-primary text-white" : "border border-gray-300"}`}
-                  onClick={() => setCurrentPage(totalPages)}
+                  onClick={() => goToPage(totalPages)}
                 >
                   {totalPages}
                 </button>
@@ -637,7 +650,7 @@ export default function DoctorsPage() {
             </div>
             <button
               className="px-3 py-1.5 sm:px-4 sm:py-2 border border-gray-300 rounded text-sm sm:text-base disabled:opacity-50"
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
             >
               Вперёд
