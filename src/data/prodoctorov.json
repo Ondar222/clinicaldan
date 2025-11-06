@@ -355,15 +355,7 @@
     "specialty": "Врач гематолог",
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037026/1935946-1037026-sarym-ool_square_small.jpg"
   },
-  {
-    "fullName": "Сарым-Оол Алла Николаевна",
-    "specialty": "Врач гематолог",
-    "category": "Высшая категория",
-    "experienceStartYear": 2007,
-    "extraSpecialties": [
-      "врач терапевт"
-    ]
-  },
+
   {
     "fullName": "Сенди Начын Владимирович",
     "specialty": "Врач УЗИ",
