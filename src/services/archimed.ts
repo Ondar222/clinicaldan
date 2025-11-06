@@ -35,6 +35,22 @@ const DEFAULT_REQUEST_TIMEOUT_MS = 20000; // 20s
 const DEFAULT_API_PAGE_LIMIT = 200; // request large page size to reduce pagination
 const MAX_API_PAGES = 50; // hard cap to prevent runaway loops
 
+// Helpers for name normalization and blacklist
+const normalizeRu = (s: string) =>
+  (s || '')
+    .toLowerCase()
+    .replace(/ё/g, 'е')
+    .replace(/[^a-zа-я0-9]+/g, ' ')
+    .trim();
+
+const makeFullName = (d: ArchimedDoctor) =>
+  normalizeRu([d?.name, d?.name1, d?.name2].filter(Boolean).join(' '));
+
+// Names to exclude from all doctors lists and details
+const NAME_BLACKLIST = new Set<string>([
+  'хорбаа анжела тарасовна',
+]);
+
 class ArchimedService {
   private baseUrl: string;
   private headers: HeadersInit;
@@ -56,11 +72,11 @@ class ArchimedService {
       const doctorsFromStorage = this.readFromStorage<unknown>(DOCTORS_CACHE_KEY, DOCTORS_CACHE_TTL_MS);
       if (Array.isArray(doctorsFromStorage)) {
         console.log('Loaded doctors from storage:', doctorsFromStorage.length);
-        this.doctorsCache = doctorsFromStorage as ArchimedDoctor[];
+        this.doctorsCache = this.applyRemovals(doctorsFromStorage as ArchimedDoctor[]);
       } else if (doctorsFromStorage && typeof doctorsFromStorage === 'object' && Array.isArray((doctorsFromStorage as any).data)) {
         const normalized = (doctorsFromStorage as any).data as ArchimedDoctor[];
         console.log('Loaded doctors from storage (normalized from .data):', normalized.length);
-        this.doctorsCache = normalized;
+        this.doctorsCache = this.applyRemovals(normalized);
         this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
       }
       const servicesFromStorage = this.readFromStorage<ApiService[]>(SERVICES_CACHE_KEY, SERVICES_CACHE_TTL_MS);
@@ -148,7 +164,7 @@ class ArchimedService {
     const fromStorage = this.readFromStorage<unknown>(DOCTORS_CACHE_KEY, DOCTORS_CACHE_TTL_MS);
     if (Array.isArray(fromStorage) && fromStorage.length > 0) {
       console.log('Loading doctors from storage:', fromStorage.length);
-      this.doctorsCache = fromStorage as ArchimedDoctor[];
+      this.doctorsCache = this.applyRemovals(fromStorage as ArchimedDoctor[]);
       // refresh in background
       this.refreshDoctors();
       return this.doctorsCache;
@@ -156,7 +172,7 @@ class ArchimedService {
     if (fromStorage && typeof fromStorage === 'object' && Array.isArray((fromStorage as any).data)) {
       const normalized = (fromStorage as any).data as ArchimedDoctor[];
       console.log('Loading doctors from storage (normalized from .data):', normalized.length);
-      this.doctorsCache = normalized;
+      this.doctorsCache = this.applyRemovals(normalized);
       this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
       this.refreshDoctors();
       return this.doctorsCache;
@@ -187,7 +203,7 @@ class ArchimedService {
 
         if (bestData.length > 0) {
           console.log('Using doctors dataset, count:', bestData.length);
-          this.doctorsCache = bestData;
+          this.doctorsCache = this.applyRemovals(bestData);
           this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
           return this.doctorsCache;
         }
@@ -206,6 +222,7 @@ class ArchimedService {
           this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
         }
       }
+      this.doctorsCache = this.applyRemovals(this.doctorsCache);
       this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
       return this.doctorsCache;
     } catch (error) {
@@ -227,6 +244,7 @@ class ArchimedService {
             this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
           }
         }
+        this.doctorsCache = this.applyRemovals(this.doctorsCache);
         this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
         console.log('Using local doctors.json:', this.doctorsCache.length);
         return this.doctorsCache;
@@ -239,6 +257,7 @@ class ArchimedService {
           console.log('Enriching mock doctors with ProDoctorov snapshot:', proDocs.length);
           this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
         }
+        this.doctorsCache = this.applyRemovals(this.doctorsCache);
         this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
         console.log('Using mock doctors:', this.doctorsCache.length);
         return this.doctorsCache;
@@ -247,7 +266,11 @@ class ArchimedService {
   }
 
   async getDoctor(id: number): Promise<ArchimedDoctor> {
-    return this.request<ArchimedDoctor>(`/doctors/${id}`);
+    const doc = await this.request<ArchimedDoctor>(`/doctors/${id}`);
+    if (this.isBlacklisted(doc)) {
+      throw new Error('Archimed API error: 404 - Not found');
+    }
+    return doc;
   }
 
   async getDoctorsByBranch(branchId: number): Promise<ArchimedDoctor[]> {
@@ -364,7 +387,7 @@ class ArchimedService {
     try {
       const allDoctors = await this.fetchAllDoctorsFromAPI();
       if (Array.isArray(allDoctors) && allDoctors.length > 0) {
-        this.doctorsCache = allDoctors;
+        this.doctorsCache = this.applyRemovals(allDoctors);
         this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
       }
     } catch {
@@ -556,6 +579,23 @@ class ArchimedService {
     }
 
     return Array.from(byName.values());
+  }
+
+  private isBlacklisted(doctor: ArchimedDoctor): boolean {
+    try {
+      const full = makeFullName(doctor);
+      return NAME_BLACKLIST.has(full);
+    } catch {
+      return false;
+    }
+  }
+
+  private applyRemovals(list: ArchimedDoctor[]): ArchimedDoctor[] {
+    try {
+      return (Array.isArray(list) ? list : []).filter(d => !this.isBlacklisted(d));
+    } catch {
+      return Array.isArray(list) ? list : [];
+    }
   }
 
   // Public helpers to link services with doctors
