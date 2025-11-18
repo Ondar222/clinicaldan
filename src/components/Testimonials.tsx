@@ -50,7 +50,6 @@ export default function Testimonials() {
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6)), url('/bg-hero.jpg')`,
         backgroundSize: "cover",
         backgroundPosition: "center 30%",
-        backgroundAttachment: "fixed",
       }}
     >
       <div className="container mx-auto px-3 sm:px-4 relative z-10">

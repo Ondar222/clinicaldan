@@ -68,7 +68,6 @@ export default function Hero() {
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.3)), url(${slides[currentSlide].image})`,
           backgroundSize: "cover",
           backgroundPosition: "center 30%",
-          backgroundAttachment: "fixed",
         }}
       >
         {slides.map((slide, index) => (

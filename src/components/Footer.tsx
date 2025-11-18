@@ -10,7 +10,6 @@ export default function Footer() {
           "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6)), url(/bg-hero.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center 30%",
-        backgroundAttachment: "fixed",
       }}
     >
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12 relative z-10">
