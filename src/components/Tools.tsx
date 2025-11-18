@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { tools } from "../data/tools";
+import type { ToolItem } from "../data/tools";
 
 function getHalf(text: string): string {
   if (!text) return "";
@@ -14,24 +14,41 @@ function getHalf(text: string): string {
 }
 
 export default function Tools() {
-  const [index, setIndex] = React.useState(0);
-  const pageSize = 4;
+  const [selected, setSelected] = React.useState<ToolItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const scrollerRef = React.useRef<HTMLDivElement>(null);
 
-  const next = () => {
-    setIndex((prev) => (prev + 1) % tools.length);
+  const openModal = (tool: ToolItem) => {
+    setSelected(tool);
+    setIsModalOpen(true);
   };
-  const prev = () => {
-    setIndex((prev) => (prev - 1 + tools.length) % tools.length);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    // slight delay to avoid flicker if CSS transitions are later added
+    setTimeout(() => setSelected(null), 150);
   };
 
-  const visible = React.useMemo(() => {
-    if (tools.length <= pageSize) return tools;
-    const arr = [];
-    for (let i = 0; i < pageSize; i++) {
-      arr.push(tools[(index + i) % tools.length]);
-    }
-    return arr;
-  }, [index]);
+  React.useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isModalOpen) {
+        e.preventDefault();
+        closeModal();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isModalOpen]);
+
+  const scrollByAmount = (direction: "left" | "right") => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const amount = Math.round(el.clientWidth * 0.85);
+    el.scrollBy({
+      left: direction === "right" ? amount : -amount,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <section id="tools" className="py-6 sm:py-10 bg-gray-50">
       <div className="container mx-auto px-3 sm:px-4">
@@ -44,11 +61,14 @@ export default function Tools() {
         </p>
 
         <div className="relative">
-          <div className="flex gap-3 sm:gap-4 items-stretch">
-            {visible.map((tool) => (
+          <div
+            ref={scrollerRef}
+            className="flex gap-3 sm:gap-4 items-stretch overflow-x-auto scroll-smooth snap-x snap-mandatory pb-1"
+          >
+            {tools.map((tool) => (
               <div
                 key={tool.id}
-                className="bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm overflow-hidden group transition-all duration-200 hover:shadow-md flex-1 flex flex-col h-full"
+                className="bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm overflow-hidden group transition-all duration-200 hover:shadow-md flex flex-col h-full snap-start min-w-[240px] sm:min-w-[260px] md:min-w-[280px]"
               >
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <img
@@ -59,14 +79,12 @@ export default function Tools() {
                   />
                 </div>
                 <div className="p-2 sm:p-4 flex flex-col flex-1">
-                  <h3 className="text-sm sm:text-base md:text-lg font-semibold mb-1 text-dark">
+                  <h3 className="text-sm sm:text-base md:text-lg font-semibold mb-2 text-dark">
                     {tool.title}
                   </h3>
-                  <p className="hidden sm:block text-gray-600 text-xs sm:text-sm leading-relaxed mb-2 flex-1">
-                    {getHalf(tool.description)}
-                  </p>
-                  <Link
-                    to={`/tools/${tool.id}`}
+                  <button
+                    type="button"
+                    onClick={() => openModal(tool)}
                     className="mt-auto inline-flex items-center text-primary hover:text-primaryDark text-xs sm:text-sm font-medium"
                   >
                     Подробнее
@@ -84,58 +102,104 @@ export default function Tools() {
                         d="M9 5l7 7-7 7"
                       />
                     </svg>
-                  </Link>
+                  </button>
                 </div>
               </div>
             ))}
           </div>
-          {tools.length > pageSize && (
-            <>
-              <button
-                type="button"
-                aria-label="Предыдущие инструменты"
-                onClick={prev}
-                className="absolute -left-1 sm:-left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-primary border border-primary/20 rounded-full p-1.5 sm:p-2 shadow transition-colors"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3.5 w-3.5 sm:h-4 sm:w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-              <button
-                type="button"
-                aria-label="Следующие инструменты"
-                onClick={next}
-                className="absolute -right-1 sm:-right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-primary border border-primary/20 rounded-full p-1.5 sm:p-2 shadow transition-colors"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3.5 w-3.5 sm:h-4 sm:w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-            </>
-          )}
+
+          <button
+            type="button"
+            aria-label="Прокрутить влево"
+            onClick={() => scrollByAmount("left")}
+            className="hidden sm:flex absolute -left-1 sm:-left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-primary border border-primary/20 rounded-full p-1.5 sm:p-2 shadow transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-3.5 w-3.5 sm:h-4 sm:w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            aria-label="Прокрутить вправо"
+            onClick={() => scrollByAmount("right")}
+            className="hidden sm:flex absolute -right-1 sm:-right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-primary border border-primary/20 rounded-full p-1.5 sm:p-2 shadow transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-3.5 w-3.5 sm:h-4 sm:w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
         </div>
+
+        {isModalOpen && selected && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tool-modal-title"
+          >
+            <div
+              className="absolute inset-0 bg-black/50"
+              onClick={closeModal}
+            />
+            <div className="relative bg-white w-full max-w-3xl rounded-lg sm:rounded-xl shadow-xl overflow-hidden">
+              <button
+                type="button"
+                aria-label="Закрыть"
+                onClick={closeModal}
+                className="absolute right-2 top-2 sm:right-3 sm:top-3 text-gray-500 hover:text-gray-700"
+              ></button>
+              <div className="relative aspect-[16/9] sm:aspect-[16/7] overflow-hidden">
+                <img
+                  src={selected.image}
+                  alt={selected.title}
+                  className="w-full h-full object-scale-down"
+                />
+              </div>
+              <div className="p-4 sm:p-6">
+                <h3
+                  id="tool-modal-title"
+                  className="text-lg sm:text-2xl font-bold mb-2 text-dark"
+                >
+                  {selected.title}
+                </h3>
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+                  {selected.description}
+                </p>
+                <div className="mt-4 sm:mt-6 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="inline-flex items-center px-4 py-2 rounded-md bg-primary text-white hover:bg-primaryDark text-sm"
+                  >
+                    Закрыть
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
