@@ -451,18 +451,62 @@ const ServicePage: React.FC = () => {
                   key={doctor.id}
                   className="bg-white rounded-lg shadow-md overflow-hidden text-center flex flex-col h-full"
                 >
-                  <div className="w-full h-48 sm:h-56 md:h-64 bg-gray-100 flex items-center justify-center">
+                  <div className="w-full h-48 sm:h-56 md:h-64 bg-gray-100 flex items-center justify-center relative overflow-hidden">
                     {doctor.photo ? (
-                      <img
-                        src={
-                          (new Image().src = `data:image/png;base64,${doctor.photo}`) as unknown as string
-                        }
-                        alt={getDoctorInitials(doctor)}
-                        className="w-full h-48 sm:h-56 md:h-64 object-cover object-[50%_30%]"
-                      />
+                      <>
+                        <img
+                          src={
+                            doctor.photo.startsWith("data:")
+                              ? doctor.photo
+                              : /^https?:\/\//i.test(doctor.photo)
+                              ? doctor.photo
+                              : `data:image/png;base64,${doctor.photo}`
+                          }
+                          alt={getDoctorInitials(doctor)}
+                          className="w-full h-48 sm:h-56 md:h-64 object-cover object-[50%_30%]"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            const nextElement = e.currentTarget
+                              .nextElementSibling as HTMLElement;
+                            if (nextElement) {
+                              nextElement.style.display = "flex";
+                            }
+                          }}
+                        />
+                        <div
+                          className="w-full h-48 sm:h-56 md:h-64 bg-gray-200 flex items-center justify-center"
+                          style={{ display: "none" }}
+                        >
+                          <svg
+                            className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                          </svg>
+                        </div>
+                      </>
                     ) : (
-                      <div className="text-gray-400 text-sm sm:text-base">
-                        Фото отсутствует
+                      <div className="w-full h-48 sm:h-56 md:h-64 bg-gray-200 flex items-center justify-center">
+                        <svg
+                          className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
                       </div>
                     )}
                   </div>
