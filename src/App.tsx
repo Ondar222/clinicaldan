@@ -8,6 +8,7 @@ import Advantages from "./components/Advantages";
 import Testimonials from "./components/Testimonials";
 import ContactForm from "./components/ContactForm";
 import Checkups from "./components/Checkups";
+import Tools from "./components/Tools";
 import DoctorsPage from "./components/DoctorsPage";
 import DoctorDetailsPage from "./components/DoctorDetailsPage";
 import ReviewsPage from "./components/ReviewsPage";
@@ -29,6 +30,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import CookieNotification from "./components/CookieNotification";
 import CookiePolicyPage from "./components/CookiePolicyPage";
 import FloatingBooking from "./components/FloatingBooking";
+import ToolDetailsPage from "./components/ToolDetailsPage";
 // Временно скрыто - личный кабинет и платежи
 // import PatientCabinetPage from "./components/PatientCabinetPage";
 // import PaymentSuccessPage from "./components/PaymentSuccessPage";
@@ -46,6 +48,7 @@ function HomePage() {
       <Advantages />
       <Testimonials />
       <ContactForm />
+      <Tools />
     </>
   );
 }
@@ -58,12 +61,12 @@ function App() {
 
   const handleCookieAccept = () => {
     // Здесь можно добавить логику для инициализации аналитики и других сервисов
-    console.log('Cookies accepted');
+    console.log("Cookies accepted");
   };
 
   const handleCookieDecline = () => {
     // Здесь можно добавить логику для отключения аналитики
-    console.log('Cookies declined');
+    console.log("Cookies declined");
   };
 
   return (
@@ -97,6 +100,7 @@ function App() {
             */}
             <Route path="/prices" element={<PriceListPage />} />
             <Route path="/services/:slug" element={<ServicePage />} />
+            <Route path="/tools/:id" element={<ToolDetailsPage />} />
             <Route path="/staff" element={<StaffDashboard />} />
             <Route path="/cookie-policy" element={<CookiePolicyPage />} />
             {/* Временно скрыто - личный кабинет и платежи
@@ -120,7 +124,7 @@ function App() {
         </main>
         <Footer />
         <FloatingBooking />
-        <CookieNotification 
+        <CookieNotification
           onAccept={handleCookieAccept}
           onDecline={handleCookieDecline}
         />

@@ -10,7 +10,7 @@ const slides = [
       "Современная медицинская клиника с высококвалифицированными специалистами. Мы предоставляем полный спектр медицинских услуг с использованием передовых технологий и индивидуальным подходом к каждому пациенту.",
     buttonText: "ПОДРОБНЕЕ",
     buttonLink: "/about",
-    image: "https://clinicaldan.ru/upload/iblock/37e/37ee47227d019ba56cb6a41102fea374.jpg",
+    image: "/bg-hero.jpg",
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ const slides = [
       "Современные программы комплексного обследования организма позволяют выявить заболевания на ранних стадиях и предотвратить их развитие. Индивидуальный подход к каждому пациенту.",
     buttonText: "ПОДРОБНЕЕ",
     buttonLink: "/prices",
-    image: "https://clinicaldan.ru/upload/iblock/37e/37ee47227d019ba56cb6a41102fea374.jpg",
+    image: "/bg-hero.jpg",
   },
 ];
 
@@ -68,7 +68,6 @@ export default function Hero() {
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.3)), url(${slides[currentSlide].image})`,
           backgroundSize: "cover",
           backgroundPosition: "center 30%",
-          backgroundAttachment: "fixed",
         }}
       >
         {slides.map((slide, index) => (
