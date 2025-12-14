@@ -124,7 +124,7 @@ export default function DoctorsPage() {
 
       // Hide admin/test entries (e.g., Администратор ArchiMed+, Арбаев)
       const nameBlob =
-        `${doctor?.name || ""} ${doctor?.name1 || ""} ${doctor?.name2 || ""} ${doctor?.info || ""}`.toLowerCase();
+        `${doctor?.name || ""} ${doctor?.name1 || ""} ${doctor?.name2 || ""} ${doctor?.info || ""} ${doctor?.type || ""}`.toLowerCase();
       if (/(администратор|archimed|арбаев)/i.test(nameBlob)) return false;
       const matchesBranch =
         selectedBranch === "all" ||

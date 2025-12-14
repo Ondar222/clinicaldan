@@ -46,6 +46,12 @@ export default function PriceListPage() {
   const [expandedService, setExpandedService] = useState<{
     [serviceId: number]: boolean;
   }>({});
+  // Полный список лабораторных услуг (группа 1002)
+  const [laboratoryGroupData, setLaboratoryGroupData] = useState<{
+    services: ApiService[];
+    total: number;
+    page: number;
+  } | null>(null);
 
   useEffect(() => {
     const loadServices = async () => {
@@ -53,11 +59,66 @@ export default function PriceListPage() {
         setIsLoading(true);
         setError(null);
 
+        // Загружаем все страницы лабораторных услуг (группа 1002) - ПАРАЛЛЕЛЬНО для ускорения
+        let labServices: ApiService[] | null = null;
+        let labTotal = 0;
+        try {
+          const apiUrl = import.meta.env.VITE_API_URL || 'http://clinicaldan.ru/api';
+          const limit = 100;
+          const maxPages = 50; // защитный предел
+          
+          // Сначала загружаем первую страницу, чтобы узнать total
+          const firstResp = await fetch(`${apiUrl}/archimed/groupservices/1002?page=1`);
+          if (firstResp.ok) {
+            const firstJson = await firstResp.json();
+            const firstChunk = Array.isArray(firstJson?.data?.services) ? firstJson.data.services : [];
+            labTotal = parseInt(firstJson?.meta?.pagination?.total || '0', 10);
+            const totalPages = labTotal ? Math.ceil(labTotal / limit) : 1;
+            const pagesToLoad = Math.min(totalPages, maxPages);
+            
+            // Загружаем остальные страницы ПАРАЛЛЕЛЬНО (батчами по 5 для оптимизации)
+            const all: ApiService[] = [...firstChunk];
+            const batchSize = 5; // загружаем по 5 страниц параллельно
+            
+            for (let batchStart = 2; batchStart <= pagesToLoad; batchStart += batchSize) {
+              const batchEnd = Math.min(batchStart + batchSize - 1, pagesToLoad);
+              const batchPromises = Array.from({ length: batchEnd - batchStart + 1 }, (_, i) => {
+                const page = batchStart + i;
+                return fetch(`${apiUrl}/archimed/groupservices/1002?page=${page}`)
+                  .then(resp => resp.ok ? resp.json() : null)
+                  .catch(() => null);
+              });
+              
+              const batchResults = await Promise.all(batchPromises);
+              for (const json of batchResults) {
+                if (json?.data?.services && Array.isArray(json.data.services)) {
+                  all.push(...json.data.services);
+                }
+              }
+            }
+            
+            if (all.length > 0) {
+              labServices = all;
+              setLaboratoryGroupData({
+                services: all,
+                total: labTotal || all.length,
+                page: 1,
+              });
+            }
+          }
+        } catch (e) {
+          console.warn('Ошибка загрузки groupservices/1002', e);
+        }
+
         const services = await archimedService.getServices();
 
         // Группируем услуги по group_name
         const groupedServices = services.reduce(
           (groups: ServiceGroup[], service: ApiService) => {
+            // Исключаем лабораторные из общего списка, если загрузили их отдельно
+            if (labServices && service.group_id === 1002) {
+              return groups;
+            }
             const existingGroup = groups.find(
               (group) => group.id === service.group_id
             );
@@ -76,6 +137,14 @@ export default function PriceListPage() {
           },
           []
         );
+        // Добавляем лабораторные как отдельную группу, если загрузились
+        if (labServices && labServices.length > 0) {
+          groupedServices.push({
+            id: 1002,
+            name: "Лабораторные исследования",
+            services: labServices,
+          });
+        }
         // Убираем стоматологию и физиотерапию
         const cleanedGroups = groupedServices.filter((group) => {
           const name = (group.name || "").toLowerCase();
@@ -1199,9 +1268,90 @@ export default function PriceListPage() {
                                     Вперед →
                                   </button>
                                 </div>
-                                {/* Mobile show more */}
-                                <div className="flex md:hidden items-center space-x-2">
-                                  {getCurrentPage(group.id) < totalPages && (
+                                {/* Mobile pagination - улучшенная версия */}
+                                <div className="flex md:hidden flex-col gap-3">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs text-gray-600">
+                                      Страница {getCurrentPage(group.id)} из {totalPages}
+                                    </span>
+                                    <span className="text-xs text-gray-500">
+                                      Показано {Math.min((getCurrentPage(group.id) - 1) * itemsPerPage + 1, filteredServices.length)}-{Math.min(getCurrentPage(group.id) * itemsPerPage, filteredServices.length)} из {filteredServices.length}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center justify-center gap-2">
+                                    <button
+                                      onClick={() =>
+                                        setPage(
+                                          group.id,
+                                          getCurrentPage(group.id) - 1
+                                        )
+                                      }
+                                      disabled={getCurrentPage(group.id) === 1}
+                                      className="px-3 py-1.5 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors flex items-center gap-1"
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                                      </svg>
+                                      Назад
+                                    </button>
+                                    {/* Номера страниц для мобильной версии (показываем текущую и соседние) */}
+                                    <div className="flex items-center gap-1">
+                                      {(() => {
+                                        const current = getCurrentPage(group.id);
+                                        const pages: React.ReactNode[] = [];
+                                        
+                                        // Первая страница
+                                        if (current > 2) {
+                                          pages.push(
+                                    <button
+                                              key={1}
+                                      onClick={() => setPage(group.id, 1)}
+                                              className="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-100"
+                                    >
+                                              1
+                                    </button>
+                                          );
+                                          if (current > 3) {
+                                            pages.push(<span key="ell1" className="text-gray-400">...</span>);
+                                          }
+                                        }
+                                        
+                                        // Текущая страница и соседние
+                                        for (let i = Math.max(1, current - 1); i <= Math.min(totalPages, current + 1); i++) {
+                                          pages.push(
+                                            <button
+                                              key={i}
+                                              onClick={() => setPage(group.id, i)}
+                                              className={`px-2 py-1 text-xs border rounded ${
+                                                i === current
+                                                  ? "bg-primary text-white border-primary"
+                                                  : "border-gray-300 hover:bg-gray-100"
+                                              }`}
+                                            >
+                                              {i}
+                                            </button>
+                                          );
+                                        }
+                                        
+                                        // Последняя страница
+                                        if (current < totalPages - 1) {
+                                          if (current < totalPages - 2) {
+                                            pages.push(<span key="ell2" className="text-gray-400">...</span>);
+                                          }
+                                          pages.push(
+                                            <button
+                                              key={totalPages}
+                                              onClick={() => setPage(group.id, totalPages)}
+                                              className="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-100"
+                                            >
+                                              {totalPages}
+                                            </button>
+                                          );
+                                        }
+                                        
+                                        return pages;
+                                      })()}
+                                    </div>
                                     <button
                                       onClick={() =>
                                         setPage(
@@ -1209,19 +1359,15 @@ export default function PriceListPage() {
                                           getCurrentPage(group.id) + 1
                                         )
                                       }
-                                      className="px-3 py-1.5 text-sm bg-primary text-white rounded"
+                                      disabled={getCurrentPage(group.id) === totalPages}
+                                      className="px-3 py-1.5 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors flex items-center gap-1"
                                     >
-                                      Показать ещё
+                                      Вперёд
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                                      </svg>
                                     </button>
-                                  )}
-                                  {getCurrentPage(group.id) > 1 && (
-                                    <button
-                                      onClick={() => setPage(group.id, 1)}
-                                      className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-100"
-                                    >
-                                      Свернуть
-                                    </button>
-                                  )}
+                                  </div>
                                 </div>
                               </div>
                             </div>

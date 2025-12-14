@@ -229,7 +229,12 @@ export default function Header() {
             onClick={() => setIsMenuOpen(false)}
             aria-label="Клиника Алдан"
           >
-            <img src="/Logo.png" alt="Клиника Алдан" className="h-36 w-auto object-contain" loading="eager" />
+            <img 
+              src="/Logo.png" 
+              alt="Клиника Алдан" 
+              className="h-36 w-auto object-contain" 
+              loading="eager"
+            />
           </Link>
           <button
             className="text-gray-500 hover:text-dark"

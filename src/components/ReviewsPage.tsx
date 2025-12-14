@@ -50,7 +50,12 @@ export default function ReviewsPage() {
   };
 
   const doctorOptions = useMemo(() => {
-    const names = doctors.map(getDoctorInitials).filter(Boolean);
+    const filtered = doctors.filter((d) => {
+      // Hide admin/test entries (e.g., Администратор, Арбаев)
+      const nameBlob = `${d?.name || ""} ${d?.name1 || ""} ${d?.name2 || ""} ${d?.info || ""} ${d?.type || ""}`.toLowerCase();
+      return !/(администратор|archimed|арбаев)/i.test(nameBlob);
+    });
+    const names = filtered.map(getDoctorInitials).filter(Boolean);
     const unique = Array.from(new Set(names));
     return ['Все врачи', ...unique];
   }, [doctors]);
