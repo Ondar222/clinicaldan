@@ -71,7 +71,7 @@ export default function Header() {
             <img
               src="/Logo.png"
               alt="Клиника Алдан"
-              className="block h-36 sm:h-36 md:h-36 lg:h-28 xl:h-36 w-auto object-contain -my-3 sm:-my-3 md:-my-4"
+              className="block h-44 sm:h-44 md:h-36 lg:h-28 xl:h-36 w-auto object-contain -my-3 sm:-my-3 md:-my-4"
               loading="eager"
             />
           </Link>
@@ -232,7 +232,7 @@ export default function Header() {
             <img 
               src="/Logo.png" 
               alt="Клиника Алдан" 
-              className="h-36 w-auto object-contain" 
+              className="h-72 w-auto object-contain -my-4" 
               loading="eager"
             />
           </Link>
