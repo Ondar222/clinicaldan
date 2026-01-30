@@ -7,13 +7,17 @@ import type {
   ApiService,
   AppointmentData,
   ArchimedAppointment,
-  AppointmentStatus
+  AppointmentStatus,
+  GroupServiceInfo,
+  GroupServicesResponse
 } from '../types/cms';
 import { mockServices } from '../data/mockServices';
 import { mockDoctors, mockBranches } from '../data/mockDoctors';
 
 // Archimed API configuration
-const ARCHIMED_API_URL = import.meta.env.VITE_ARCHIMED_API_URL || 'http://clinicaldan.ru/api/archimed';
+const ARCHIMED_API_URL = (typeof import.meta.env.VITE_ARCHIMED_API_URL === 'string'
+  ? import.meta.env.VITE_ARCHIMED_API_URL.replace(/[\s;]+$/, '').replace(/\/+$/, '')
+  : '') || 'http://clinicaldan.ru/api/archimed';
 const ARCHIMED_API_TOKEN = import.meta.env.VITE_ARCHIMED_API_TOKEN || '';
 // Public gateway (proxy) that may already aggregate Archimed doctors for this site
 const PUBLIC_DOCTORS_URL = 'https://aldan.yurta.site/api/archimed/doctors';
@@ -828,6 +832,30 @@ class ArchimedService {
       void this.getDoctors();
     } catch {
       // ignore prefetch errors
+    }
+  }
+
+  // Groupservices API methods
+  async getServiceGroups(): Promise<GroupServiceInfo[]> {
+    try {
+      const response = await this.request<{ data: GroupServiceInfo[] }>('/groupservices');
+      return response.data || [];
+    } catch (error) {
+      console.warn('API недоступен для групп услуг, возвращаем пустой массив:', error);
+      return [];
+    }
+  }
+
+  async getGroupServices(groupId: number, page: number = 1): Promise<GroupServicesResponse> {
+    try {
+      const response = await this.request<GroupServicesResponse>(
+        `/groupservices/${groupId}?page=${page}`,
+        { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
+      );
+      return response;
+    } catch (error) {
+      console.warn(`API недоступен для услуг группы ${groupId}, страница ${page}:`, error);
+      return { data: [], meta: { pagination: { page: 1, pageCount: 1, pageSize: 100, total: 0 } } };
     }
   }
 }

@@ -31,6 +31,7 @@ import CookieNotification from "./components/CookieNotification";
 import CookiePolicyPage from "./components/CookiePolicyPage";
 import FloatingBooking from "./components/FloatingBooking";
 import ToolDetailsPage from "./components/ToolDetailsPage";
+import RouteErrorBoundary from "./components/RouteErrorBoundary";
 // Временно скрыто - личный кабинет и платежи
 // import PatientCabinetPage from "./components/PatientCabinetPage";
 // import PaymentSuccessPage from "./components/PaymentSuccessPage";
@@ -75,6 +76,7 @@ function App() {
         <ScrollToTop />
         <Header />
         <main className="flex-grow">
+          <RouteErrorBoundary>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutClinicPage />} />
@@ -121,6 +123,7 @@ function App() {
             <Route path="/payment-monitor" element={<PaymentMonitorPage />} />
             */}
           </Routes>
+          </RouteErrorBoundary>
         </main>
         <Footer />
         <FloatingBooking />
