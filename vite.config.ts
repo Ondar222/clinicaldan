@@ -40,8 +40,9 @@ export default defineConfig({
 			name: "redirect-certificates-pages",
 			configureServer(server) {
 				server.middlewares.use((req, res, next) => {
-					const pathname = (req.url ?? "").split("?")[0];
-					const query = (req.url ?? "").includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
+					const url = req.url ?? "";
+					const pathname = url.split("?")[0];
+					const query = url.includes("?") ? url.slice(url.indexOf("?")) : "";
 					if (req.method !== "GET") { next(); return; }
 					if (pathname === "/certificates/success") {
 						res.statusCode = 302;
