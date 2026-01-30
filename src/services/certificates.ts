@@ -32,8 +32,13 @@ class CertificateService {
   private apiUrl: string;
 
   constructor() {
-    // Получаем базовый URL API из переменных окружения
-    this.apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    // URL только для API сертификатов/оплаты. Не используем VITE_ARCHIMED_API_URL.
+    // Приоритет: VITE_CERTIFICATE_API_URL → VITE_API_URL (если не Archimed) → в dev '' (proxy).
+    const certEnv = import.meta.env.VITE_CERTIFICATE_API_URL ?? import.meta.env.VITE_API_URL;
+    const raw = typeof certEnv === 'string' ? certEnv.replace(/[\s;]+$/, '').replace(/\/+$/, '') : '';
+    const isArchimed = /archimed/i.test(raw);
+    const url = raw && !isArchimed ? raw : '';
+    this.apiUrl = url || (import.meta.env.DEV ? '' : 'http://localhost:3001');
   }
 
   /**
@@ -41,7 +46,8 @@ class CertificateService {
    */
   async createCertificate(data: CreateCertificateRequest): Promise<CreateCertificateResponse> {
     try {
-      const response = await fetch(`${this.apiUrl}/certificate`, {
+      const url = this.apiUrl ? `${this.apiUrl.replace(/\/$/, '')}/certificate` : '/certificate';
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +67,10 @@ class CertificateService {
       return result;
     } catch (error) {
       console.error('Error creating certificate:', error);
-      throw error;
+      const message = error instanceof TypeError && (error as Error).message === 'Failed to fetch'
+        ? 'Сервер оплаты недоступен. Убедитесь, что бэкенд запущен (порт 3001) или попробуйте позже.'
+        : (error instanceof Error ? error.message : 'Ошибка при создании сертификата');
+      throw new Error(message);
     }
   }
 
@@ -70,7 +79,8 @@ class CertificateService {
    */
   async checkPaymentStatus(orderNumber: string): Promise<CheckPaymentResponse> {
     try {
-      const response = await fetch(`${this.apiUrl}/certificate/check-payment/${orderNumber}`, {
+      const base = this.apiUrl ? this.apiUrl.replace(/\/$/, '') : '';
+      const response = await fetch(`${base}/certificate/check-payment/${orderNumber}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

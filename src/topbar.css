@@ -64,8 +64,10 @@
 }
 
 .special-button {
-  height: 30px;
   cursor: pointer;
+  font-size: 16px;
+  line-height: 1.2;
+  height: auto;
 }
 
 /* Responsive adjustments */
@@ -83,5 +85,15 @@
 
   .contact-item {
     font-size: 0.75rem;
+  }
+
+  .special-button {
+    font-size: 26px; /* +2 steps for mobile */
+    text-align: center;
+  }
+
+  .top-bar-right {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }

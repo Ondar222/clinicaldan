@@ -35,6 +35,55 @@ const ServicePage: React.FC = () => {
     [slug]
   );
 
+  // Update SEO meta tags when direction changes
+  useEffect(() => {
+    if (!direction) return;
+
+    // Update document title
+    const title = direction.seoTitle || `${direction.title} в Кызыле | Клиника Алдан`;
+    document.title = title;
+
+    // Update or create meta description
+    let metaDescription = document.querySelector('meta[name="description"]');
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.setAttribute('name', 'description');
+      document.head.appendChild(metaDescription);
+    }
+    metaDescription.setAttribute(
+      'content',
+      direction.seoDescription || direction.description
+    );
+
+    // Update or create meta keywords
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (direction.seoKeywords) {
+      if (!metaKeywords) {
+        metaKeywords = document.createElement('meta');
+        metaKeywords.setAttribute('name', 'keywords');
+        document.head.appendChild(metaKeywords);
+      }
+      metaKeywords.setAttribute('content', direction.seoKeywords);
+    } else if (metaKeywords) {
+      // Remove keywords meta if not provided
+      metaKeywords.remove();
+    }
+
+    // Cleanup function to restore default meta tags when component unmounts
+    return () => {
+      document.title = 'Клиника Алдан';
+      const defaultDescription = 'Клиника Алдан - современная медицинская клиника с высококвалифицированными специалистами. Широкий спектр медицинских услуг в Кызыле.';
+      const desc = document.querySelector('meta[name="description"]');
+      if (desc) {
+        desc.setAttribute('content', defaultDescription);
+      }
+      const keywords = document.querySelector('meta[name="keywords"]');
+      if (keywords) {
+        keywords.remove();
+      }
+    };
+  }, [direction]);
+
   useEffect(() => {
     // Всегда поднимаем страницу вверх при смене направления
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -236,6 +285,10 @@ const ServicePage: React.FC = () => {
   const filteredDoctors = useMemo(() => {
     if (!direction) return [] as ArchimedDoctor[];
     return doctors.filter((d) => {
+      // Hide admin/test entries (e.g., Администратор, Арбаев)
+      const nameBlob = `${d?.name || ""} ${d?.name1 || ""} ${d?.name2 || ""} ${d?.info || ""} ${d?.type || ""}`.toLowerCase();
+      if (/(администратор|archimed|арбаев)/i.test(nameBlob)) return false;
+      
       const types = (d?.types || []).map((t) => t.name).join(" ");
       return (
         keywordMatch(d.type, direction.doctorKeywords) ||
@@ -246,6 +299,10 @@ const ServicePage: React.FC = () => {
 
   const getServicePrice = (service: ApiService): number => {
     return service.cito_cost > 0 ? service.cito_cost : service.base_cost;
+  };
+
+  const getDoctorFullName = (doctor: ArchimedDoctor) => {
+    return `${doctor.name} ${doctor.name1} ${doctor.name2}`;
   };
 
   const getDoctorInitials = (doctor: ArchimedDoctor) => {
@@ -270,38 +327,115 @@ const ServicePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Хлебные крошки */}
+      <div className="bg-white border-b">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+          <nav className="flex items-center space-x-2 text-sm text-gray-600">
+            <Link to="/" className="hover:text-primary transition-colors duration-200">
+              Главная
+            </Link>
+            <span>/</span>
+            <span className="text-gray-900">{direction.title}</span>
+          </nav>
+        </div>
+      </div>
+
+      {/* Кнопка возврата на главную */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+        <Link
+          to="/"
+          className="inline-flex items-center text-primary hover:text-primaryDark text-sm sm:text-base transition-colors duration-200"
+        >
+          <svg
+            className="w-4 h-4 sm:w-5 sm:h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Назад на главную
+        </Link>
+      </div>
+
       {/* Герой-секция направления */}
       <section
-        className="py-12 sm:py-16 md:py-20 bg-cover bg-center relative"
+        className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"
         style={{ backgroundImage: `url(/bg-hero.jpg)` }}
       >
         <div className="absolute inset-0 bg-black/50"></div>
-        <div className="container mx-auto px-3 sm:px-4 text-center text-white relative z-10">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2 sm:mb-3 md:mb-4 leading-tight">
             {direction.title}
           </h1>
         </div>
       </section>
 
-      {/* Если потребуется текст описания — его можно подтягивать из CMS позже */}
+      {/* Описание направления */}
+      {direction.description && (
+        <section className="py-6 sm:py-8 md:py-10 lg:py-12 bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto">
+              {/* Описание с красивыми отступами */}
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-sm border border-gray-100 mb-6 sm:mb-8">
+                <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+                  <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed sm:leading-loose mb-0 indent-0 sm:indent-0">
+                    {direction.description}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Список услуг */}
+              {effectiveServices.length > 0 && (
+                <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-200">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 mb-4 sm:mb-6 px-2">
+                    Услуги по направлению "{direction.title}":
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5 px-2">
+                    {effectiveServices.slice(0, 9).map((service) => (
+                      <div
+                        key={service.id}
+                        className="flex items-start gap-2 sm:gap-3 text-sm sm:text-base md:text-lg text-gray-700 hover:text-primary transition-colors duration-200 group"
+                      >
+                        <span className="text-primary mt-1 sm:mt-1.5 text-lg sm:text-xl font-bold group-hover:scale-110 transition-transform duration-200">•</span>
+                        <span className="leading-relaxed">{service.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {effectiveServices.length > 9 && (
+                    <p className="text-gray-600 text-sm sm:text-base mt-4 sm:mt-6 italic px-2 text-center sm:text-left">
+                      и ещё {effectiveServices.length - 9} услуг
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Услуги в рамках этого направления */}
-      <section className="py-8 sm:py-10 md:py-12 bg-white">
-        <div className="container mx-auto px-3 sm:px-4">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-8 sm:mb-10 md:mb-12">
+      <section className="py-6 sm:py-8 md:py-10 lg:py-12 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12 text-gray-900">
             Услуги по направлению "{direction.title}"
           </h2>
 
           {/* Фильтр по категориям */}
           {availableCategories.length > 0 && (
-            <div className="mb-8">
-              <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+            <div className="mb-6 sm:mb-8 md:mb-10">
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4">
                 <button
                   onClick={() => setSelectedCategory("all")}
-                  className={`px-4 py-2 rounded-full text-sm sm:text-base font-medium transition-colors ${
+                  className={`px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm md:text-base font-medium transition-all duration-200 ${
                     selectedCategory === "all"
-                      ? "bg-primary text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      ? "bg-primary text-white shadow-md scale-105"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300 hover:shadow-sm"
                   }`}
                 >
                   Все услуги
@@ -310,14 +444,14 @@ const ServicePage: React.FC = () => {
                   <button
                     key={category!.id}
                     onClick={() => setSelectedCategory(category!.id)}
-                    className={`px-4 py-2 rounded-full text-sm sm:text-base font-medium transition-colors flex items-center gap-2 ${
+                    className={`px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm md:text-base font-medium transition-all duration-200 flex items-center gap-2 ${
                       selectedCategory === category!.id
-                        ? "bg-primary text-white"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        ? "bg-primary text-white shadow-md scale-105"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300 hover:shadow-sm"
                     }`}
                   >
-                    <span>{category!.icon}</span>
-                    {category!.name}
+                    <span className="text-base sm:text-lg md:text-xl">{category!.icon}</span>
+                    <span className="whitespace-nowrap">{category!.name}</span>
                   </button>
                 ))}
               </div>
@@ -339,37 +473,37 @@ const ServicePage: React.FC = () => {
                   : null;
 
                 return (
-                  <div key={key} className="bg-gray-50 rounded-lg p-4 sm:p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="text-2xl">{category?.icon}</span>
+                  <div key={key} className="bg-gray-50 rounded-lg sm:rounded-xl p-4 sm:p-6 md:p-8 mb-4 sm:mb-6">
+                    <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                      <span className="text-2xl sm:text-3xl md:text-4xl">{category?.icon}</span>
                       <div>
-                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+                        <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900">
                           {category?.name}
                         </h3>
                         {subcategory && (
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm sm:text-base text-gray-600 mt-1">
                             {subcategory.name}
                           </p>
                         )}
                       </div>
                     </div>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
                       {services.slice(0, 6).map((service) => (
                         <div
                           key={service.id}
-                          className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                          className="bg-white p-4 sm:p-5 md:p-6 rounded-lg sm:rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
                         >
-                          <h4 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">
+                          <h4 className="font-medium text-gray-900 mb-2 sm:mb-3 text-sm sm:text-base md:text-lg leading-tight">
                             {service.name}
                           </h4>
                           {service.altname &&
                             service.altname !== service.name && (
-                              <p className="text-gray-600 mb-2 text-xs italic">
+                              <p className="text-gray-600 mb-2 sm:mb-3 text-xs sm:text-sm italic leading-relaxed">
                                 {service.altname}
                               </p>
                             )}
-                          <div className="flex justify-between items-center">
-                            <span className="text-primary font-bold text-sm">
+                          <div className="flex justify-between items-center mt-auto pt-2 sm:pt-3">
+                            <span className="text-primary font-bold text-sm sm:text-base md:text-lg">
                               {getServicePrice(service).toLocaleString("ru-RU")}{" "}
                               ₽
                             </span>
@@ -378,8 +512,8 @@ const ServicePage: React.FC = () => {
                       ))}
                     </div>
                     {services.length > 6 && (
-                      <div className="text-center mt-4">
-                        <button className="text-primary text-sm hover:underline">
+                      <div className="text-center mt-4 sm:mt-6">
+                        <button className="text-primary text-sm sm:text-base hover:underline font-medium transition-colors duration-200">
                           Показать ещё {services.length - 6} услуг
                         </button>
                       </div>
@@ -390,7 +524,7 @@ const ServicePage: React.FC = () => {
             </div>
           ) : (
             // Показываем услуги выбранной категории
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
               {(showAllServices
                 ? servicesForCategory
                 : servicesForCategory.slice(0, 6)
@@ -439,31 +573,29 @@ const ServicePage: React.FC = () => {
 
       {/* Врачи направления */}
       {filteredDoctors.length > 0 && (
-        <section className="py-8 sm:py-10 md:py-12">
-          <div className="container mx-auto px-3 sm:px-4">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-8 sm:mb-10 md:mb-12">
+        <section className="py-6 sm:py-8 md:py-10 lg:py-12 bg-gray-50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12 text-gray-900">
               Наши специалисты
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6 lg:gap-8">
               {filteredDoctors.map((doctor) => (
                 <div
                   key={doctor.id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden text-center flex flex-col h-full"
+                  className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col h-full"
                 >
-                  <div className="w-full h-48 sm:h-56 md:h-64 bg-gray-100 flex items-center justify-center relative overflow-hidden">
+                  <div className="h-28 sm:h-44 bg-gradient-to-br from-primary to-primaryDark flex items-center justify-center">
                     {doctor.photo ? (
                       <>
                         <img
                           src={
                             doctor.photo.startsWith("data:")
                               ? doctor.photo
-                              : /^https?:\/\//i.test(doctor.photo)
-                              ? doctor.photo
-                              : `data:image/png;base64,${doctor.photo}`
+                              : doctor.photo
                           }
                           alt={getDoctorInitials(doctor)}
-                          className="w-full h-48 sm:h-56 md:h-64 object-cover object-[50%_30%]"
+                          className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover object-[50%_30%] border-3 sm:border-4 border-white"
                           onError={(e) => {
                             e.currentTarget.style.display = "none";
                             const nextElement = e.currentTarget
@@ -474,11 +606,11 @@ const ServicePage: React.FC = () => {
                           }}
                         />
                         <div
-                          className="w-full h-48 sm:h-56 md:h-64 bg-gray-200 flex items-center justify-center"
+                          className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center"
                           style={{ display: "none" }}
                         >
                           <svg
-                            className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400"
+                            className="w-8 h-8 sm:w-12 sm:h-12 text-white"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -493,9 +625,9 @@ const ServicePage: React.FC = () => {
                         </div>
                       </>
                     ) : (
-                      <div className="w-full h-48 sm:h-56 md:h-64 bg-gray-200 flex items-center justify-center">
+                      <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
                         <svg
-                          className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400"
+                          className="w-8 h-8 sm:w-12 sm:h-12 text-white"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -510,22 +642,23 @@ const ServicePage: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <div className="p-4 sm:p-6 flex flex-col flex-grow">
-                    <h3 className="text-lg sm:text-xl font-semibold mb-2 text-gray-900">
-                      {getDoctorInitials(doctor)}
+
+                  <div className="p-3 sm:p-5 flex flex-col flex-grow">
+                    <h3 className="text-base sm:text-lg font-semibold text-dark mb-1.5">
+                      {getDoctorFullName(doctor)}
                     </h3>
-                    <p className="text-gray-600 mb-3 leading-relaxed text-sm sm:text-base">
+                    <p className="text-primary font-medium mb-2 text-xs sm:text-sm">
                       {doctor.type}
                     </p>
                     {doctor.branch && (
-                      <p className="text-gray-500 text-xs sm:text-sm mb-4 leading-relaxed">
+                      <p className="text-gray-500 text-xs sm:text-sm mb-3 leading-relaxed">
                         {doctor.branch}
                       </p>
                     )}
                     <div className="mt-auto">
                       <Link
                         to={`/doctors/${doctor.id}`}
-                        className="inline-block px-4 sm:px-6 py-1.5 sm:py-2 bg-primary text-white rounded-lg hover:bg-primaryDark transition-colors font-medium text-xs sm:text-sm"
+                        className="inline-block w-full px-4 sm:px-6 py-2 sm:py-2.5 bg-primary text-white rounded-lg hover:bg-primaryDark transition-colors font-medium text-xs sm:text-sm text-center"
                       >
                         Подробнее
                       </Link>
@@ -539,18 +672,15 @@ const ServicePage: React.FC = () => {
       )}
 
       {/* Кнопка записи */}
-      <section className="py-8 sm:py-10 md:py-12 bg-primary">
-        <div className="container mx-auto px-3 sm:px-4 text-center">
-          {/* <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 sm:mb-6">
-            Записаться на прием: {direction.title}
-          </h2> */}
-          <p className="text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto text-sm sm:text-base">
+      <section className="py-8 sm:py-10 md:py-12 lg:py-14 bg-primary">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-white/95 mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
             Оставьте заявку и наш администратор свяжется с вами для уточнения
             деталей записи
           </p>
           <button
             onClick={() => handleAppointmentClick()}
-            className="px-6 sm:px-8 py-2 sm:py-3 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors text-sm sm:text-base md:text-lg"
+            className="px-6 sm:px-8 md:px-10 py-3 sm:py-3.5 md:py-4 bg-white text-primary font-semibold rounded-lg sm:rounded-xl hover:bg-gray-100 active:scale-95 transition-all duration-200 text-sm sm:text-base md:text-lg shadow-lg hover:shadow-xl"
           >
             Записаться онлайн
           </button>

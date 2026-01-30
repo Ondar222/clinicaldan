@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Закрываем технические/служебные страницы
+Disallow: /staff
+Disallow: /certificates/success
+Disallow: /certificates/cancel
+Disallow: /api/
+
+Sitemap: https://clinicaldan.ru/sitemap.xml
+
+

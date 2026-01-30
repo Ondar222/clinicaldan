@@ -1,9 +1,18 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import logoUrl from "../assets/Logo.png";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const logoSrc = logoUrl;
+  const handleLogoError: React.ReactEventHandler<HTMLImageElement> = (e) => {
+    const img = e.currentTarget;
+    // Prevent infinite loop if fallback is also missing
+    if (img.dataset.fallbackApplied === "1") return;
+    img.dataset.fallbackApplied = "1";
+    img.src = "/Logo.png";
+  };
 
   // Check if user is logged in
   useEffect(() => {
@@ -69,10 +78,11 @@ export default function Header() {
         <div className="py-1 md:py-0 flex items-center justify-between">
           <Link to="/" className="flex items-center" aria-label="Клиника Алдан">
             <img
-              src="/Logo.png"
+              src={logoSrc}
               alt="Клиника Алдан"
-              className="block h-36 sm:h-36 md:h-36 lg:h-28 xl:h-36 w-auto object-contain -my-3 sm:-my-3 md:-my-4"
+              className="block h-44 sm:h-44 md:h-36 lg:h-28 xl:h-36 w-auto object-contain -my-3 sm:-my-3 md:-my-4"
               loading="eager"
+              onError={handleLogoError}
             />
           </Link>
 
@@ -229,7 +239,13 @@ export default function Header() {
             onClick={() => setIsMenuOpen(false)}
             aria-label="Клиника Алдан"
           >
-            <img src="/Logo.png" alt="Клиника Алдан" className="h-36 w-auto object-contain" loading="eager" />
+            <img 
+              src={logoSrc} 
+              alt="Клиника Алдан" 
+              className="h-72 w-auto object-contain -my-4" 
+              loading="eager"
+              onError={handleLogoError}
+            />
           </Link>
           <button
             className="text-gray-500 hover:text-dark"

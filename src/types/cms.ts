@@ -259,4 +259,23 @@ export interface AuthResponse {
   user: User;
   token: string;
   expires_at: string;
+}
+
+// Groupservices API types
+export interface GroupServiceInfo {
+  id: number;
+  name: string;
+  [key: string]: unknown;
+}
+
+export interface GroupServicesResponse {
+  data: ApiService[];
+  meta?: {
+    pagination?: {
+      page: number;
+      pageCount: number;
+      pageSize: number;
+      total: number;
+    };
+  };
 } 

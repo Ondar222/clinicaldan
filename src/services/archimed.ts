@@ -7,13 +7,17 @@ import type {
   ApiService,
   AppointmentData,
   ArchimedAppointment,
-  AppointmentStatus
+  AppointmentStatus,
+  GroupServiceInfo,
+  GroupServicesResponse
 } from '../types/cms';
 import { mockServices } from '../data/mockServices';
 import { mockDoctors, mockBranches } from '../data/mockDoctors';
 
 // Archimed API configuration
-const ARCHIMED_API_URL = import.meta.env.VITE_ARCHIMED_API_URL || 'https://newapi.archimed-soft.ru/api/v5';
+const ARCHIMED_API_URL = (typeof import.meta.env.VITE_ARCHIMED_API_URL === 'string'
+  ? import.meta.env.VITE_ARCHIMED_API_URL.replace(/[\s;]+$/, '').replace(/\/+$/, '')
+  : '') || 'http://clinicaldan.ru/api/archimed';
 const ARCHIMED_API_TOKEN = import.meta.env.VITE_ARCHIMED_API_TOKEN || '';
 // Public gateway (proxy) that may already aggregate Archimed doctors for this site
 const PUBLIC_DOCTORS_URL = 'https://aldan.yurta.site/api/archimed/doctors';
@@ -297,8 +301,8 @@ class ArchimedService {
     }
 
     try {
-      const response = await this.request<{ data: ApiService[]; total: number; page: number; limit: number }>('/services');
-      this.servicesCache = response.data || [];
+      const allServices = await this.fetchAllServicesFromAPI();
+      this.servicesCache = allServices;
       this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
       return this.servicesCache;
     } catch (error) {
@@ -308,6 +312,57 @@ class ArchimedService {
       this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
       return this.servicesCache;
     }
+  }
+
+  private async fetchAllServicesFromAPI(): Promise<ApiService[]> {
+    const all: ApiService[] = [];
+    let page = 1;
+
+    // If base URL is not configured, short-circuit
+    if (!this.baseUrl) {
+      console.warn('ARCHIMED_API_URL not configured, cannot fetch services');
+      return all;
+    }
+
+    // Try to fetch a large single page first
+    try {
+      const first = await this.request<{ data: ApiService[]; total: number | string; page: number; limit: number }>(
+        `/services?page=${page}&limit=${DEFAULT_API_PAGE_LIMIT}`,
+        { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
+      );
+      // total может быть строкой или числом
+      const total = typeof first.total === 'string' ? parseInt(first.total, 10) : (first.total ?? first.data?.length ?? 0);
+      const limit = first.limit ?? DEFAULT_API_PAGE_LIMIT;
+      if (Array.isArray(first?.data)) {
+        all.push(...first.data);
+      }
+      const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
+
+      // Fetch remaining pages if needed
+      for (page = 2; page <= Math.min(totalPages, MAX_API_PAGES); page++) {
+        try {
+          const next = await this.request<{ data: ApiService[]; total: number | string; page: number; limit: number }>(
+            `/services?page=${page}&limit=${limit}`,
+            { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
+          );
+          if (Array.isArray(next?.data) && next.data.length > 0) {
+            all.push(...next.data);
+            if (next.data.length < limit) break; // last page
+          } else {
+            break;
+          }
+        } catch (pageError) {
+          console.warn(`Error fetching services page ${page}, stopping pagination:`, pageError);
+          break; // Останавливаем пагинацию при ошибке
+        }
+      }
+    } catch (e) {
+      console.warn('Error fetching services from API:', e);
+      // Не пробрасываем ошибку, возвращаем то что успели получить (может быть пустой массив)
+      return all;
+    }
+
+    return all;
   }
 
   async getService(id: number): Promise<ApiService> {
@@ -639,12 +694,9 @@ class ArchimedService {
 
   private async refreshServices(): Promise<void> {
     try {
-      const response = await this.request<{ data: ApiService[]; total: number; page: number; limit: number }>(
-        '/services',
-        { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
-      );
-      if (Array.isArray(response?.data) && response.data.length > 0) {
-        this.servicesCache = response.data;
+      const allServices = await this.fetchAllServicesFromAPI();
+      if (Array.isArray(allServices) && allServices.length > 0) {
+        this.servicesCache = allServices;
         this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
       }
     } catch {
@@ -780,6 +832,30 @@ class ArchimedService {
       void this.getDoctors();
     } catch {
       // ignore prefetch errors
+    }
+  }
+
+  // Groupservices API methods
+  async getServiceGroups(): Promise<GroupServiceInfo[]> {
+    try {
+      const response = await this.request<{ data: GroupServiceInfo[] }>('/groupservices');
+      return response.data || [];
+    } catch (error) {
+      console.warn('API недоступен для групп услуг, возвращаем пустой массив:', error);
+      return [];
+    }
+  }
+
+  async getGroupServices(groupId: number, page: number = 1): Promise<GroupServicesResponse> {
+    try {
+      const response = await this.request<GroupServicesResponse>(
+        `/groupservices/${groupId}?page=${page}`,
+        { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
+      );
+      return response;
+    } catch (error) {
+      console.warn(`API недоступен для услуг группы ${groupId}, страница ${page}:`, error);
+      return { data: [], meta: { pagination: { page: 1, pageCount: 1, pageSize: 100, total: 0 } } };
     }
   }
 }
