@@ -100,12 +100,12 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/api': {
-				target: 'http://localhost:3000',
+				target: 'http://localhost:5002',
 				changeOrigin: true,
 				secure: false,
 			},
 			'/certificate': {
-				target: 'http://localhost:3000',
+				target: 'http://localhost:5002',
 				changeOrigin: true,
 				secure: false,
 			},
