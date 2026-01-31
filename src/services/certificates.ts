@@ -38,7 +38,7 @@ class CertificateService {
     const raw = typeof certEnv === 'string' ? certEnv.replace(/[\s;]+$/, '').replace(/\/+$/, '') : '';
     const isArchimed = /archimed/i.test(raw);
     const url = raw && !isArchimed ? raw : '';
-    this.apiUrl = url || (import.meta.env.DEV ? '' : 'http://localhost:3001');
+    this.apiUrl = url || '';
   }
 
   /**
@@ -68,7 +68,7 @@ class CertificateService {
     } catch (error) {
       console.error('Error creating certificate:', error);
       const message = error instanceof TypeError && (error as Error).message === 'Failed to fetch'
-        ? 'Сервер оплаты недоступен. Убедитесь, что бэкенд запущен (порт 3001) или попробуйте позже.'
+        ? 'Сервер оплаты недоступен. Убедитесь, что бэкенд запущен или попробуйте позже.'
         : (error instanceof Error ? error.message : 'Ошибка при создании сертификата');
       throw new Error(message);
     }
