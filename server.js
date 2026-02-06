@@ -28,12 +28,12 @@ const ALFA_BANK_CONFIG = {
     login: "clinicaldan-operator",
     password: "KACr2LiW3R?",
   },
-  // Продакшн среда
+  // Продакшн среда (вход в ЛК: https://pay.alfabank.ru/lk/login)
   production: {
     url: "https://pay.alfabank.ru/payment/rest",
-    token: "pfcr5js74l5jnsqcsrms960nok",
+    token: "r37nq08sa80l4vdv9rcs4imt0j",
     login: "clinicaldan-operator",
-    password: "vy_$2BTVD*KVD#u/",
+    password: "T2WpfN!Ftgq9WSB(",
   },
 };
 
