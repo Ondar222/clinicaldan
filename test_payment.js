@@ -33,6 +33,7 @@ async function createTestPayment() {
           }),
         }
       );
+      // dsjkkf
 
       const statusResult = await statusResponse.json();
       console.log("📊 Статус платежа:", statusResult);
