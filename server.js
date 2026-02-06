@@ -21,13 +21,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // Конфигурация Альфа-Банка
 const ALFA_BANK_CONFIG = {
-  // Тестовая среда
-  test: {
-    url: "https://alfa.rbsuat.com/payment/rest",
-    token: "pfcr5js74l5jnsqcsrms960nok",
-    login: "clinicaldan-operator",
-    password: "KACr2LiW3R?",
-  },
+  // Тестовая среда (закомментировано — используется продуктовая)
+  // test: {
+  //   url: "https://alfa.rbsuat.com/payment/rest",
+  //   token: "pfcr5js74l5jnsqcsrms960nok",
+  //   login: "clinicaldan-operator",
+  //   password: "KACr2LiW3R?",
+  // },
   // Продакшн среда (вход в ЛК: https://pay.alfabank.ru/lk/login)
   production: {
     url: "https://pay.alfabank.ru/payment/rest",
@@ -44,13 +44,10 @@ const certificateDataByOrderNumber = new Map();
 // Заказы, по которым письмо уже отправлено (чтобы не дублировать)
 const emailSentByOrderNumber = new Set();
 
-// Определяем текущую среду
-const isProduction = process.env.NODE_ENV === "production";
-const currentConfig = isProduction
-  ? ALFA_BANK_CONFIG.production
-  : ALFA_BANK_CONFIG.test;
+// Всегда продуктовая среда Альфа-Банка
+const currentConfig = ALFA_BANK_CONFIG.production;
 
-console.log(`🚀 Запуск в ${isProduction ? "ПРОДАКШН" : "ТЕСТОВОЙ"} среде`);
+console.log(`🚀 Запуск в ПРОДАКШН среде (Альфа-Банк)`);
 console.log(`🔗 URL Альфа-Банка: ${currentConfig.url}`);
 
 // Транспорт для отправки писем (если заданы SMTP_* в .back.env)
