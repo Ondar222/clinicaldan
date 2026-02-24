@@ -63,7 +63,7 @@ export default function PriceListPage() {
         let labServices: ApiService[] | null = null;
         let labTotal = 0;
         try {
-          const apiUrl = import.meta.env.VITE_API_URL || 'http://clinicaldan.ru/api';
+          const apiUrl = import.meta.env.VITE_API_URL || 'https://clinicaldan.ru/api';
           const limit = 100;
           const maxPages = 50; // защитный предел
           

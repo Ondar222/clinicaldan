@@ -16,7 +16,7 @@ class VKService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_API_URL || 'http://clinicaldan.ru/api';
+    this.baseUrl = import.meta.env.VITE_API_URL || 'https://clinicaldan.ru/api';
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
