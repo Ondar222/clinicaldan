@@ -13,7 +13,8 @@ import type {
 } from '../types/cms';
 
 // Directus API configuration
-const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL || 'http://localhost:8055';
+// В production используем HTTPS по умолчанию, если переменная окружения не задана
+const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL || (import.meta.env.PROD ? 'https://clinicaldan.ru/api/directus' : 'http://localhost:8055');
 const DIRECTUS_TOKEN = import.meta.env.VITE_DIRECTUS_TOKEN || '';
 
 class DirectusService {

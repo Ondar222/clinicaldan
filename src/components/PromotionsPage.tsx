@@ -40,7 +40,8 @@ export default function PromotionsPage() {
   const getImageUrl = (image?: string) => {
     if (!image) return '';
     if (image.startsWith('http')) return image;
-    const base = (import.meta.env.VITE_DIRECTUS_URL || 'http://localhost:8055').replace(/\/$/, '');
+    // В production используем HTTPS по умолчанию, если переменная окружения не задана
+    const base = (import.meta.env.VITE_DIRECTUS_URL || (import.meta.env.PROD ? 'https://clinicaldan.ru/api/directus' : 'http://localhost:8055')).replace(/\/$/, '');
     return `${base}/assets/${image}`;
   };
 

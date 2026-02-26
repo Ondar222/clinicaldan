@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Платеж отменен — Клиника Алдан</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; min-height: 100vh; background: #f9fafb; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .card { max-width: 420px; width: 100%; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 2rem; text-align: center; }
+    .icon { width: 64px; height: 64px; margin: 0 auto 1rem; border-radius: 50%; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; }
+    .icon svg { width: 36px; height: 36px; }
+    h1 { font-size: 1.35rem; color: #111; margin: 0 0 0.5rem; }
+    .sub { color: #6b7280; font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .btns { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+    .btn { display: inline-block; padding: 0.75rem 1.25rem; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; cursor: pointer; border: none; }
+    .btn-primary { background: #d2002e; color: #fff; }
+    .btn-primary:hover { background: #b10026; }
+    .btn-secondary { background: #e5e7eb; color: #374151; }
+    .btn-secondary:hover { background: #d1d5db; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+    </div>
+    <h1>Платеж отменен</h1>
+    <p class="sub">Оплата сертификата была отменена. Если возникли вопросы — свяжитесь с нами.</p>
+    <div class="btns">
+      <a href="/certificates" class="btn btn-primary">Попробовать снова</a>
+      <a href="/" class="btn btn-secondary">На главную</a>
+    </div>
+  </div>
+</body>
+</html>

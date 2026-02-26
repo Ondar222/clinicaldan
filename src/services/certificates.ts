@@ -37,8 +37,9 @@ class CertificateService {
     const certEnv = import.meta.env.VITE_CERTIFICATE_API_URL ?? import.meta.env.VITE_API_URL;
     const raw = typeof certEnv === 'string' ? certEnv.replace(/[\s;]+$/, '').replace(/\/+$/, '') : '';
     const isArchimed = /archimed/i.test(raw);
-    const url = raw && !isArchimed ? raw : '';
-    this.apiUrl = url || '';
+    // В production используем HTTPS по умолчанию, если URL не задан
+    const url = raw && !isArchimed ? raw : (import.meta.env.PROD ? 'https://clinicaldan.ru/api' : '');
+    this.apiUrl = url;
   }
 
   /**

@@ -87,7 +87,8 @@ class PaymentService {
       };
 
       // Используем наш прокси-сервер для обхода CORS
-      const proxyUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      // В production используем HTTPS по умолчанию
+      const proxyUrl = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://clinicaldan.ru/api' : 'http://localhost:3001');
       
       const response = await fetch(`${proxyUrl}/api/payment/register`, {
         method: 'POST',
@@ -125,7 +126,8 @@ class PaymentService {
       };
 
       // Используем наш прокси-сервер для обхода CORS
-      const proxyUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      // В production используем HTTPS по умолчанию
+      const proxyUrl = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://clinicaldan.ru/api' : 'http://localhost:3001');
       
       const response = await fetch(`${proxyUrl}/api/payment/status`, {
         method: 'POST',
