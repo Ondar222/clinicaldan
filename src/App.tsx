@@ -10,6 +10,7 @@ import ContactForm from "./components/ContactForm";
 import Checkups from "./components/Checkups";
 import Tools from "./components/Tools";
 import DoctorsPage from "./components/DoctorsPage";
+import NewsPage from "./components/NewsPage";
 import DoctorDetailsPage from "./components/DoctorDetailsPage";
 import ReviewsPage from "./components/ReviewsPage";
 import PromotionsPage from "./components/PromotionsPage";
@@ -25,6 +26,7 @@ import PaymentSuccessPage from "./components/PaymentSuccessPage";
 import PaymentCancelPage from "./components/PaymentCancelPage";
 import ServicePage from "./components/ServicePage";
 import StaffDashboard from "./components/StaffDashboard";
+import NotFoundPage from "./components/NotFoundPage";
 import archimedService from "./services/archimed";
 import ScrollToTop from "./components/ScrollToTop";
 import CookieNotification from "./components/CookieNotification";
@@ -82,6 +84,7 @@ function App() {
             <Route path="/about" element={<AboutClinicPage />} />
             <Route path="/doctors" element={<DoctorsPage />} />
             <Route path="/doctors/:id" element={<DoctorDetailsPage />} />
+            <Route path="/news" element={<NewsPage />} />
             <Route path="/reviews" element={<ReviewsPage />} />
             <Route path="/stock" element={<PromotionsPage />} />
             <Route path="/contacts" element={<ContactsPage />} />
@@ -105,6 +108,7 @@ function App() {
             <Route path="/tools/:id" element={<ToolDetailsPage />} />
             <Route path="/staff" element={<StaffDashboard />} />
             <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+            <Route path="*" element={<NotFoundPage />} />
             {/* Временно скрыто - личный кабинет и платежи
             <Route path="/personal-cabinet" element={<PatientCabinetPage />} />
             <Route path="/payment-test" element={<PaymentTestPage />} />

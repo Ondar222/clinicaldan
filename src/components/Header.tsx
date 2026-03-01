@@ -75,24 +75,24 @@ export default function Header() {
         {/* Top bar */}
 
         {/* Main header */}
-        <div className="py-1 md:py-0 flex items-center justify-between">
-          <Link to="/" className="flex items-center" aria-label="Клиника Алдан">
+        <div className="py-2 md:py-0 flex items-center justify-between">
+          <Link to="/" className="flex items-center flex-shrink-0" aria-label="Клиника Алдан">
             <img
               src={logoSrc}
               alt="Клиника Алдан"
-              className="block h-44 sm:h-44 md:h-36 lg:h-28 xl:h-36 w-auto object-contain -my-3 sm:-my-3 md:-my-4"
+              className="block h-32 sm:h-36 md:h-32 lg:h-28 xl:h-32 w-auto object-contain -my-2 sm:-my-2 md:-my-2"
               loading="eager"
               onError={handleLogoError}
             />
           </Link>
 
           {/* Desktop navigation */}
-          <nav className="hidden md:flex">
-            <ul className="flex space-x-4">
+          <nav className="hidden md:flex flex-shrink-0 overflow-hidden">
+            <ul className="flex space-x-1 lg:space-x-2 xl:space-x-3">
               <li>
                 <Link
                   to="/"
-                  className="text-dark hover:text-primary transition-colors"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Главная
                 </Link>
@@ -100,7 +100,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/about"
-                  className="text-dark hover:text-primary transition-colors"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   О клинике
                 </Link>
@@ -108,7 +108,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/doctors"
-                  className="text-dark hover:text-primary transition-colors"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Врачи
                 </Link>
@@ -116,7 +116,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/prices"
-                  className="text-dark hover:text-primary transition-colors"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Прайс-лист
                 </Link>
@@ -124,15 +124,23 @@ export default function Header() {
               <li>
                 <Link
                   to="/stock"
-                  className="text-dark hover:text-primary transition-colors"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Акции
                 </Link>
               </li>
               <li>
                 <Link
+                  to="/news"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                >
+                  Новости
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/certificates"
-                  className="text-dark hover:text-primary transition-colors"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Сертификаты
                 </Link>
@@ -140,7 +148,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/reviews"
-                  className="text-dark hover:text-primary transition-colors"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Отзывы
                 </Link>
@@ -148,7 +156,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/questions"
-                  className="text-dark hover:text-primary transition-colors"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Вопросы
                 </Link>
@@ -156,7 +164,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/documents"
-                  className="text-dark hover:text-primary transition-colors"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Документы
                 </Link>
@@ -165,7 +173,7 @@ export default function Header() {
                 <li>
                   <Link
                     to="/staff"
-                    className="text-dark hover:text-primary transition-colors"
+                    className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                   >
                     Панель сотрудника
                   </Link>
@@ -174,7 +182,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/contacts"
-                  className="text-dark hover:text-primary transition-colors"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Контакты
                 </Link>
@@ -274,7 +282,7 @@ export default function Header() {
             <li>
               <Link
                 to="/"
-                className="block py-2 text-dark hover:text-primary transition-colors"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Главная
@@ -283,7 +291,7 @@ export default function Header() {
             <li>
               <Link
                 to="/about"
-                className="block py-2 text-dark hover:text-primary transition-colors"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 О клинике
@@ -292,7 +300,7 @@ export default function Header() {
             <li>
               <Link
                 to="/doctors"
-                className="block py-2 text-dark hover:text-primary transition-colors"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Врачи
@@ -301,7 +309,7 @@ export default function Header() {
             <li>
               <Link
                 to="/prices"
-                className="block py-2 text-dark hover:text-primary transition-colors"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Прайс-лист
@@ -310,7 +318,7 @@ export default function Header() {
             <li>
               <Link
                 to="/stock"
-                className="block py-2 text-dark hover:text-primary transition-colors"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Акции
@@ -318,8 +326,17 @@ export default function Header() {
             </li>
             <li>
               <Link
+                to="/news"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Новости
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/certificates"
-                className="block py-2 text-dark hover:text-primary transition-colors"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Сертификаты
@@ -328,7 +345,7 @@ export default function Header() {
             <li>
               <Link
                 to="/reviews"
-                className="block py-2 text-dark hover:text-primary transition-colors"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Отзывы
@@ -337,7 +354,7 @@ export default function Header() {
             <li>
               <Link
                 to="/questions"
-                className="block py-2 text-dark hover:text-primary transition-colors"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Вопросы
@@ -346,7 +363,7 @@ export default function Header() {
             <li>
               <Link
                 to="/documents"
-                className="block py-2 text-dark hover:text-primary transition-colors"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Документы
@@ -356,7 +373,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/staff"
-                  className="block py-2 text-dark hover:text-primary transition-colors"
+                  className="block py-2 text-dark text-sm hover:text-primary transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Панель сотрудника
@@ -366,7 +383,7 @@ export default function Header() {
             <li>
               <Link
                 to="/contacts"
-                className="block py-2 text-dark hover:text-primary transition-colors"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Контакты
