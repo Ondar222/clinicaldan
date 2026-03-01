@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
+import { VkController } from './vk/vk.controller.js';
 
 dotenv.config();
 
@@ -181,6 +182,51 @@ app.post('/certificate/check-payment/:orderNumber', async (req, res) => {
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// VK API Endpoints
+app.get('/vk/posts', async (req, res) => {
+  try {
+    const count = parseInt(req.query.count) || 10;
+    const offset = parseInt(req.query.offset) || 0;
+
+    const result = await VkController.getPosts(count, offset);
+
+    if (result.success) {
+      res.json(result.data);
+    } else {
+      res.status(500).json({ error: result.error });
+    }
+  } catch (error) {
+    console.error('❌ Error in /vk/posts:', error);
+    res.status(500).json({
+      error: 'Failed to fetch VK posts',
+      message: error.message || 'Internal server error',
+    });
+  }
+});
+
+app.get('/vk/posts/:id', async (req, res) => {
+  try {
+    const postId = parseInt(req.params.id);
+    if (isNaN(postId)) {
+      return res.status(400).json({ error: 'Invalid post ID' });
+    }
+
+    const result = await VkController.getPostById(postId);
+
+    if (result.success) {
+      res.json(result.data);
+    } else {
+      res.status(404).json({ error: result.error });
+    }
+  } catch (error) {
+    console.error('❌ Error in /vk/posts/:id:', error);
+    res.status(500).json({
+      error: 'Failed to fetch VK post',
+      message: error.message || 'Internal server error',
+    });
+  }
 });
 
 // Start server

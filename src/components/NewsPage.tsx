@@ -4,7 +4,7 @@ export default function NewsPage() {
   return (
     <div className="min-h-screen bg-lightTeal py-8 md:py-12">
       <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
           {/* <div className="mb-8 md:mb-12 text-center">
             <h1 className="text-3xl md:text-4xl font-bold text-dark mb-4">
@@ -26,9 +26,9 @@ export default function NewsPage() {
             </a>
           </div> */}
 
-          {/* VK Widget */}
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden p-4">
-            <VkNewsWidget groupId={128344113} height={800} width="auto" />
+          {/* VK Posts */}
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden p-4 md:p-6">
+            <VkNewsWidget count={50} itemsPerPage={6} />
           </div>
         </div>
       </div>

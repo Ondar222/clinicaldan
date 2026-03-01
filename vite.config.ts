@@ -109,11 +109,24 @@ export default defineConfig({
 				changeOrigin: true,
 				secure: false,
 			},
+			'/vk': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+			},
 		}
 	},
 	build: {
 		outDir: "dist",
 		sourcemap: false,
-		minify: "esbuild"
+		minify: "esbuild",
+		rollupOptions: {
+			output: {
+				manualChunks: {
+					vendor: ['react', 'react-dom', 'react-router-dom'],
+					sw: ['swr'],
+				}
+			}
+		}
 	}
 });
