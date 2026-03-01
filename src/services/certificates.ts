@@ -48,7 +48,7 @@ class CertificateService {
   async createCertificate(data: CreateCertificateRequest): Promise<CreateCertificateResponse> {
     try {
       // В production всегда используем абсолютный HTTPS URL
-      const url = import.meta.env.PROD 
+      const url = import.meta.env.PROD
         ? 'https://clinicaldan.ru/api/certificate'
         : (this.apiUrl ? `${this.apiUrl.replace(/\/$/, '')}/certificate` : '/certificate');
       const response = await fetch(url, {
@@ -61,8 +61,14 @@ class CertificateService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
+        
+        // Check if backend returned HTML (server not running)
+        if (response.status === 500 && errorData?.message?.includes('backend')) {
+          throw new Error('Сервер временно недоступен. Попробуйте позже или обновите страницу.');
+        }
+        
         throw new Error(
-          errorData?.message || 
+          errorData?.message ||
           `HTTP error! status: ${response.status}`
         );
       }

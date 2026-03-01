@@ -14,6 +14,52 @@ const PORT = process.env.PORT || 5002;
 app.use(cors());
 app.use(express.json());
 
+// Archimed API Proxy
+const ARCHIMED_API_URL = process.env.VITE_ARCHIMED_API_URL || 'https://newapi.archimed-soft.ru/api/v5';
+const ARCHIMED_API_TOKEN = process.env.VITE_ARCHIMED_API_TOKEN || '';
+
+console.log(`🏥 Archimed API Proxy: ${ARCHIMED_API_URL}`);
+
+// Proxy all /api/archimed/* requests to external API
+app.use('/api/archimed', async (req, res) => {
+  try {
+    const url = new URL(req.url, ARCHIMED_API_URL);
+    url.searchParams.set('token', ARCHIMED_API_TOKEN);
+    
+    console.log(`🔄 Proxying: ${req.method} ${url.toString()}`);
+    
+    const response = await fetch(url.toString(), {
+      method: req.method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: req.method !== 'GET' && req.method !== 'HEAD' ? JSON.stringify(req.body) : undefined,
+    });
+    
+    const data = await response.text();
+    
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      res.status(response.status).json(JSON.parse(data));
+    } else {
+      // Response is HTML (error page)
+      console.error('❌ External API returned HTML:', data.substring(0, 200));
+      res.status(response.status).json({
+        error: 'External API error',
+        message: 'Archimed API returned HTML instead of JSON. Check if the external API is running.',
+        status: response.status,
+      });
+    }
+  } catch (error) {
+    console.error('❌ Proxy error:', error);
+    res.status(500).json({
+      error: 'Proxy error',
+      message: error.message || 'Failed to connect to Archimed API',
+    });
+  }
+});
+
 // Альфа-Банк конфигурация - ПРОДАКШН
 const ALFA_BANK_URL = 'https://pay.alfabank.ru/payment/rest';
 const ALFA_BANK_TOKEN = 'r37nq08sa80l4vdv9rcs4imt0j';
@@ -116,9 +162,26 @@ app.post('/certificate', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Error creating certificate:', error);
-    res.status(500).json({
+    
+    // Determine error type and return user-friendly message
+    let errorMessage = 'Произошла ошибка при создании сертификата. Попробуйте позже.';
+    let errorStatus = 500;
+    
+    if (error.message?.includes('Alfa-Bank')) {
+      errorMessage = 'Сервис оплаты временно недоступен. Попробуйте позже или свяжитесь с нами.';
+      errorStatus = 503; // Service Unavailable
+    } else if (error.message?.includes('timeout')) {
+      errorMessage = 'Превышено время ожидания ответа. Попробуйте еще раз.';
+      errorStatus = 504; // Gateway Timeout
+    } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+      errorMessage = 'Ошибка соединения с банком. Проверьте интернет и попробуйте снова.';
+      errorStatus = 502; // Bad Gateway
+    }
+    
+    res.status(errorStatus).json({
       error: 'Certificate creation failed',
-      message: error.message || 'Internal server error',
+      message: errorMessage,
+      details: import.meta.env.PROD ? undefined : error.message, // Don't expose details in production
     });
   }
 });

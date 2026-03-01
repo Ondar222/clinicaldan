@@ -124,7 +124,22 @@ class ArchimedService {
       if (!options?.suppressErrorLog) {
         console.error('API error response:', errorText);
       }
+      
+      // Check if response is HTML instead of JSON (backend not running)
+      if (errorText.trim().startsWith('<!DOCTYPE') || errorText.trim().startsWith('<html')) {
+        throw new Error('Backend server is not running. Please start the backend server.');
+      }
+      
       throw new Error(`Archimed API error: ${response.status} - ${errorText}`);
+    }
+
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && !contentType.includes('application/json')) {
+      const text = await response.text();
+      if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+        throw new Error('Backend server returned HTML instead of JSON. Is the backend running?');
+      }
     }
 
     return response.json();
