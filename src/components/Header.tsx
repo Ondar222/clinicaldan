@@ -235,28 +235,28 @@ export default function Header() {
 
       {/* Mobile navigation sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 md:hidden ${
+        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 md:hidden overflow-y-auto ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
         data-mobile-menu
       >
-        <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+        <div className="p-3 border-b border-gray-100 flex justify-between items-center flex-shrink-0">
           <Link
             to="/"
             className="flex items-center"
             onClick={() => setIsMenuOpen(false)}
             aria-label="Клиника Алдан"
           >
-            <img 
-              src={logoSrc} 
-              alt="Клиника Алдан" 
-              className="h-72 w-auto object-contain -my-4" 
+            <img
+              src={logoSrc}
+              alt="Клиника Алдан"
+              className="h-48 w-auto object-contain -my-2"
               loading="eager"
               onError={handleLogoError}
             />
           </Link>
           <button
-            className="text-gray-500 hover:text-dark"
+            className="text-gray-500 hover:text-dark flex-shrink-0 ml-2"
             onClick={() => setIsMenuOpen(false)}
             aria-label="Close menu"
           >
@@ -277,8 +277,8 @@ export default function Header() {
           </button>
         </div>
 
-        <nav className="p-4">
-          <ul className="space-y-4">
+        <nav className="p-3">
+          <ul className="space-y-2">
             <li>
               <Link
                 to="/"
