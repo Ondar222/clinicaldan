@@ -34,6 +34,7 @@ import CookiePolicyPage from "./components/CookiePolicyPage";
 import FloatingBooking from "./components/FloatingBooking";
 import ToolDetailsPage from "./components/ToolDetailsPage";
 import RouteErrorBoundary from "./components/RouteErrorBoundary";
+import VkPostDetailPage from "./components/VkPostDetailPage";
 // Временно скрыто - личный кабинет и платежи
 // import PatientCabinetPage from "./components/PatientCabinetPage";
 // import PaymentSuccessPage from "./components/PaymentSuccessPage";
@@ -106,6 +107,7 @@ function App() {
             <Route path="/prices" element={<PriceListPage />} />
             <Route path="/services/:slug" element={<ServicePage />} />
             <Route path="/tools/:id" element={<ToolDetailsPage />} />
+            <Route path="/vk-post/:id" element={<VkPostDetailPage />} />
             <Route path="/staff" element={<StaffDashboard />} />
             <Route path="/cookie-policy" element={<CookiePolicyPage />} />
             <Route path="*" element={<NotFoundPage />} />

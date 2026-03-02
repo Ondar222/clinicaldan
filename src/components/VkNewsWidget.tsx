@@ -1,5 +1,6 @@
 import useSWR from 'swr';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Backend API URL - use relative path for production (same domain)
 const API_BASE_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5002');
@@ -83,12 +84,13 @@ interface VkNewsWidgetProps {
 }
 
 // Компонент карусели медиа
-function MediaCarousel({ attachments, onOpen }: { attachments?: VkPost['attachments'], onOpen: () => void }) {
+function MediaCarousel({ attachments, postId }: { attachments?: VkPost['attachments'], postId: number }) {
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!attachments || attachments.length === 0) return null;
 
-  const mediaItems = attachments.filter(att => 
+  const mediaItems = attachments.filter(att =>
     ['photo', 'video', 'link'].includes(att.type)
   );
 
@@ -115,24 +117,27 @@ function MediaCarousel({ attachments, onOpen }: { attachments?: VkPost['attachme
     switch (media.type) {
       case 'photo': {
         const sizes = media.photo?.sizes || [];
-        const largestImage = sizes.length > 0 
-          ? [...sizes].sort((a, b) => b.width - a.width)[0].url 
+        const largestImage = sizes.length > 0
+          ? [...sizes].sort((a, b) => b.width - a.width)[0].url
           : media.photo?.image;
-        
+
         if (!largestImage) return null;
 
         return (
-          <div className="photo-container relative overflow-hidden">
+          <div className="photo-container relative overflow-hidden rounded-lg">
             <img
               src={largestImage}
               alt="Фото"
-              className="w-full h-48 object-cover cursor-pointer"
+              className="w-full h-56 object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
               loading="lazy"
-              onClick={onOpen}
+              onClick={() => navigate(`/vk-post/${postId}`)}
               onError={(e) => {
                 (e.target as HTMLImageElement).closest('.photo-container')?.remove();
               }}
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3">
+              <span className="text-white text-sm font-medium">Посмотреть пост</span>
+            </div>
           </div>
         );
       }
@@ -148,12 +153,15 @@ function MediaCarousel({ attachments, onOpen }: { attachments?: VkPost['attachme
             href={videoData.link || videoData.player || `https://vk.com/video-${128344113}_${videoData.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block relative bg-gray-900 cursor-pointer group"
-            onClick={onOpen}
+            className="block relative bg-gray-900 rounded-lg overflow-hidden cursor-pointer group"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(`/vk-post/${postId}`);
+            }}
           >
             <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-              <div className="w-14 h-14 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg className="w-7 h-7 text-blue-600 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <svg className="w-8 h-8 text-primary ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
                 </svg>
               </div>
@@ -162,16 +170,19 @@ function MediaCarousel({ attachments, onOpen }: { attachments?: VkPost['attachme
               <img
                 src={thumbnail}
                 alt={videoData.title}
-                className="w-full h-48 object-cover opacity-90"
+                className="w-full h-56 object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
                 loading="lazy"
               />
             ) : (
-              <div className="w-full h-48 bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center">
-                <svg className="w-16 h-16 text-white/80" fill="currentColor" viewBox="0 0 24 24">
+              <div className="w-full h-56 bg-gradient-to-br from-primary to-primaryDark flex items-center justify-center">
+                <svg className="w-20 h-20 text-white/80" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-2.19 0-3.8-.16-4.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L5 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c2.19 0 3.8.16 4.83.44.9.25 1.48.83 1.73 1.73z"/>
                 </svg>
               </div>
             )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3">
+              <span className="text-white text-sm font-medium">Посмотреть пост</span>
+            </div>
           </a>
         );
       }
@@ -228,7 +239,7 @@ function MediaCarousel({ attachments, onOpen }: { attachments?: VkPost['attachme
   return (
     <div className="relative mb-3">
       {/* Media */}
-      <div onClick={onOpen} className="cursor-pointer">
+      <div onClick={() => navigate(`/vk-post/${postId}`)} className="cursor-pointer">
         {renderMedia(currentMedia)}
       </div>
 
@@ -276,241 +287,9 @@ function MediaCarousel({ attachments, onOpen }: { attachments?: VkPost['attachme
   );
 }
 
-// Модальное окно просмотра поста
-function PostModal({ post, onClose }: { post: VkPost; onClose: () => void }) {
-  if (!post) return null;
-
-  const stripHtml = (html: string) => {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
-  };
-
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleDateString('ru-RU', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const photos = post.attachments?.filter(a => a.type === 'photo') || [];
-  const videos = post.attachments?.filter(a => a.type === 'video') || [];
-  const links = post.attachments?.filter(a => a.type === 'link') || [];
-
-  return (
-    <div 
-      className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      <div 
-        className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between rounded-t-xl">
-          <h3 className="text-lg font-bold text-gray-900">Пост ВКонтакте</h3>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 hover:bg-gray-100 rounded-full flex items-center justify-center transition-colors"
-          >
-            <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-4">
-          {/* Text */}
-          {post.text && (
-            <div className="mb-4">
-              <p className="text-gray-800 text-sm leading-relaxed whitespace-pre-wrap">
-                {stripHtml(post.text)}
-              </p>
-            </div>
-          )}
-
-          {/* Photos Grid */}
-          {photos.length > 0 && (
-            <div className="mb-4">
-              <div className={`grid gap-2 ${
-                photos.length === 1 ? 'grid-cols-1' :
-                photos.length === 2 ? 'grid-cols-2' :
-                photos.length === 3 ? 'grid-cols-2' :
-                'grid-cols-2 md:grid-cols-3'
-              }`}>
-                {photos.map((photo, idx) => {
-                  const sizes = photo.photo?.sizes || [];
-                  const largestImage = sizes.length > 0 
-                    ? [...sizes].sort((a, b) => b.width - a.width)[0].url 
-                    : photo.photo?.image;
-                  
-                  if (!largestImage) return null;
-
-                  return (
-                    <img
-                      key={idx}
-                      src={largestImage}
-                      alt={`Фото ${idx + 1}`}
-                      className={`w-full object-cover rounded-lg ${
-                        photos.length === 1 ? 'h-96' :
-                        photos.length === 2 ? 'h-64' :
-                        photos.length === 3 && idx === 0 ? 'h-96 row-span-2' :
-                        'h-48'
-                      }`}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Videos */}
-          {videos.length > 0 && (
-            <div className="mb-4 space-y-3">
-              {videos.map((video, idx) => {
-                const videoData = video.video;
-                if (!videoData) return null;
-
-                const thumbnail = videoData.image?.[0]?.url;
-
-                return (
-                  <a
-                    key={idx}
-                    href={videoData.link || videoData.player || `https://vk.com/video-${128344113}_${videoData.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block relative bg-gray-900 rounded-lg overflow-hidden group"
-                  >
-                    <div className="absolute inset-0 flex items-center justify-center z-10">
-                      <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <svg className="w-8 h-8 text-blue-600 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
-                      </div>
-                    </div>
-                    {thumbnail ? (
-                      <img
-                        src={thumbnail}
-                        alt={videoData.title}
-                        className="w-full h-56 object-cover opacity-90"
-                      />
-                    ) : (
-                      <div className="w-full h-56 bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center">
-                        <svg className="w-20 h-20 text-white/80" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-2.19 0-3.8-.16-4.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L5 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c2.19 0 3.8.16 4.83.44.9.25 1.48.83 1.73 1.73z"/>
-                        </svg>
-                      </div>
-                    )}
-                    {videoData.title && (
-                      <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
-                        <p className="text-white text-sm font-medium">{videoData.title}</p>
-                      </div>
-                    )}
-                  </a>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Links */}
-          {links.length > 0 && (
-            <div className="mb-4 space-y-3">
-              {links.map((link, idx) => {
-                const linkData = link.link;
-                if (!linkData) return null;
-
-                const imageUrl = linkData.image?.[0]?.url;
-
-                return (
-                  <a
-                    key={idx}
-                    href={linkData.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block border border-gray-200 rounded-lg overflow-hidden hover:border-blue-400 hover:shadow-md transition-all"
-                  >
-                    {imageUrl && (
-                      <img
-                        src={imageUrl}
-                        alt={linkData.title}
-                        className="w-full h-48 object-cover"
-                      />
-                    )}
-                    <div className="p-3 bg-gray-50">
-                      <p className="text-blue-600 text-sm font-medium line-clamp-2">
-                        {linkData.title}
-                      </p>
-                      {linkData.description && (
-                        <p className="text-gray-600 text-xs mt-1 line-clamp-2">
-                          {linkData.description}
-                        </p>
-                      )}
-                    </div>
-                  </a>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Stats */}
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-            <span className="text-sm text-gray-500">
-              {formatDate(post.date)}
-            </span>
-
-            <div className="flex items-center gap-3">
-              {post.likes && post.likes.count > 0 && (
-                <span className="inline-flex items-center gap-1.5 text-sm text-gray-700 bg-red-50 px-3 py-1.5 rounded-full">
-                  <span>❤️</span>
-                  <span className="font-medium">{post.likes.count}</span>
-                </span>
-              )}
-              {post.comments && post.comments.count > 0 && (
-                <span className="inline-flex items-center gap-1.5 text-sm text-gray-700 bg-blue-50 px-3 py-1.5 rounded-full">
-                  <span>💬</span>
-                  <span className="font-medium">{post.comments.count}</span>
-                </span>
-              )}
-              {post.reposts && post.reposts.count > 0 && (
-                <span className="inline-flex items-center gap-1.5 text-sm text-gray-700 bg-green-50 px-3 py-1.5 rounded-full">
-                  <span>🔄</span>
-                  <span className="font-medium">{post.reposts.count}</span>
-                </span>
-              )}
-              {post.views && post.views.count > 0 && (
-                <span className="inline-flex items-center gap-1.5 text-sm text-gray-700 bg-gray-50 px-3 py-1.5 rounded-full">
-                  <span>👁️</span>
-                  <span className="font-medium">{post.views.count}</span>
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Open in VK button */}
-          <a
-            href={`https://vk.com/wall-${128344113}_${post.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#0077FF] hover:bg-[#0066DD] text-white rounded-lg font-medium transition-colors"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12.785 16.241s.327-.039.495-.238c.185-.22.179-.51.179-.51s-.026-3.75 1.676-4.304c1.707-.563 3.9 3.95 6.226 5.696 1.773 1.316 3.115 1.028 3.115 1.028l6.22-.09s3.25-.203 1.71-2.77c-.128-.21-.91-1.88-4.687-5.316-3.966-3.62-3.436-3.036 1.344-9.304.923-1.2.647-1.82-.614-1.82h-6.63s-.49-.035-.855.22c-.298.2-.49.65-.49.65s-.881 2.35-2.054 4.35c-2.476 4.2-3.468 4.95-3.872 4.66-.95-.57-.712-2.3-.712-3.53 0-3.84.558-5.44-1.088-5.86-.275-.07-.477-.12-1.182-.127-.865-.01-1.525.003-1.92.207-.264.135-.475.435-.35.453.155.022.505.097.69.355.24.33.23 1.07.23 1.07s1.38 8.08 3.23 12.15c1.5 3.22 2.23 4.22 3.48 4.22h.84s.99.07 1.19-.64c.09-.36.09-.78.09-1.28 0-2.5.18-3.55.81-3.9.4-.22 1.15-.15 1.9.11.5.18.87.3.96.47.14.24.1.78.1 1.2-.01.8.14 1.13.32 1.3.22.21.48.14.48.14z"/>
-            </svg>
-            Открыть во ВКонтакте
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWidgetProps) {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedPost, setSelectedPost] = useState<VkPost | null>(null);
 
   const { data, error, isLoading, mutate } = useSWR<VkPostsResponse>(
     `/api/vk/posts?count=${count}&offset=0`,
@@ -589,22 +368,14 @@ export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWid
       {/* Header */}
       <div className="flex justify-between items-center pb-3 border-b border-gray-200">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">
-            Новости ВКонтакте
+          <h2 className="text-lg font-bold text-primary">
+            Новости
           </h2>
           <p className="text-xs text-gray-500">
             Страница {currentPage} из {totalPages}
           </p>
         </div>
-        <button
-          onClick={() => mutate()}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-          </svg>
-          Обновить
-        </button>
+    
       </div>
 
       {/* Posts Grid */}
@@ -618,7 +389,7 @@ export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWid
           return (
             <article
               key={post.id}
-              onClick={() => setSelectedPost(post)}
+              onClick={() => navigate(`/vk-post/${post.id}`)}
               className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-200 cursor-pointer flex flex-col h-full group"
             >
               <div className="flex flex-col flex-1 p-3">
@@ -635,9 +406,9 @@ export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWid
 
                 {/* Media Carousel */}
                 {hasMedia && (
-                  <MediaCarousel 
-                    attachments={post.attachments} 
-                    onOpen={() => setSelectedPost(post)}
+                  <MediaCarousel
+                    attachments={post.attachments}
+                    postId={post.id}
                   />
                 )}
 
@@ -652,20 +423,26 @@ export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWid
 
                   <div className="flex items-center gap-2">
                     {post.likes && post.likes.count > 0 && (
-                      <span className="inline-flex items-center gap-1 text-xs text-gray-600 bg-red-50 px-1.5 py-0.5 rounded-full">
-                        <span>❤️</span>
+                      <span className="inline-flex items-center gap-1 text-xs text-primary px-1.5 py-0.5 rounded-full bg-red-50">
+                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
                         <span className="font-medium">{post.likes.count}</span>
                       </span>
                     )}
                     {post.comments && post.comments.count > 0 && (
-                      <span className="inline-flex items-center gap-1 text-xs text-gray-600 bg-blue-50 px-1.5 py-0.5 rounded-full">
-                        <span>💬</span>
+                      <span className="inline-flex items-center gap-1 text-xs text-blue-600 px-1.5 py-0.5 rounded-full bg-blue-50">
+                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                        </svg>
                         <span className="font-medium">{post.comments.count}</span>
                       </span>
                     )}
                     {post.views && post.views.count > 0 && (
-                      <span className="inline-flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-1.5 py-0.5 rounded-full">
-                        <span>👁️</span>
+                      <span className="inline-flex items-center gap-1 text-xs text-gray-600 px-1.5 py-0.5 rounded-full bg-gray-50">
+                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
                         <span className="font-medium">{post.views.count}</span>
                       </span>
                     )}
@@ -683,22 +460,22 @@ export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWid
           <button
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700"
           >
             ← Назад
           </button>
 
           <div className="flex items-center gap-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
-              if (page === 1 || page === totalPages || 
+              if (page === 1 || page === totalPages ||
                   (page >= currentPage - 1 && page <= currentPage + 1)) {
                 return (
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`w-8 h-8 text-sm font-medium rounded-lg transition-colors ${
+                    className={`w-9 h-9 text-sm font-semibold rounded-lg transition-all ${
                       page === currentPage
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-primary text-white shadow-md'
                         : 'hover:bg-gray-100 text-gray-700'
                     }`}
                   >
@@ -718,19 +495,11 @@ export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWid
           <button
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700"
           >
             Вперёд →
           </button>
         </div>
-      )}
-
-      {/* Post Modal */}
-      {selectedPost && (
-        <PostModal 
-          post={selectedPost} 
-          onClose={() => setSelectedPost(null)} 
-        />
       )}
     </div>
   );
