@@ -67,8 +67,14 @@ interface VkPost {
 }
 
 interface VkPostsResponse {
-  items: VkPost[];
-  count: number;
+  items?: VkPost[];
+  count?: number;
+  // Backend response format: {success: true, data: {posts: [...], total: N}}
+  success?: boolean;
+  data?: {
+    posts: VkPost[];
+    total: number;
+  };
 }
 
 interface VkNewsWidgetProps {
@@ -538,7 +544,10 @@ export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWid
     );
   }
 
-  if (!data || !data.items || data.items.length === 0) {
+  // Transform backend response: {success: true, data: {posts: [...], total: N}}
+  const posts = data?.data?.posts || data?.items || [];
+  
+  if (!posts || posts.length === 0) {
     return (
       <div className="p-6 text-center text-gray-500">
         <p className="text-sm">Нет новостей</p>
@@ -546,8 +555,8 @@ export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWid
     );
   }
 
-  const totalPages = Math.ceil((data.items?.length || 0) / itemsPerPage);
-  const currentPosts = (data.items || []).slice(
+  const totalPages = Math.ceil((posts?.length || 0) / itemsPerPage);
+  const currentPosts = posts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -600,9 +609,9 @@ export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWid
 
       {/* Posts Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {currentPosts.map((post) => {
+        {currentPosts.map((post: VkPost) => {
           const text = stripHtml(post.text);
-          const hasMedia = post.attachments && post.attachments.some(att => 
+          const hasMedia = post.attachments && post.attachments.some((att: any) =>
             ['photo', 'video', 'link'].includes(att.type)
           );
 
