@@ -251,7 +251,7 @@ app.get('/health', (req, res) => {
 });
 
 // VK API Endpoints
-app.get('/vk/posts', async (req, res) => {
+app.get('/api/vk/posts', async (req, res) => {
   try {
     const count = parseInt(req.query.count) || 10;
     const offset = parseInt(req.query.offset) || 0;
@@ -264,7 +264,7 @@ app.get('/vk/posts', async (req, res) => {
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
-    console.error('❌ Error in /vk/posts:', error);
+    console.error('❌ Error in /api/vk/posts:', error);
     res.status(500).json({
       error: 'Failed to fetch VK posts',
       message: error.message || 'Internal server error',
@@ -272,7 +272,7 @@ app.get('/vk/posts', async (req, res) => {
   }
 });
 
-app.get('/vk/posts/:id', async (req, res) => {
+app.get('/api/vk/posts/:id', async (req, res) => {
   try {
     const postId = parseInt(req.params.id);
     if (isNaN(postId)) {
@@ -287,7 +287,7 @@ app.get('/vk/posts/:id', async (req, res) => {
       res.status(404).json({ error: result.error });
     }
   } catch (error) {
-    console.error('❌ Error in /vk/posts/:id:', error);
+    console.error('❌ Error in /api/vk/posts/:id:', error);
     res.status(500).json({
       error: 'Failed to fetch VK post',
       message: error.message || 'Internal server error',
