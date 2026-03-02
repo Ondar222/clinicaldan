@@ -13,39 +13,27 @@ export interface VKPostsResponse {
 }
 
 class VKService {
-  // VK Group ID for clinicaaldan
-  private groupId: string = 'clinicaaldan';
-  private accessToken: string = import.meta.env.VITE_VK_ACCESS_TOKEN || '';
+  // Use backend proxy for VK API
+  private apiBaseUrl = import.meta.env.PROD ? '/api/vk' : 'http://localhost:5002/api/vk';
 
   /**
-   * Получает посты из VK
+   * Получает посты из VK через backend proxy
    * @param offset - смещение для пагинации
    * @param count - количество постов
    */
   async getPosts(offset: number = 0, count: number = 10): Promise<VKPostsResponse> {
     try {
-      // Используем VK API напрямую
-      const url = 'https://api.vk.com/method/wall.get';
-      const params = new URLSearchParams({
-        owner_id: '-128344113', // Отрицательный ID для сообществ (128344113 -> -128344113)
-        count: count.toString(),
-        offset: offset.toString(),
-        filter: 'owner',
-        v: '5.131',
-      });
-
-      if (this.accessToken) {
-        params.append('access_token', this.accessToken);
+      const url = `${this.apiBaseUrl}/posts?count=${count}&offset=${offset}`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const response = await fetch(`${url}?${params}`);
+      
       const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error.error_msg || 'VK API error');
-      }
-
-      const posts = data.response.items
+      
+      // Map backend response to frontend format
+      const posts = (data.items || [])
         .filter((item: any) => !item.marked_as_ads && item.date)
         .map((item: any) => {
           // Extract image if available
@@ -53,7 +41,6 @@ class VKService {
           if (item.attachments && item.attachments.length > 0) {
             const photo = item.attachments.find((a: any) => a.type === 'photo');
             if (photo) {
-              // Get the largest available photo size
               const sizes = photo.photo.sizes || [];
               const largest = sizes[sizes.length - 1];
               imageUrl = largest?.url || photo.photo.photo_604 || photo.photo.photo_200;
@@ -78,7 +65,7 @@ class VKService {
 
       return {
         posts,
-        total: data.response.count,
+        total: data.count || 0,
       };
     } catch (error: any) {
       console.error('Error fetching VK posts:', error);
