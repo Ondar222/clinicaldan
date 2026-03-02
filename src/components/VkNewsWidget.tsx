@@ -1,8 +1,12 @@
 import useSWR from 'swr';
 import { useState } from 'react';
 
+// Local Backend API URL
+const API_BASE_URL = 'http://localhost:5002';
+
 const fetcher = async (url: string) => {
-  const response = await fetch(url);
+  const fullUrl = `${API_BASE_URL}${url}`;
+  const response = await fetch(fullUrl);
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Failed to fetch' }));
     throw new Error(error.error || error.message || 'Failed to fetch');

@@ -28,7 +28,7 @@ export default function NewsPage() {
 
           {/* VK Posts */}
           <div className="bg-white rounded-lg shadow-lg overflow-hidden p-4 md:p-6">
-            <VkNewsWidget count={50} itemsPerPage={6} />
+            <VkNewsWidget count={12} itemsPerPage={6} />
           </div>
         </div>
       </div>

@@ -12,10 +12,9 @@ import type {
   ApiService
 } from '../types/cms';
 
-// Directus API configuration
-// В production используем HTTPS по умолчанию, если переменная окружения не задана
-const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL || (import.meta.env.PROD ? 'https://clinicaldan.ru/api/directus' : 'https://localhost:8055');
-const DIRECTUS_TOKEN = import.meta.env.VITE_DIRECTUS_TOKEN || '';
+// Directus API configuration - use LOCAL backend proxy
+const DIRECTUS_URL = 'http://localhost:5002/api/directus';
+const DIRECTUS_TOKEN = ''; // Token handled by backend
 
 class DirectusService {
   private baseUrl: string;

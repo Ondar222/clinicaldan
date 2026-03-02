@@ -14,13 +14,9 @@ import type {
 import { mockServices } from '../data/mockServices';
 import { mockDoctors, mockBranches } from '../data/mockDoctors';
 
-// Archimed API configuration
-const ARCHIMED_API_URL = (typeof import.meta.env.VITE_ARCHIMED_API_URL === 'string'
-  ? import.meta.env.VITE_ARCHIMED_API_URL.replace(/[\s;]+$/, '').replace(/\/+$/, '')
-  : '') || 'https://clinicaldan.ru/api/archimed';
-const ARCHIMED_API_TOKEN = import.meta.env.VITE_ARCHIMED_API_TOKEN || '';
-// Public gateway (proxy) that may already aggregate Archimed doctors for this site
-const PUBLIC_DOCTORS_URL = 'https://aldan.yurta.site/api/archimed/doctors';
+// Archimed API configuration - use LOCAL backend proxy
+const ARCHIMED_API_URL = 'http://localhost:5002/api/archimed';
+const ARCHIMED_API_TOKEN = ''; // Token handled by backend
 
 console.log('Environment variables:');
 console.log('VITE_ARCHIMED_API_URL:', import.meta.env.VITE_ARCHIMED_API_URL);
