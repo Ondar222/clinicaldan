@@ -494,9 +494,9 @@ export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWid
   const [selectedPost, setSelectedPost] = useState<VkPost | null>(null);
 
   const { data, error, isLoading, mutate } = useSWR<VkPostsResponse>(
-    `/vk/posts?count=${count}&offset=0`,
+    `/api/vk/posts?count=${count}&offset=0`,
     fetcher,
-    { 
+    {
       refreshInterval: 60000,
       revalidateOnFocus: false,
     }
