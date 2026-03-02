@@ -61,7 +61,7 @@ class ArchimedService {
     this.baseUrl = ARCHIMED_API_URL;
     this.headers = {
       'Content-Type': 'application/json',
-      ...(ARCHIMED_API_TOKEN && { 'Authorization': `Bearer ${ARCHIMED_API_TOKEN}` }),
+      ...(ARCHIMED_API_TOKEN ? { 'Authorization': `Bearer ${ARCHIMED_API_TOKEN}` } : {}),
     };
 
     console.log('ArchimedService constructor, API URL:', this.baseUrl);
@@ -198,7 +198,7 @@ class ArchimedService {
       // 1) Try public gateway first (absolute URL)
       const controller = new AbortController();
       const timeoutId = window.setTimeout(() => controller.abort('timeout'), DEFAULT_REQUEST_TIMEOUT_MS);
-      const publicUrl = `${PUBLIC_DOCTORS_URL}?limit=${DEFAULT_API_PAGE_LIMIT}`;
+      const publicUrl = `https://archimed-soft.ru/api/doctors?limit=${DEFAULT_API_PAGE_LIMIT}`;
       const siteResp = await fetch(publicUrl, { signal: controller.signal });
       window.clearTimeout(timeoutId);
       if (siteResp.ok) {
