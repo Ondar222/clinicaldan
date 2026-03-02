@@ -4,8 +4,21 @@ import { useState } from 'react';
 // Backend API URL - use relative path for production (same domain)
 const API_BASE_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5002');
 
+// VK API - fetch directly from VK through backend proxy
+const VK_API_URL = '/api/vk';
+
 const fetcher = async (url: string) => {
   const fullUrl = `${API_BASE_URL}${url}`;
+  const response = await fetch(fullUrl);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to fetch' }));
+    throw new Error(error.error || error.message || 'Failed to fetch');
+  }
+  return response.json();
+};
+
+const vkFetcher = async (url: string) => {
+  const fullUrl = `${VK_API_URL}${url}`;
   const response = await fetch(fullUrl);
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Failed to fetch' }));
