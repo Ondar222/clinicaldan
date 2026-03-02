@@ -12,8 +12,8 @@ import type {
   ApiService
 } from '../types/cms';
 
-// Directus API configuration - use LOCAL backend proxy
-const DIRECTUS_URL = 'http://localhost:5002/api/directus';
+// Directus API configuration - relative path for production, localhost for dev
+const DIRECTUS_URL = import.meta.env.PROD ? '/api/directus' : (import.meta.env.VITE_DIRECTUS_URL || 'http://localhost:5002/api/directus');
 const DIRECTUS_TOKEN = ''; // Token handled by backend
 
 class DirectusService {

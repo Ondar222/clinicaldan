@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 import { useState } from 'react';
 
-// Local Backend API URL
-const API_BASE_URL = 'http://localhost:5002';
+// Backend API URL - use relative path for production (same domain)
+const API_BASE_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5002');
 
 const fetcher = async (url: string) => {
   const fullUrl = `${API_BASE_URL}${url}`;

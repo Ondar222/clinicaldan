@@ -14,8 +14,8 @@ import type {
 import { mockServices } from '../data/mockServices';
 import { mockDoctors, mockBranches } from '../data/mockDoctors';
 
-// Archimed API configuration - use LOCAL backend proxy
-const ARCHIMED_API_URL = 'http://localhost:5002/api/archimed';
+// Archimed API configuration - relative path for production, localhost for dev
+const ARCHIMED_API_URL = import.meta.env.PROD ? '/api/archimed' : (import.meta.env.VITE_ARCHIMED_API_URL || 'http://localhost:5002/api/archimed');
 const ARCHIMED_API_TOKEN = ''; // Token handled by backend
 
 console.log('Environment variables:');
@@ -193,40 +193,11 @@ class ArchimedService {
       return this.doctorsCache;
     }
 
-    console.log('No cached data, trying public site API, then Archimed API, then local file...');
+    console.log('No cached data, fetching from local backend API...');
     try {
-      // 1) Try public gateway first (absolute URL)
-      const controller = new AbortController();
-      const timeoutId = window.setTimeout(() => controller.abort('timeout'), DEFAULT_REQUEST_TIMEOUT_MS);
-      const publicUrl = `https://archimed-soft.ru/api/doctors?limit=${DEFAULT_API_PAGE_LIMIT}`;
-      const siteResp = await fetch(publicUrl, { signal: controller.signal });
-      window.clearTimeout(timeoutId);
-      if (siteResp.ok) {
-        const siteJson = await siteResp.json();
-        const publicData = Array.isArray(siteJson) ? siteJson : (siteJson?.data || []);
-        let bestData: ArchimedDoctor[] = Array.isArray(publicData) ? (publicData as ArchimedDoctor[]) : [];
-
-        // Try to fetch full list directly from Archimed API; prefer larger dataset if available
-        try {
-          const apiAll = await this.fetchAllDoctorsFromAPI();
-          if (Array.isArray(apiAll) && apiAll.length > bestData.length) {
-            bestData = apiAll;
-          }
-        } catch (e) {
-          console.warn('Failed to enrich doctors from Archimed API, using public data if present:', e);
-        }
-
-        if (bestData.length > 0) {
-          console.log('Using doctors dataset, count:', bestData.length);
-          this.doctorsCache = this.applyRemovals(bestData);
-          this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
-          return this.doctorsCache;
-        }
-      }
-
-      // 2) Fallback to Archimed API directly
+      // Fetch from local backend proxy only (no direct external API calls)
       const allDoctors = await this.fetchAllDoctorsFromAPI();
-      console.log('Archimed API returned doctors:', allDoctors?.length || 0);
+      console.log('Local API returned doctors:', allDoctors?.length || 0);
       this.doctorsCache = allDoctors || [];
 
       // If API returned too few, try to enrich from ProDoctorov local snapshot

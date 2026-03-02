@@ -18,8 +18,8 @@ app.use(cors({
 app.use(express.json());
 
 // Archimed API Proxy
-const ARCHIMED_API_URL = process.env.VITE_ARCHIMED_API_URL || 'https://newapi.archimed-soft.ru/api/v5';
-const ARCHIMED_API_TOKEN = process.env.VITE_ARCHIMED_API_TOKEN || '';
+const ARCHIMED_API_URL = process.env.ARCHIMED_API_URL || 'https://newapi.archimed-soft.ru/api/v5';
+const ARCHIMED_API_TOKEN = process.env.ARCHIMED_API_TOKEN || '';
 
 console.log(`🏥 Archimed API Proxy: ${ARCHIMED_API_URL}`);
 
@@ -27,14 +27,14 @@ console.log(`🏥 Archimed API Proxy: ${ARCHIMED_API_URL}`);
 app.use('/api/archimed', async (req, res) => {
   try {
     const url = new URL(req.url, ARCHIMED_API_URL);
-    url.searchParams.set('token', ARCHIMED_API_TOKEN);
-    
+
     console.log(`🔄 Proxying: ${req.method} ${url.toString()}`);
-    
+
     const response = await fetch(url.toString(), {
       method: req.method,
       headers: {
         'Content-Type': 'application/json',
+        ...(ARCHIMED_API_TOKEN ? { 'Authorization': `Bearer ${ARCHIMED_API_TOKEN}` } : {}),
       },
       body: req.method !== 'GET' && req.method !== 'HEAD' ? JSON.stringify(req.body) : undefined,
     });
