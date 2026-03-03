@@ -180,9 +180,13 @@ export default function GiftCertificatesPage() {
 
       // Отправка запроса на создание сертификата
       const response = await certificateService.createCertificate(requestData);
-
-      // Перенаправление на страницу оплаты
-      window.location.href = response.paymentUrl;
+      const paymentUrl = response?.paymentUrl;
+      if (!paymentUrl) {
+        setError("Сервер не вернул ссылку на оплату. Попробуйте еще раз.");
+        setIsSubmitting(false);
+        return;
+      }
+      window.location.href = paymentUrl;
     } catch (error) {
       console.error("Ошибка при оформлении сертификата:", error);
       const errorMessage = error instanceof Error ? error.message : "Произошла ошибка при создании платежа";

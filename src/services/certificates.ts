@@ -60,21 +60,29 @@ class CertificateService {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        
-        // Check if backend returned HTML (server not running)
-        if (response.status === 500 && errorData?.message?.includes('backend')) {
-          throw new Error('Сервер временно недоступен. Попробуйте позже или обновите страницу.');
-        }
-        
-        throw new Error(
-          errorData?.message ||
-          `HTTP error! status: ${response.status}`
-        );
+        const errorData = await response.json().catch(() => ({} as Record<string, unknown>));
+        const msg =
+          (errorData && typeof errorData === 'object' && (errorData.message ?? errorData.error)) ||
+          (response.status === 500 ? 'Ошибка сервера. Попробуйте позже или свяжитесь с нами.' : `HTTP ${response.status}`);
+        throw new Error(typeof msg === 'string' ? msg : 'Ошибка при создании сертификата');
       }
 
-      const result = await response.json();
-      return result;
+      const result = await response.json().catch(() => ({} as Record<string, unknown>));
+      // Бэкенд может вернуть { paymentUrl, ... } или { payload: { paymentUrl, ... } }
+      const payload = result && typeof result === 'object' ? (result as Record<string, unknown>).payload : undefined;
+      const inner = payload && typeof payload === 'object' ? (payload as Record<string, unknown>) : result as Record<string, unknown>;
+      const paymentUrl = (result?.paymentUrl ?? inner?.paymentUrl ?? inner?.payment_url) as string | undefined;
+      const orderId = (result?.orderId ?? result?.order_id ?? inner?.orderId ?? inner?.order_id ?? result?.code ?? inner?.code) as string | undefined;
+      if (!paymentUrl) {
+        console.error('Certificate response missing paymentUrl:', result);
+        throw new Error('Сервер не вернул ссылку на оплату. Попробуйте позже.');
+      }
+      return {
+        message: (result?.message ?? inner?.message) as string ?? 'OK',
+        code: (result?.code ?? inner?.code) as string ?? orderId ?? '',
+        paymentUrl,
+        orderId: orderId ?? '',
+      };
     } catch (error) {
       console.error('Error creating certificate:', error);
       const message = error instanceof TypeError && (error as Error).message === 'Failed to fetch'
