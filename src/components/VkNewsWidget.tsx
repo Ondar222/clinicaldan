@@ -68,13 +68,15 @@ interface VkPost {
 }
 
 interface VkPostsResponse {
+  /** Бэкенд отдаёт { items, count } или при ошибке { items: [], count: 0, error } */
   items?: VkPost[];
   count?: number;
-  // Backend response format: {success: true, data: {posts: [...], total: N}}
+  error?: string;
   success?: boolean;
   data?: {
-    posts: VkPost[];
-    total: number;
+    posts?: VkPost[];
+    total?: number;
+    items?: VkPost[];
   };
 }
 
