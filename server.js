@@ -6,13 +6,23 @@ import fetch from 'node-fetch';
 import { VkController } from './vk/vk.controller.js';
 
 dotenv.config();
+dotenv.config({ path: '.back.env' }); // переопределяет .env, если есть
 
 const app = express();
 const PORT = process.env.PORT || 5002;
 
 // Middleware
+// Разрешаем фронт: 5173 (Vite по умолчанию) и 5174; в prod можно задать CORS_ORIGIN через запятую
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,http://localhost:5174')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+if (allowedOrigins.length === 0) allowedOrigins.push('http://localhost:5173');
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.some((o) => origin === o)) return cb(null, true);
+    return cb(null, allowedOrigins[0]);
+  },
   credentials: true,
 }));
 app.use(express.json());
@@ -250,7 +260,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// VK API Endpoints
+// VK API Endpoints — при ошибке VK отдаём 200 с пустым списком и текстом, чтобы страница не падала
 app.get('/api/vk/posts', async (req, res) => {
   try {
     const count = parseInt(req.query.count) || 10;
@@ -261,13 +271,19 @@ app.get('/api/vk/posts', async (req, res) => {
     if (result.success) {
       res.json(result.data);
     } else {
-      res.status(500).json({ error: result.error });
+      console.error('❌ VK /api/vk/posts:', result.error);
+      res.status(200).json({
+        items: [],
+        count: 0,
+        error: result.error,
+      });
     }
   } catch (error) {
     console.error('❌ Error in /api/vk/posts:', error);
-    res.status(500).json({
-      error: 'Failed to fetch VK posts',
-      message: error.message || 'Internal server error',
+    res.status(200).json({
+      items: [],
+      count: 0,
+      error: error.message || 'Не удалось загрузить посты из VK',
     });
   }
 });

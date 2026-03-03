@@ -12,8 +12,8 @@ import type {
   ApiService
 } from '../types/cms';
 
-// Directus API configuration - relative path for production, localhost for dev
-const DIRECTUS_URL = import.meta.env.PROD ? '/api/directus' : (import.meta.env.VITE_DIRECTUS_URL || 'http://localhost:5002/api/directus');
+// Directus API: относительный путь — в dev прокси Vite на 8055, в prod — nginx
+const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL || '/api/directus';
 const DIRECTUS_TOKEN = ''; // Token handled by backend
 
 class DirectusService {

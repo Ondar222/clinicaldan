@@ -6,14 +6,14 @@ dotenv.config();
 const VK_API_BASE = 'https://api.vk.com/method';
 
 export class VkService {
-  #token;
-  #version;
-  #ownerId;
+  #version = '5.131';
 
-  constructor() {
-    this.#token = process.env.VK_API_TOKEN || '';
-    this.#version = '5.131';
-    this.#ownerId = process.env.VK_OWNER_ID || '-128344113';
+  /** Токен и owner_id при каждом запросе — подхватывают .back.env после загрузки server.js */
+  get #token() {
+    return process.env.VK_API_TOKEN || '';
+  }
+  get #ownerId() {
+    return process.env.VK_OWNER_ID || '-128344113';
   }
 
   async #request(method, params = {}) {

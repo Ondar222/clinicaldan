@@ -99,6 +99,13 @@ export default defineConfig({
 	],
 	server: {
 		proxy: {
+			// Сначала более специфичные пути (Directus на 8055)
+			'/api/directus': {
+				target: 'http://localhost:8055',
+				changeOrigin: true,
+				secure: false,
+				rewrite: (path) => path.replace(/^\/api\/directus/, ''),
+			},
 			'/api': {
 				target: 'http://localhost:5002',
 				changeOrigin: true,

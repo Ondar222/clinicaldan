@@ -2,8 +2,8 @@ import useSWR from 'swr';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// Backend API URL - use relative path for production (same domain)
-const API_BASE_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5002');
+// Backend API URL - relative path so Vite proxy (dev) or nginx (prod) handles it
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 // VK API - fetch directly from VK through backend proxy
 const VK_API_URL = '/api/vk';
@@ -323,13 +323,29 @@ export default function VkNewsWidget({ count = 50, itemsPerPage = 6 }: VkNewsWid
     );
   }
 
-  // Transform backend response: {success: true, data: {posts: [...], total: N}}
-  const posts = data?.data?.posts || data?.items || [];
-  
+  // Бэкенд отдаёт { items, count } или при ошибке { items: [], count: 0, error?: string }
+  const posts = data?.data?.items || data?.data?.posts || data?.items || [];
+  const backendError = data?.error;
+
   if (!posts || posts.length === 0) {
     return (
-      <div className="p-6 text-center text-gray-500">
+      <div className="p-6 text-center text-gray-500 space-y-2">
         <p className="text-sm">Нет новостей</p>
+        {backendError && (
+          <p className="text-xs text-amber-600 max-w-md mx-auto">
+            {backendError}
+          </p>
+        )}
+        <p className="text-xs text-gray-400">
+          Проверьте VK_API_TOKEN и VK_OWNER_ID в .env или .back.env на бэкенде.
+        </p>
+        <button
+          type="button"
+          onClick={() => mutate()}
+          className="text-xs text-blue-600 hover:underline"
+        >
+          Повторить
+        </button>
       </div>
     );
   }

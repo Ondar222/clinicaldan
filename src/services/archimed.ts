@@ -14,8 +14,8 @@ import type {
 import { mockServices } from '../data/mockServices';
 import { mockDoctors, mockBranches } from '../data/mockDoctors';
 
-// Archimed API configuration - relative path for production, localhost for dev
-const ARCHIMED_API_URL = import.meta.env.PROD ? '/api/archimed' : (import.meta.env.VITE_ARCHIMED_API_URL || 'http://localhost:5002/api/archimed');
+// Archimed API: в dev и prod идём через тот же origin (Vite proxy или nginx), чтобы не было CORS
+const ARCHIMED_API_URL = import.meta.env.VITE_ARCHIMED_API_URL || '/api/archimed';
 const ARCHIMED_API_TOKEN = ''; // Token handled by backend
 
 console.log('Environment variables:');
