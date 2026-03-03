@@ -7,12 +7,32 @@ interface NewsProps {
   showPagination?: boolean;
 }
 
+// lg = 1024px — на десктопе 5 постов, на адаптивной 4
+const DESKTOP_BREAKPOINT = 1024;
+
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(`(min-width: ${DESKTOP_BREAKPOINT}px)`).matches : true
+  );
+  useEffect(() => {
+    const m = window.matchMedia(`(min-width: ${DESKTOP_BREAKPOINT}px)`);
+    const onChange = () => setIsDesktop(m.matches);
+    m.addEventListener('change', onChange);
+    return () => m.removeEventListener('change', onChange);
+  }, []);
+  return isDesktop;
+}
+
 export default function News({ limit = 5, showPagination = true }: NewsProps) {
+  const isDesktop = useIsDesktop();
   const [posts, setPosts] = useState<VKPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
+
+  const visibleCount = isDesktop ? 5 : 4;
+  const visiblePosts = posts.slice(0, visibleCount);
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -106,7 +126,7 @@ export default function News({ limit = 5, showPagination = true }: NewsProps) {
           </div>
         ) : (
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8 items-stretch">
-          {posts.map((post) => (
+          {visiblePosts.map((post) => (
             <Link
               key={post.id}
               to={`/vk-post/${post.id}`}

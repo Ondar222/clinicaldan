@@ -49,7 +49,7 @@ function HomePage() {
     <>
       <Hero />
       <ServiceGrid />
-      <News limit={4} showPagination={false} />
+      <News limit={5} showPagination={false} />
       <Checkups />
       <Advantages />
       <Testimonials />
