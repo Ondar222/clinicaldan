@@ -152,11 +152,30 @@ export default function GiftCertificatesPage() {
         };
       }
 
+      const amount = Number(formData.amount);
+      if (!Number.isFinite(amount) || amount < 1000 || amount > 50000) {
+        setError("Укажите корректную сумму сертификата (1 000 – 50 000 ₽).");
+        setIsSubmitting(false);
+        return;
+      }
+
       const requestData: CreateCertificateRequest = {
-        amount: formData.amount,
-        customer,
-        sponsor,
-        greetingText: formData.message || undefined,
+        amount,
+        customer: {
+          firstName: customer.firstName.trim() || '—',
+          lastName: customer.lastName.trim() || '—',
+          email: customer.email.trim(),
+          ...(customer.phone ? { phone: customer.phone } : {}),
+        },
+        ...(sponsor ? {
+          sponsor: {
+            firstName: sponsor.firstName.trim() || '—',
+            lastName: sponsor.lastName.trim() || '—',
+            email: sponsor.email.trim(),
+            ...(sponsor.phone ? { phone: sponsor.phone } : {}),
+          },
+        } : {}),
+        greetingText: formData.message?.trim() || undefined,
       };
 
       // Отправка запроса на создание сертификата

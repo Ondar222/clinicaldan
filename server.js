@@ -120,25 +120,39 @@ function generateOrderNumber() {
   return `cert_${timestamp}_${random}`;
 }
 
+// Нормализация клиента: поддержка camelCase и snake_case, пустые имена → "—" (для БД first_name/last_name NOT NULL)
+function normalizeCustomer(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const firstName = (raw.firstName ?? raw.first_name ?? '').toString().trim() || '—';
+  const lastName = (raw.lastName ?? raw.last_name ?? '').toString().trim() || '—';
+  const email = (raw.email ?? '').toString().trim();
+  const phone = raw.phone != null ? (raw.phone + '').trim() : undefined;
+  if (!email) return null;
+  return { firstName, lastName, email, ...(phone ? { phone } : {}) };
+}
+
 // Certificate handlers (used for both /certificate and /api/certificate for nginx proxy)
 async function handleCreateCertificate(req, res) {
   try {
-    const { amount, customer, sponsor, greetingText } = req.body;
+    const body = req.body || {};
+    const amount = body.amount != null ? Number(body.amount) : NaN;
+    const customer = normalizeCustomer(body.customer);
+    const sponsor = body.sponsor ? normalizeCustomer(body.sponsor) : undefined;
+    const greetingText = body.greetingText ?? body.greeting_text;
 
     console.log('📝 Creating certificate:', { amount, customer, sponsor, greetingText });
 
-    // Validate required fields
-    if (!amount || amount <= 0) {
+    if (!Number.isFinite(amount) || amount <= 0) {
       return res.status(400).json({
         error: 'Invalid amount',
-        message: 'Amount must be greater than 0',
+        message: 'Требуется поле amount (число больше 0)',
       });
     }
 
-    if (!customer || !customer.email || !customer.firstName || !customer.lastName) {
+    if (!customer) {
       return res.status(400).json({
         error: 'Invalid customer data',
-        message: 'Customer email, firstName, and lastName are required',
+        message: 'Требуется объект customer с полями email, firstName (или first_name), lastName (или last_name)',
       });
     }
 
@@ -261,6 +275,8 @@ async function handleCheckPayment(req, res) {
 
 app.post('/certificate/check-payment/:orderNumber', handleCheckPayment);
 app.post('/api/certificate/check-payment/:orderNumber', handleCheckPayment);
+// Диагностика: GET https://clinicaldan.ru/api/certificate/ping → { "ok": true } если бэкенд обновлён
+app.get('/api/certificate/ping', (req, res) => res.json({ ok: true, route: 'api/certificate' }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

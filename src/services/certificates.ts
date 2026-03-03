@@ -114,21 +114,22 @@ class CertificateService {
   }
 
   /**
-   * Разделение полного имени на имя и фамилию
+   * Разделение полного имени на имя и фамилию.
+   * Всегда возвращает непустые строки (для БД: first_name/last_name не NULL).
    */
   parseFullName(fullName: string): { firstName: string; lastName: string } {
-    const nameParts = fullName.trim().split(' ');
+    const trimmed = fullName.trim();
+    const nameParts = trimmed.split(/\s+/).filter(Boolean);
     if (nameParts.length >= 2) {
       return {
         firstName: nameParts[0],
         lastName: nameParts.slice(1).join(' ')
       };
-    } else {
-      return {
-        firstName: nameParts[0] || '',
-        lastName: ''
-      };
     }
+    if (nameParts.length === 1) {
+      return { firstName: nameParts[0], lastName: '—' };
+    }
+    return { firstName: '—', lastName: '—' };
   }
 
   /**
