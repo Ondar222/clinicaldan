@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"vite --host 0.0.0.0\" --names \"backend,vite\" --prefix-colors \"blue,green\"",
+    "dev": "vite --host 0.0.0.0",
     "build": "tsc && vite build",
     "lint": "npx biome lint --write && npx tsc --noEmit",
     "format": "npx biome format --write",
