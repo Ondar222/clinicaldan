@@ -120,8 +120,8 @@ function generateOrderNumber() {
   return `cert_${timestamp}_${random}`;
 }
 
-// POST /certificate - Create certificate and get payment URL
-app.post('/certificate', async (req, res) => {
+// Certificate handlers (used for both /certificate and /api/certificate for nginx proxy)
+async function handleCreateCertificate(req, res) {
   try {
     const { amount, customer, sponsor, greetingText } = req.body;
 
@@ -175,11 +175,11 @@ app.post('/certificate', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Error creating certificate:', error);
-    
+
     // Determine error type and return user-friendly message
     let errorMessage = 'Произошла ошибка при создании сертификата. Попробуйте позже.';
     let errorStatus = 500;
-    
+
     if (error.message?.includes('Alfa-Bank')) {
       errorMessage = 'Сервис оплаты временно недоступен. Попробуйте позже или свяжитесь с нами.';
       errorStatus = 503; // Service Unavailable
@@ -190,17 +190,21 @@ app.post('/certificate', async (req, res) => {
       errorMessage = 'Ошибка соединения с банком. Проверьте интернет и попробуйте снова.';
       errorStatus = 502; // Bad Gateway
     }
-    
+
     res.status(errorStatus).json({
       error: 'Certificate creation failed',
       message: errorMessage,
-      details: import.meta.env.PROD ? undefined : error.message, // Don't expose details in production
+      details: process.env.NODE_ENV === 'production' ? undefined : error.message,
     });
   }
-});
+}
 
-// POST /certificate/check-payment/:orderNumber - Check payment status
-app.post('/certificate/check-payment/:orderNumber', async (req, res) => {
+// POST /certificate and POST /api/certificate - Create certificate and get payment URL
+app.post('/certificate', handleCreateCertificate);
+app.post('/api/certificate', handleCreateCertificate);
+
+// POST /certificate/check-payment/:orderNumber and /api/certificate/check-payment/:orderNumber - Check payment status
+async function handleCheckPayment(req, res) {
   try {
     const { orderNumber } = req.params;
 
@@ -253,7 +257,10 @@ app.post('/certificate/check-payment/:orderNumber', async (req, res) => {
       message: error.message || 'Internal server error',
     });
   }
-});
+}
+
+app.post('/certificate/check-payment/:orderNumber', handleCheckPayment);
+app.post('/api/certificate/check-payment/:orderNumber', handleCheckPayment);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

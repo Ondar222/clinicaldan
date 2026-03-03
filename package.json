@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "concurrently \"npm run server\" \"vite --host 0.0.0.0\" --names \"backend,vite\" --prefix-colors \"blue,green\"",
     "build": "tsc && vite build",
     "lint": "npx biome lint --write && npx tsc --noEmit",
     "format": "npx biome format --write",
@@ -27,6 +27,7 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "@biomejs/biome": "1.9.4",
     "@eslint/js": "^9.18.0",
     "@types/node": "^24.0.14",
