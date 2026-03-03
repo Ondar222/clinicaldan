@@ -31,19 +31,43 @@ class VKService {
       }
       
       const data = await response.json();
-      
+      // Сервер при успехе отдаёт result.data = { items, count }; при ошибке — { items: [], count: 0, error }
+      if (data.error) {
+        return { posts: [], total: 0, error: data.error };
+      }
+      const rawItems = data.items ?? data.data?.items ?? [];
+      const totalCount = data.count ?? data.data?.count ?? 0;
+
       // Map backend response to frontend format
-      const posts = (data.items || [])
+      const posts = (rawItems)
         .filter((item: any) => !item.marked_as_ads && item.date)
         .map((item: any) => {
-          // Extract image if available
+          // Extract image/thumbnail: photo, video preview, or link image
           let imageUrl: string | undefined;
           if (item.attachments && item.attachments.length > 0) {
             const photo = item.attachments.find((a: any) => a.type === 'photo');
-            if (photo) {
+            if (photo?.photo) {
               const sizes = photo.photo.sizes || [];
               const largest = sizes[sizes.length - 1];
               imageUrl = largest?.url || photo.photo.photo_604 || photo.photo.photo_200;
+            }
+            if (!imageUrl) {
+              const video = item.attachments.find((a: any) => a.type === 'video');
+              if (video?.video) {
+                // VK video: photo_640, photo_320, photo_130 или image / first_frame
+                const v = video.video;
+                imageUrl = v.photo_640 || v.photo_320 || v.photo_130
+                  || (Array.isArray(v.image) ? v.image[0]?.url : v.image?.url)
+                  || (Array.isArray(v.first_frame) ? v.first_frame[0]?.url : v.first_frame?.url);
+              }
+            }
+            if (!imageUrl) {
+              const link = item.attachments.find((a: any) => a.type === 'link');
+              if (link?.link?.image) {
+                const img = link.link.image;
+                const arr = Array.isArray(img) ? img : [img];
+                imageUrl = arr[0]?.url || (typeof arr[0] === 'string' ? arr[0] : undefined);
+              }
             }
           }
 
@@ -65,7 +89,7 @@ class VKService {
 
       return {
         posts,
-        total: data.count || 0,
+        total: totalCount,
       };
     } catch (error: any) {
       console.error('Error fetching VK posts:', error);

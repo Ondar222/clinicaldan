@@ -8,6 +8,7 @@ import Advantages from "./components/Advantages";
 import Testimonials from "./components/Testimonials";
 import ContactForm from "./components/ContactForm";
 import Checkups from "./components/Checkups";
+import News from "./components/News";
 import Tools from "./components/Tools";
 import DoctorsPage from "./components/DoctorsPage";
 import NewsPage from "./components/NewsPage";
@@ -48,6 +49,7 @@ function HomePage() {
     <>
       <Hero />
       <ServiceGrid />
+      <News limit={4} showPagination={false} />
       <Checkups />
       <Advantages />
       <Testimonials />
