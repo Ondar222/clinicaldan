@@ -116,6 +116,12 @@ export default defineConfig({
 				changeOrigin: true,
 				secure: false,
 			},
+			'/api/certificate': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+				rewrite: (path) => path.replace(/^\/api\/certificate/, '/certificate'),
+			},
 			'/vk': {
 				target: 'http://localhost:5002',
 				changeOrigin: true,

@@ -147,6 +147,22 @@ export default function Header() {
               </li>
               <li>
                 <Link
+                  to="/checkups"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                >
+                  Медосмотры 
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/medical-examinations"
+                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                >
+                  Медосмотры
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/reviews"
                   className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
@@ -340,6 +356,24 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Сертификаты
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/checkups"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Медосмотры (Центр)
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/medical-examinations"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Медосмотры
               </Link>
             </li>
             <li>

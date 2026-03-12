@@ -8,6 +8,7 @@ import Advantages from "./components/Advantages";
 import Testimonials from "./components/Testimonials";
 import ContactForm from "./components/ContactForm";
 import Checkups from "./components/Checkups";
+import CheckupCenterPage from "./components/CheckupCenterPage";
 import News from "./components/News";
 import Tools from "./components/Tools";
 import DoctorsPage from "./components/DoctorsPage";
@@ -19,6 +20,7 @@ import ContactsPage from "./components/ContactsPage";
 import FAQPage from "./components/FAQPage";
 import AboutClinicPage from "./components/AboutClinicPage";
 import DocumentsPage from "./components/DocumentsPage";
+import MedicalExaminationsPage from "./components/MedicalExaminationsPage";
 // Временно скрыто - компоненты сертификатов и записи на прием
 // import GiftCertificatesPage from "./components/GiftCertificatesPage";
 import PriceListPage from "./components/PriceListPage";
@@ -87,6 +89,7 @@ function App() {
             <Route path="/about" element={<AboutClinicPage />} />
             <Route path="/doctors" element={<DoctorsPage />} />
             <Route path="/doctors/:id" element={<DoctorDetailsPage />} />
+            <Route path="/medical-examinations" element={<MedicalExaminationsPage />} />
             <Route path="/news" element={<NewsPage />} />
             <Route path="/reviews" element={<ReviewsPage />} />
             <Route path="/stock" element={<PromotionsPage />} />
@@ -94,6 +97,7 @@ function App() {
             <Route path="/questions" element={<FAQPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
             <Route path="/certificates" element={<GiftCertificatesPage />} />
+            <Route path="/checkups" element={<CheckupCenterPage />} />
             <Route
               path="/certificates/success"
               element={<PaymentSuccessPage type="certificate" />}

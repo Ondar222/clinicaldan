@@ -9,8 +9,7 @@
     "lint": "npx biome lint --write && npx tsc --noEmit",
     "format": "npx biome format --write",
     "preview": "vite preview",
-    "server": "node server.js",
-    "start": "npm run build && npm run server"
+    "start": "npm run build && vite preview"
   },
   "dependencies": {
     "bvi": "^1.0.2",

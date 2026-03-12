@@ -4,6 +4,17 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import archimedService from "../services/archimed";
 import type { ArchimedDoctor } from "../types/cms";
 import AppointmentModal from "./AppointmentModal";
+import prodoctorovData from "../data/prodoctorov.json";
+
+// Создаем мапу фото из prodoctorov.json
+const doctorPhotoMap = new Map<string, string>();
+if (Array.isArray(prodoctorovData)) {
+  prodoctorovData.forEach((doc: any) => {
+    if (doc.fullName && doc.photo) {
+      doctorPhotoMap.set(doc.fullName.toLowerCase(), doc.photo);
+    }
+  });
+}
 
 const DoctorDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -75,6 +86,21 @@ const DoctorDetailsPage: React.FC = () => {
 
   const getDoctorInitials = (doctor: ArchimedDoctor) => {
     return `${doctor.name} ${doctor.name1?.charAt(0)}. ${doctor.name2?.charAt(0)}.`;
+  };
+
+  // Получение фото врача: приоритеты
+  const getDoctorPhoto = (doctor: ArchimedDoctor): string | null => {
+    if (doctor.photo && doctor.photo.length > 10) {
+      if (doctor.photo.startsWith('http') || doctor.photo.startsWith('/')) {
+        return doctor.photo;
+      }
+      if (doctor.photo.length > 50) {
+        return doctor.photo.startsWith('data:') ? doctor.photo : `data:image/bmp;base64,${doctor.photo}`;
+      }
+    }
+
+    const fullName = getDoctorFullName(doctor).toLowerCase();
+    return doctorPhotoMap.get(fullName) || null;
   };
 
   const formatSpecialtyName = (raw: string | undefined | null): string => {
@@ -172,31 +198,47 @@ const DoctorDetailsPage: React.FC = () => {
             <div className="grid md:grid-cols-3 gap-8">
               {/* Фото врача */}
               <div className="md:col-span-1">
-                <div className="w-full h-80 bg-gray-100 rounded-lg overflow-hidden">
-                  {doctor.photo ? (
-                    <>
-                      <img
-                        src={
-                          doctor.photo.startsWith("data:")
-                            ? doctor.photo
-                            : doctor.photo
-                        }
-                        alt={getDoctorFullName(doctor)}
-                        className="w-full h-full object-cover object-center"
-                        onError={(e) => {
-                          e.currentTarget.style.display = "none";
-                          const nextElement = e.currentTarget
-                            .nextElementSibling as HTMLElement;
-                          if (nextElement) {
-                            nextElement.style.display = "flex";
-                          }
-                        }}
-                      />
-                      <div
-                        className="w-full h-full flex items-center justify-center text-gray-400"
-                        style={{ display: "none" }}
-                      >
-                        <div className="text-center">
+                <div className="w-full h-80 bg-gray-100 rounded-lg overflow-hidden shadow-md">
+                  {(() => {
+                    const photoUrl = getDoctorPhoto(doctor);
+                    return photoUrl ? (
+                      <>
+                        <img
+                          src={photoUrl}
+                          alt={getDoctorFullName(doctor)}
+                          className="w-full h-full object-cover object-[50%_30%]"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            const nextElement = e.currentTarget
+                              .nextElementSibling as HTMLElement;
+                            if (nextElement) {
+                              nextElement.style.display = "flex";
+                            }
+                          }}
+                        />
+                        <div
+                          className="w-full h-full flex items-center justify-center text-gray-400"
+                          style={{ display: "none" }}
+                        >
+                          <div className="text-center p-4">
+                            <svg
+                              className="w-16 h-16 mx-auto mb-2"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                            <p className="text-sm">Фото недоступно</p>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-primary/20 to-primaryDark/20">
+                        <div className="text-center p-4">
                           <svg
                             className="w-16 h-16 mx-auto mb-2"
                             fill="currentColor"
@@ -208,28 +250,11 @@ const DoctorDetailsPage: React.FC = () => {
                               clipRule="evenodd"
                             />
                           </svg>
-                          <p className="text-sm">Фото недоступно</p>
+                          <p className="text-sm">Фото отсутствует</p>
                         </div>
                       </div>
-                    </>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      <div className="text-center">
-                        <svg
-                          className="w-16 h-16 mx-auto mb-2"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        <p>Фото отсутствует</p>
-                      </div>
-                    </div>
-                  )}
+                    );
+                  })()}
                 </div>
               </div>
 

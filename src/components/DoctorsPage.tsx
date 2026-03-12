@@ -9,6 +9,17 @@ import type {
 import archimedService from "../services/archimed";
 import ErrorComponent from "./ErrorComponent";
 import AppointmentModal from "./AppointmentModal";
+import prodoctorovData from "../data/prodoctorov.json";
+
+// Создаем мапу фото из prodoctorov.json
+const doctorPhotoMap = new Map<string, string>();
+if (Array.isArray(prodoctorovData)) {
+  prodoctorovData.forEach((doc: any) => {
+    if (doc.fullName && doc.photo) {
+      doctorPhotoMap.set(doc.fullName.toLowerCase(), doc.photo);
+    }
+  });
+}
 
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState<ArchimedDoctor[]>([]);
@@ -182,6 +193,24 @@ export default function DoctorsPage() {
 
   const getDoctorFullName = (doctor: ArchimedDoctor) => {
     return `${doctor.name} ${doctor.name1} ${doctor.name2}`;
+  };
+
+  // Получение фото врача из prodoctorov.json
+  const getDoctorPhoto = (doctor: ArchimedDoctor): string | null => {
+    // Если уже есть photo в doctor
+    if (doctor.photo && doctor.photo.length > 10) {
+      if (doctor.photo.startsWith('http') || doctor.photo.startsWith('/')) {
+        return doctor.photo;
+      }
+      // base64 данные
+      if (doctor.photo.length > 50) {
+        return doctor.photo.startsWith('data:') ? doctor.photo : `data:image/bmp;base64,${doctor.photo}`;
+      }
+    }
+    
+    // Ищем в prodoctorov.json
+    const fullName = getDoctorFullName(doctor).toLowerCase();
+    return doctorPhotoMap.get(fullName) || null;
   };
 
   const getDoctorInitials = (doctor: ArchimedDoctor) => {
@@ -398,29 +427,44 @@ export default function DoctorsPage() {
                   className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col h-full"
                 >
                   <div className="h-28 sm:h-44 bg-gradient-to-br from-primary to-primaryDark flex items-center justify-center">
-                    {doctor.photo ? (
-                      <>
-                        <img
-                          src={
-                            doctor.photo.startsWith("data:")
-                              ? doctor.photo
-                              : doctor.photo
-                          }
-                          alt={getDoctorFullName(doctor)}
-                          className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover object-[50%_30%] border-3 sm:border-4 border-white"
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                            const nextElement = e.currentTarget
-                              .nextElementSibling as HTMLElement;
-                            if (nextElement) {
-                              nextElement.style.display = "flex";
-                            }
-                          }}
-                        />
-                        <div
-                          className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center"
-                          style={{ display: "none" }}
-                        >
+                    {(() => {
+                      const photoUrl = getDoctorPhoto(doctor);
+                      return photoUrl ? (
+                        <>
+                          <img
+                            src={photoUrl}
+                            alt={getDoctorFullName(doctor)}
+                            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover object-[50%_30%] border-3 sm:border-4 border-white"
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                              const nextElement = e.currentTarget
+                                .nextElementSibling as HTMLElement;
+                              if (nextElement) {
+                                nextElement.style.display = "flex";
+                              }
+                            }}
+                          />
+                          <div
+                            className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center"
+                            style={{ display: "none" }}
+                          >
+                            <svg
+                              className="w-8 h-8 sm:w-12 sm:h-12 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                              />
+                            </svg>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
                           <svg
                             className="w-8 h-8 sm:w-12 sm:h-12 text-white"
                             fill="none"
@@ -435,24 +479,8 @@ export default function DoctorsPage() {
                             />
                           </svg>
                         </div>
-                      </>
-                    ) : (
-                      <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
-                        <svg
-                          className="w-8 h-8 sm:w-12 sm:h-12 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                          />
-                        </svg>
-                      </div>
-                    )}
+                      );
+                    })()}
                   </div>
 
                   <div className="p-3 sm:p-5 flex flex-col flex-grow">
