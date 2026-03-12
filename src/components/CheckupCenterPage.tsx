@@ -274,23 +274,55 @@ export default function CheckupCenterPage() {
   const [specialists, setSpecialists] = useState<Specialist[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Загрузка врачей из Archimed API
+  // Загрузка врачей из Archimed API для медосмотров
   useEffect(() => {
     const loadDoctors = async () => {
       try {
         const doctors = await archimedService.getDoctors();
+        
+        // Специальности врачей для медосмотров
+        const checkupSpecialties = [
+          /терапевт/i,
+          /профпатолог/i,
+          /невролог/i,
+          /офтальмолог/i,
+          /лор/i,
+          /оториноларинголог/i,
+          /хирург/i,
+          /психиатр/i,
+          /нарколог/i,
+          /дерматолог/i,
+          /фтизиатр/i,
+        ];
+        
+        // Фильтруем врачей - только те, кто проводит медосмотры
+        const filtered = doctors.filter(d => {
+          // Пропускаем пустые имена
+          if (!d.name || d.name.trim() === '') return false;
+          
+          // Пропускаем администраторов и тестовые записи
+          const nameBlob = `${d.name || ""} ${d.name1 || ""} ${d.name2 || ""} ${d.type || ""}`.toLowerCase();
+          if (/администратор|archimed|арбаев/i.test(nameBlob)) return false;
+          
+          // Пропускаем массажистов
+          if (/массажист/i.test(d?.type || "")) return false;
+          
+          // Проверяем специальность
+          const specialty = d.type || d.category || '';
+          const matchesSpecialty = checkupSpecialties.some(regex => regex.test(specialty));
+          
+          return matchesSpecialty;
+        });
+        
         // Берём первых 8 доступных врачей
-        const mapped = doctors
-          .filter(d => d.name && d.name.trim() !== '')
-          .slice(0, 8)
-          .map((doctor, index) => ({
-            id: doctor.id,
-            name: `${doctor.name} ${doctor.name1} ${doctor.name2}`.trim(),
-            specialty: doctor.category || doctor.type || 'Врач',
-            experience: doctor.max_time ? parseInt(doctor.max_time, 10) || 0 : 0,
-            image: getDoctorPhotoUrl(doctor),
-            isAvailable: true,
-          }));
+        const mapped = filtered.slice(0, 8).map((doctor) => ({
+          id: doctor.id,
+          name: `${doctor.name} ${doctor.name1} ${doctor.name2}`.trim(),
+          specialty: doctor.category || doctor.type || 'Врач',
+          experience: doctor.max_time ? parseInt(doctor.max_time, 10) || 0 : 0,
+          image: getDoctorPhotoUrl(doctor),
+          isAvailable: true,
+        }));
         setSpecialists(mapped);
       } catch (error) {
         console.error('Error loading doctors:', error);
