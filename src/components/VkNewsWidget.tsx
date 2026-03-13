@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+  // ввавава
 // Backend API URL - relative path so Vite proxy (dev) or nginx (prod) handles it
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
