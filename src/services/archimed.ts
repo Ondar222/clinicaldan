@@ -27,7 +27,7 @@ console.log('Final ARCHIMED_API_TOKEN:', ARCHIMED_API_TOKEN);
 const ARCHIMED_CATEGORIES_ENABLED = false;
 
 // Local cache settings
-const DOCTORS_CACHE_KEY = 'archimed_doctors_v1';
+const DOCTORS_CACHE_KEY = 'archimed_doctors_v2';
 const SERVICES_CACHE_KEY = 'archimed_services_v1';
 const DOCTORS_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 const SERVICES_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
@@ -49,6 +49,13 @@ const makeFullName = (d: ArchimedDoctor) =>
 // Names to exclude from all doctors lists and details
 const NAME_BLACKLIST = new Set<string>([
   'хорбаа анжела тарасовна',
+  'торуш ш',
+  'монгуш чаяна алексеевна',
+  'байтингер андрей владимирович',
+  'щевелева галина викторовна',
+  'бегзи сай-суу олеговна',
+  'лопсан ай-суу орлановна',
+  'сафин динара адхамович',
 ]);
 
 class ArchimedService {
@@ -200,13 +207,13 @@ class ArchimedService {
       console.log('Local API returned doctors:', allDoctors?.length || 0);
       this.doctorsCache = allDoctors || [];
 
-      // If API returned too few, try to enrich from ProDoctorov local snapshot
-      if (this.doctorsCache.length < 10) {
-        const proDocs = await this.loadProdoctorovSnapshot();
-        if (proDocs.length > 0) {
-          console.log('Enriching doctors with ProDoctorov snapshot:', proDocs.length);
-          this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
-        }
+      // Always enrich from ProDoctorov local snapshot
+      const proDocs = await this.loadProdoctorovSnapshot();
+      if (proDocs.length > 0) {
+        console.log('Enriching doctors with ProDoctorov snapshot:', proDocs.length);
+        console.log('ProDoctorov doctors:', proDocs.map(d => `${d.name} ${d.name1} ${d.name2}`));
+        this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
+        console.log('After merge, total doctors:', this.doctorsCache.length);
       }
       this.doctorsCache = this.applyRemovals(this.doctorsCache);
       this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
