@@ -27,14 +27,14 @@ console.log('Final ARCHIMED_API_TOKEN:', ARCHIMED_API_TOKEN);
 const ARCHIMED_CATEGORIES_ENABLED = false;
 
 // Local cache settings
-const DOCTORS_CACHE_KEY = 'archimed_doctors_v4';
+const DOCTORS_CACHE_KEY = 'archimed_doctors_v5_no_cache';
 const SERVICES_CACHE_KEY = 'archimed_services_v1';
-const DOCTORS_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour - shorter TTL for fresher data
+const DOCTORS_CACHE_TTL_MS = 0; // Disabled - always fetch fresh data to ensure blacklist is applied
 const SERVICES_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 const DEFAULT_REQUEST_TIMEOUT_MS = 20000; // 20s
 
 // Old cache keys to clean up
-const OLD_DOCTORS_CACHE_KEYS = ['archimed_doctors_v2', 'archimed_doctors_v3'];
+const OLD_DOCTORS_CACHE_KEYS = ['archimed_doctors_v2', 'archimed_doctors_v3', 'archimed_doctors_v4', 'archimed_doctors_v5_no_cache'];
 const DEFAULT_API_PAGE_LIMIT = 200; // request large page size to reduce pagination
 const MAX_API_PAGES = 50; // hard cap to prevent runaway loops
 
@@ -89,26 +89,8 @@ class ArchimedService {
       console.log('Cache cleanup error:', error);
     }
 
-    // Warm caches from localStorage on startup for instant UI
-    try {
-      const doctorsFromStorage = this.readFromStorage<unknown>(DOCTORS_CACHE_KEY, DOCTORS_CACHE_TTL_MS);
-      if (Array.isArray(doctorsFromStorage)) {
-        console.log('Loaded doctors from storage:', doctorsFromStorage.length);
-        this.doctorsCache = this.applyRemovals(doctorsFromStorage as ArchimedDoctor[]);
-      } else if (doctorsFromStorage && typeof doctorsFromStorage === 'object' && Array.isArray((doctorsFromStorage as any).data)) {
-        const normalized = (doctorsFromStorage as any).data as ArchimedDoctor[];
-        console.log('Loaded doctors from storage (normalized from .data):', normalized.length);
-        this.doctorsCache = this.applyRemovals(normalized);
-        this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
-      }
-      const servicesFromStorage = this.readFromStorage<ApiService[]>(SERVICES_CACHE_KEY, SERVICES_CACHE_TTL_MS);
-      if (servicesFromStorage) {
-        console.log('Loaded services from storage:', servicesFromStorage.length);
-        this.servicesCache = servicesFromStorage;
-      }
-    } catch (error) {
-      console.log('Storage error:', error);
-    }
+    // No longer loading from localStorage - always fetch fresh data for doctors
+    console.log('Doctors cache disabled - will always fetch fresh data');
   }
 
   private async request<T>(endpoint: string, options?: RequestInit & { timeoutMs?: number; suppressErrorLog?: boolean }): Promise<T> {
@@ -166,12 +148,14 @@ class ArchimedService {
   private readFromStorage<T>(key: string, ttlMs: number): T | null {
     try {
       if (typeof window === 'undefined') return null;
+      // If TTL is 0, skip cache entirely and always fetch fresh
+      if (ttlMs === 0) return null;
       const raw = window.localStorage.getItem(key);
       if (!raw) return null;
       const parsed = JSON.parse(raw) as { data: T; timestamp: number };
       if (!parsed || !parsed.data || !parsed.timestamp) return null;
       const isFresh = Date.now() - parsed.timestamp < ttlMs;
-      return isFresh ? parsed.data : parsed.data; // return stale data too; we'll revalidate
+      return isFresh ? parsed.data : null; // Return null if stale when TTL > 0
     } catch {
       return null;
     }
@@ -191,31 +175,8 @@ class ArchimedService {
   async getDoctors(): Promise<ArchimedDoctor[]> {
     console.log('getDoctors called, cache length:', this.doctorsCache.length);
 
-    if (this.doctorsCache.length > 0) {
-      console.log('Returning cached doctors:', this.doctorsCache.length);
-      // Revalidate in background for freshness
-      this.refreshDoctors();
-      return this.doctorsCache;
-    }
-
-    const fromStorage = this.readFromStorage<unknown>(DOCTORS_CACHE_KEY, DOCTORS_CACHE_TTL_MS);
-    if (Array.isArray(fromStorage) && fromStorage.length > 0) {
-      console.log('Loading doctors from storage:', fromStorage.length);
-      this.doctorsCache = this.applyRemovals(fromStorage as ArchimedDoctor[]);
-      // refresh in background
-      this.refreshDoctors();
-      return this.doctorsCache;
-    }
-    if (fromStorage && typeof fromStorage === 'object' && Array.isArray((fromStorage as any).data)) {
-      const normalized = (fromStorage as any).data as ArchimedDoctor[];
-      console.log('Loading doctors from storage (normalized from .data):', normalized.length);
-      this.doctorsCache = this.applyRemovals(normalized);
-      this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
-      this.refreshDoctors();
-      return this.doctorsCache;
-    }
-
-    console.log('No cached data, fetching from local backend API...');
+    // Always fetch fresh data to ensure blacklist is applied (no caching for doctors)
+    console.log('Fetching fresh doctors data (no cache)...');
     try {
       // Fetch from local backend proxy only (no direct external API calls)
       const allDoctors = await this.fetchAllDoctorsFromAPI();
@@ -231,7 +192,7 @@ class ArchimedService {
         console.log('After merge, total doctors:', this.doctorsCache.length);
       }
       this.doctorsCache = this.applyRemovals(this.doctorsCache);
-      this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
+      console.log('After applying blacklist, doctors count:', this.doctorsCache.length);
       return this.doctorsCache;
     } catch (error) {
       console.warn('API недоступен, пробуем загрузить локальный файл doctors.json. Ошибка:', error);
@@ -253,8 +214,7 @@ class ArchimedService {
           }
         }
         this.doctorsCache = this.applyRemovals(this.doctorsCache);
-        this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
-        console.log('Using local doctors.json:', this.doctorsCache.length);
+        console.log('After applying blacklist (from doctors.json), doctors count:', this.doctorsCache.length);
         return this.doctorsCache;
       } catch (e) {
         console.warn('Не удалось загрузить doctors.json, используем mockDoctors. Ошибка:', e);
@@ -266,11 +226,14 @@ class ArchimedService {
           this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
         }
         this.doctorsCache = this.applyRemovals(this.doctorsCache);
-        this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
-        console.log('Using mock doctors:', this.doctorsCache.length);
+        console.log('After applying blacklist (from mock), doctors count:', this.doctorsCache.length);
         return this.doctorsCache;
       }
     }
+  }
+
+  async refreshDoctorsIfNeeded(): Promise<void> {
+    // Background refresh - no longer used since we always fetch fresh
   }
 
   async getDoctor(id: number): Promise<ArchimedDoctor> {
@@ -441,17 +404,9 @@ class ArchimedService {
     return this.doctorsCache;
   }
 
-  // Background refreshers (stale-while-revalidate)
+  // Background refreshers - disabled for doctors (always fetch fresh)
   private async refreshDoctors(): Promise<void> {
-    try {
-      const allDoctors = await this.fetchAllDoctorsFromAPI();
-      if (Array.isArray(allDoctors) && allDoctors.length > 0) {
-        this.doctorsCache = this.applyRemovals(allDoctors);
-        this.writeToStorage(DOCTORS_CACHE_KEY, this.doctorsCache);
-      }
-    } catch {
-      // keep stale cache on failure
-    }
+    // No-op - doctors are always fetched fresh
   }
 
   private async fetchAllDoctorsFromAPI(): Promise<ArchimedDoctor[]> {
