@@ -59,6 +59,8 @@ const NAME_BLACKLIST = new Set<string>([
   'бегзи сай-суу олеговна',
   'лопсан ай-суу орлановна',
   'сафин динара адхамович',
+  'арбаев аржан ильич',
+  'дажынай мария владимировна',
 ]);
 
 class ArchimedService {
@@ -171,64 +173,46 @@ class ArchimedService {
     }
   }
 
-  // Doctors
+  // Doctors - load from local files only (no API)
   async getDoctors(): Promise<ArchimedDoctor[]> {
-    console.log('getDoctors called, cache length:', this.doctorsCache.length);
+    console.log('getDoctors called - loading from local files only (no API)');
 
-    // Always fetch fresh data to ensure blacklist is applied (no caching for doctors)
-    console.log('Fetching fresh doctors data (no cache)...');
     try {
-      // Fetch from local backend proxy only (no direct external API calls)
-      const allDoctors = await this.fetchAllDoctorsFromAPI();
-      console.log('Local API returned doctors:', allDoctors?.length || 0);
-      this.doctorsCache = allDoctors || [];
+      // 1) Load from doctors.json (real data snapshot)
+      const localModule = await import('../data/doctors.json');
+      const raw = (localModule as any).default;
+      let localDoctors: ArchimedDoctor[] = Array.isArray(raw)
+        ? (raw as ArchimedDoctor[])
+        : (Array.isArray(raw?.data) ? (raw.data as ArchimedDoctor[]) : []);
 
-      // Always enrich from ProDoctorov local snapshot
+      console.log('Loaded from doctors.json:', localDoctors.length);
+
+      // 2) Enrich from ProDoctorov snapshot
       const proDocs = await this.loadProdoctorovSnapshot();
       if (proDocs.length > 0) {
-        console.log('Enriching doctors with ProDoctorov snapshot:', proDocs.length);
-        console.log('ProDoctorov doctors:', proDocs.map(d => `${d.name} ${d.name1} ${d.name2}`));
+        console.log('Enriching with ProDoctorov snapshot:', proDocs.length);
+        localDoctors = this.mergeDoctors(localDoctors, proDocs);
+        console.log('After merge, total doctors:', localDoctors.length);
+      }
+
+      // 3) Apply blacklist to remove unwanted doctors
+      localDoctors = this.applyRemovals(localDoctors);
+      console.log('After applying blacklist, doctors count:', localDoctors.length);
+
+      this.doctorsCache = localDoctors;
+      return this.doctorsCache;
+    } catch (e) {
+      console.warn('Не удалось загрузить doctors.json, используем mockDoctors. Ошибка:', e);
+      // Fallback to mock data
+      this.doctorsCache = mockDoctors;
+      const proDocs = await this.loadProdoctorovSnapshot();
+      if (proDocs.length > 0) {
+        console.log('Enriching mock doctors with ProDoctorov snapshot:', proDocs.length);
         this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
-        console.log('After merge, total doctors:', this.doctorsCache.length);
       }
       this.doctorsCache = this.applyRemovals(this.doctorsCache);
-      console.log('After applying blacklist, doctors count:', this.doctorsCache.length);
+      console.log('After applying blacklist (from mock), doctors count:', this.doctorsCache.length);
       return this.doctorsCache;
-    } catch (error) {
-      console.warn('API недоступен, пробуем загрузить локальный файл doctors.json. Ошибка:', error);
-      try {
-        // 3) Fallback to local doctors.json (real data snapshot)
-        const localModule = await import('../data/doctors.json');
-        const raw = (localModule as any).default;
-        const localDoctors: ArchimedDoctor[] = Array.isArray(raw)
-          ? (raw as ArchimedDoctor[])
-          : (Array.isArray(raw?.data) ? (raw.data as ArchimedDoctor[]) : []);
-        this.doctorsCache = localDoctors;
-
-        // Enrich from ProDoctorov snapshot if available
-        if (this.doctorsCache.length < 10) {
-          const proDocs = await this.loadProdoctorovSnapshot();
-          if (proDocs.length > 0) {
-            console.log('Enriching local doctors.json with ProDoctorov snapshot:', proDocs.length);
-            this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
-          }
-        }
-        this.doctorsCache = this.applyRemovals(this.doctorsCache);
-        console.log('After applying blacklist (from doctors.json), doctors count:', this.doctorsCache.length);
-        return this.doctorsCache;
-      } catch (e) {
-        console.warn('Не удалось загрузить doctors.json, используем mockDoctors. Ошибка:', e);
-        // 4) Last resort – mock data
-        this.doctorsCache = mockDoctors;
-        const proDocs = await this.loadProdoctorovSnapshot();
-        if (proDocs.length > 0) {
-          console.log('Enriching mock doctors with ProDoctorov snapshot:', proDocs.length);
-          this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
-        }
-        this.doctorsCache = this.applyRemovals(this.doctorsCache);
-        console.log('After applying blacklist (from mock), doctors count:', this.doctorsCache.length);
-        return this.doctorsCache;
-      }
     }
   }
 
