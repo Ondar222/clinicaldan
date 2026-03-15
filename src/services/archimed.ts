@@ -27,11 +27,14 @@ console.log('Final ARCHIMED_API_TOKEN:', ARCHIMED_API_TOKEN);
 const ARCHIMED_CATEGORIES_ENABLED = false;
 
 // Local cache settings
-const DOCTORS_CACHE_KEY = 'archimed_doctors_v3';
+const DOCTORS_CACHE_KEY = 'archimed_doctors_v4';
 const SERVICES_CACHE_KEY = 'archimed_services_v1';
-const DOCTORS_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
+const DOCTORS_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour - shorter TTL for fresher data
 const SERVICES_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 const DEFAULT_REQUEST_TIMEOUT_MS = 20000; // 20s
+
+// Old cache keys to clean up
+const OLD_DOCTORS_CACHE_KEYS = ['archimed_doctors_v2', 'archimed_doctors_v3'];
 const DEFAULT_API_PAGE_LIMIT = 200; // request large page size to reduce pagination
 const MAX_API_PAGES = 50; // hard cap to prevent runaway loops
 
@@ -73,6 +76,18 @@ class ArchimedService {
 
     console.log('ArchimedService constructor, API URL:', this.baseUrl);
     console.log('API Token configured:', !!ARCHIMED_API_TOKEN);
+
+    // Clean up old cache keys to force fresh data with blacklist applied
+    try {
+      OLD_DOCTORS_CACHE_KEYS.forEach(key => {
+        try {
+          window.localStorage?.removeItem(key);
+          console.log('Cleared old cache key:', key);
+        } catch {}
+      });
+    } catch (error) {
+      console.log('Cache cleanup error:', error);
+    }
 
     // Warm caches from localStorage on startup for instant UI
     try {
