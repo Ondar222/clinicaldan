@@ -27,7 +27,7 @@ console.log('Final ARCHIMED_API_TOKEN:', ARCHIMED_API_TOKEN);
 const ARCHIMED_CATEGORIES_ENABLED = false;
 
 // Local cache settings
-const DOCTORS_CACHE_KEY = 'archimed_doctors_v2';
+const DOCTORS_CACHE_KEY = 'archimed_doctors_v3';
 const SERVICES_CACHE_KEY = 'archimed_services_v1';
 const DOCTORS_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 const SERVICES_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
