@@ -21,6 +21,7 @@ import FAQPage from "./components/FAQPage";
 import AboutClinicPage from "./components/AboutClinicPage";
 import DocumentsPage from "./components/DocumentsPage";
 import MedicalExaminationsPage from "./components/MedicalExaminationsPage";
+import ToolsPage from "./components/ToolsPage";
 // Временно скрыто - компоненты сертификатов и записи на прием
 // import GiftCertificatesPage from "./components/GiftCertificatesPage";
 import PriceListPage from "./components/PriceListPage";
@@ -96,6 +97,7 @@ function App() {
             <Route path="/contacts" element={<ContactsPage />} />
             <Route path="/questions" element={<FAQPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
+            <Route path="/tools" element={<ToolsPage />} />
             <Route path="/certificates" element={<GiftCertificatesPage />} />
             <Route path="/checkups" element={<CheckupCenterPage />} />
             <Route

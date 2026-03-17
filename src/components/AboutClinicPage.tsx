@@ -1,6 +1,31 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { tools } from "../data/tools";
+import type { ToolItem } from "../data/tools";
 
 export default function AboutClinicPage() {
+  const [selected, setSelected] = React.useState<ToolItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const openModal = (tool: ToolItem) => {
+    setSelected(tool);
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => setSelected(null), 150);
+  };
+
+  React.useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isModalOpen) {
+        e.preventDefault();
+        closeModal();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isModalOpen]);
   return (
     <div className="min-h-screen bg-gray-50 py-8 md:py-12">
       <div className="container mx-auto px-4">
@@ -15,6 +40,110 @@ export default function AboutClinicPage() {
             использованием передовых технологий и индивидуальным подходом к
             каждому пациенту.
           </p>
+        </div>
+
+        {/* Our Tools Block - Last 5 Tools */}
+        <div className="mb-12 md:mb-16">
+          <div className="relative mb-8">
+            {/* Decorative Elements */}
+            <div className="absolute -left-4 top-0 w-12 h-12 bg-primary/10 rounded-full blur-xl" />
+            <div className="absolute -right-4 bottom-0 w-16 h-16 bg-primary/5 rounded-full blur-xl" />
+            
+            <div className="relative flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-1 h-8 bg-primary rounded-full" />
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-dark">
+                    Современное оборудование
+                  </h2>
+                </div>
+                <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl">
+                  В нашей клинике используется <span className="font-medium text-dark">передовое медицинское оборудование</span> для точной диагностики и эффективного лечения
+                </p>
+              </div>
+              <Link
+                to="/tools"
+                className="inline-flex items-center justify-center sm:justify-end text-primary hover:text-primaryDark font-medium text-sm group flex-shrink-0 transition-colors"
+              >
+                <span className="border-b border-primary/30 group-hover:border-primary transition-colors pb-0.5">
+                  Все инструменты
+                </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 ml-1.5 transform group-hover:translate-x-1 transition-transform"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Link>
+            </div>
+          </div>
+
+          {/* Tools Grid - Horizontal scroll on mobile, grid on desktop */}
+          <div className="mb-8">
+            {/* Mobile: Horizontal scroll */}
+            <div className="sm:hidden overflow-x-auto pb-4 -mx-4 px-4">
+              <div className="flex gap-4 w-max">
+                {tools.slice(-5).map((tool, index) => (
+                  <div
+                    key={tool.id}
+                    onClick={() => openModal(tool)}
+                    className="w-40 flex-shrink-0 bg-white rounded-lg shadow-md overflow-hidden group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-100 cursor-pointer"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div className="relative aspect-square overflow-hidden bg-gray-100">
+                      <img
+                        src={tool.image}
+                        alt={tool.title}
+                        className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                    <div className="p-3">
+                      <h3 className="text-xs font-semibold text-dark mb-1 line-clamp-2 min-h-[2.5rem]">
+                        {tool.title}
+                      </h3>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Desktop: Grid layout */}
+            <div className="hidden sm:grid grid-cols-5 gap-4 mb-8">
+              {tools.slice(-5).map((tool, index) => (
+                <div
+                  key={tool.id}
+                  onClick={() => openModal(tool)}
+                  className="bg-white rounded-lg shadow-md overflow-hidden group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-100 cursor-pointer"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className="relative aspect-square overflow-hidden bg-gray-100">
+                    <img
+                      src={tool.image}
+                      alt={tool.title}
+                      className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+                  <div className="p-3">
+                    <h3 className="text-sm font-semibold text-dark mb-1 line-clamp-2 min-h-[2.5rem]">
+                      {tool.title}
+                    </h3>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Main Content */}
@@ -277,6 +406,79 @@ export default function AboutClinicPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal for Tools */}
+      {isModalOpen && selected && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="tool-modal-title"
+          onClick={closeModal}
+        >
+          <div className="absolute inset-0 bg-black/50" />
+          <div
+            className="relative bg-white w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              aria-label="Закрыть"
+              onClick={closeModal}
+              className="absolute right-3 top-3 z-10 text-gray-500 hover:text-gray-700 bg-white/80 rounded-full p-1 transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <div className="relative aspect-[16/7] overflow-hidden bg-gray-100">
+              <img
+                src={selected.image}
+                alt={selected.title}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="p-5 sm:p-6">
+              <h3
+                id="tool-modal-title"
+                className="text-xl sm:text-2xl font-bold mb-4 text-dark"
+              >
+                {selected.title}
+              </h3>
+              <p className="text-gray-700 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+                {selected.description}
+              </p>
+              <div className="mt-6 flex justify-end gap-3">
+                <Link
+                  to="/tools"
+                  onClick={closeModal}
+                  className="inline-flex items-center px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10 transition-colors text-sm font-medium"
+                >
+                  Все инструменты
+                </Link>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="inline-flex items-center px-5 py-2 rounded-lg bg-primary text-white hover:bg-primaryDark transition-colors text-sm font-medium"
+                >
+                  Закрыть
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
