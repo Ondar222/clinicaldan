@@ -24,7 +24,18 @@ export default function ToolsPage() {
       }
     };
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    
+    // Блокируем скролл фона при открытом модальном окне
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
   }, [isModalOpen]);
 
   return (
@@ -57,15 +68,6 @@ export default function ToolsPage() {
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <button
-                    type="button"
-                    onClick={() => openModal(tool)}
-                    className="w-full py-2 bg-white/90 backdrop-blur-sm text-primary font-semibold rounded-lg hover:bg-white transition-colors text-xs sm:text-sm"
-                  >
-                    Подробнее
-                  </button>
-                </div>
               </div>
               <div className="p-4 flex flex-col flex-1">
                 <div className="flex items-start justify-between mb-2">
@@ -82,23 +84,9 @@ export default function ToolsPage() {
                 <button
                   type="button"
                   onClick={() => openModal(tool)}
-                  className="inline-flex items-center justify-center text-primary hover:text-primaryDark text-xs sm:text-sm font-semibold group/btn"
+                  className="w-full py-2 bg-primary/10 text-primary font-semibold rounded-lg hover:bg-primary hover:text-white transition-all text-xs sm:text-sm mt-2"
                 >
-                  Узнать больше
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-3 w-3 sm:h-4 sm:w-4 ml-1 transform group-hover/btn:translate-x-1 transition-transform"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
+                  Подробнее
                 </button>
               </div>
             </div>
@@ -112,17 +100,20 @@ export default function ToolsPage() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="tool-modal-title"
+            onClick={closeModal}
           >
             <div
               className="absolute inset-0 bg-black/50"
-              onClick={closeModal}
             />
-            <div className="relative bg-white w-full max-w-3xl rounded-lg sm:rounded-xl shadow-xl overflow-hidden">
+            <div
+              className="relative bg-white w-full max-w-3xl rounded-lg sm:rounded-xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
               <button
                 type="button"
                 aria-label="Закрыть"
                 onClick={closeModal}
-                className="absolute right-2 top-2 sm:right-3 sm:top-3 text-gray-500 hover:text-gray-700 z-10"
+                className="absolute right-2 top-2 sm:right-3 sm:top-3 z-10 text-gray-500 hover:text-gray-700 bg-white/80 rounded-full p-1 transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -139,14 +130,14 @@ export default function ToolsPage() {
                   />
                 </svg>
               </button>
-              <div className="relative aspect-[16/9] sm:aspect-[16/7] overflow-hidden bg-gray-100">
+              <div className="relative aspect-[16/9] sm:aspect-[16/7] overflow-hidden bg-gray-100 flex-shrink-0">
                 <img
                   src={selected.image}
                   alt={selected.title}
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="p-4 sm:p-6">
+              <div className="p-4 sm:p-6 overflow-y-auto flex-1">
                 <h3
                   id="tool-modal-title"
                   className="text-lg sm:text-2xl font-bold mb-3 sm:mb-4 text-dark"

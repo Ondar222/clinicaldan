@@ -24,7 +24,18 @@ export default function AboutClinicPage() {
       }
     };
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    
+    // Блокируем скролл фона при открытом модальном окне
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
   }, [isModalOpen]);
   return (
     <div className="min-h-screen bg-gray-50 py-8 md:py-12">
@@ -418,7 +429,7 @@ export default function AboutClinicPage() {
         >
           <div className="absolute inset-0 bg-black/50" />
           <div
-            className="relative bg-white w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden"
+            className="relative bg-white w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -442,14 +453,14 @@ export default function AboutClinicPage() {
                 />
               </svg>
             </button>
-            <div className="relative aspect-[16/7] overflow-hidden bg-gray-100">
+            <div className="relative aspect-[16/7] overflow-hidden bg-gray-100 flex-shrink-0">
               <img
                 src={selected.image}
                 alt={selected.title}
                 className="w-full h-full object-contain"
               />
             </div>
-            <div className="p-5 sm:p-6">
+            <div className="p-5 sm:p-6 overflow-y-auto flex-1">
               <h3
                 id="tool-modal-title"
                 className="text-xl sm:text-2xl font-bold mb-4 text-dark"
