@@ -1,42 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { tools } from "../data/tools";
-import type { ToolItem } from "../data/tools";
 
 export default function AboutClinicPage() {
-  const [selected, setSelected] = React.useState<ToolItem | null>(null);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-
-  const openModal = (tool: ToolItem) => {
-    setSelected(tool);
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setTimeout(() => setSelected(null), 150);
-  };
-
-  React.useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isModalOpen) {
-        e.preventDefault();
-        closeModal();
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    
-    // Блокируем скролл фона при открытом модальном окне
-    if (isModalOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = "";
-    };
-  }, [isModalOpen]);
   return (
     <div className="min-h-screen bg-gray-50 py-8 md:py-12">
       <div className="container mx-auto px-4">
@@ -103,10 +69,10 @@ export default function AboutClinicPage() {
             <div className="sm:hidden overflow-x-auto pb-4 -mx-4 px-4">
               <div className="flex gap-4 w-max">
                 {tools.slice(-5).map((tool, index) => (
-                  <div
+                  <Link
                     key={tool.id}
-                    onClick={() => openModal(tool)}
-                    className="w-40 flex-shrink-0 bg-white rounded-lg shadow-md overflow-hidden group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-100 cursor-pointer"
+                    to={`/tools/${tool.id}`}
+                    className="w-40 flex-shrink-0 bg-white rounded-lg shadow-md overflow-hidden group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-100"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div className="relative aspect-square overflow-hidden bg-gray-100">
@@ -123,7 +89,7 @@ export default function AboutClinicPage() {
                         {tool.title}
                       </h3>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -131,10 +97,10 @@ export default function AboutClinicPage() {
             {/* Desktop: Grid layout */}
             <div className="hidden sm:grid grid-cols-5 gap-4 mb-8">
               {tools.slice(-5).map((tool, index) => (
-                <div
+                <Link
                   key={tool.id}
-                  onClick={() => openModal(tool)}
-                  className="bg-white rounded-lg shadow-md overflow-hidden group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-100 cursor-pointer"
+                  to={`/tools/${tool.id}`}
+                  className="bg-white rounded-lg shadow-md overflow-hidden group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-100"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div className="relative aspect-square overflow-hidden bg-gray-100">
@@ -151,7 +117,7 @@ export default function AboutClinicPage() {
                       {tool.title}
                     </h3>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -417,79 +383,6 @@ export default function AboutClinicPage() {
           </div>
         </div>
       </div>
-
-      {/* Modal for Tools */}
-      {isModalOpen && selected && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="tool-modal-title"
-          onClick={closeModal}
-        >
-          <div className="absolute inset-0 bg-black/50" />
-          <div
-            className="relative bg-white w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              aria-label="Закрыть"
-              onClick={closeModal}
-              className="absolute right-3 top-3 z-10 text-gray-500 hover:text-gray-700 bg-white/80 rounded-full p-1 transition-colors"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            <div className="relative aspect-[16/7] overflow-hidden bg-gray-100 flex-shrink-0">
-              <img
-                src={selected.image}
-                alt={selected.title}
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="p-5 sm:p-6 overflow-y-auto flex-1">
-              <h3
-                id="tool-modal-title"
-                className="text-xl sm:text-2xl font-bold mb-4 text-dark"
-              >
-                {selected.title}
-              </h3>
-              <p className="text-gray-700 leading-relaxed text-sm sm:text-base whitespace-pre-line">
-                {selected.description}
-              </p>
-              <div className="mt-6 flex justify-end gap-3">
-                <Link
-                  to="/tools"
-                  onClick={closeModal}
-                  className="inline-flex items-center px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10 transition-colors text-sm font-medium"
-                >
-                  Все инструменты
-                </Link>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="inline-flex items-center px-5 py-2 rounded-lg bg-primary text-white hover:bg-primaryDark transition-colors text-sm font-medium"
-                >
-                  Закрыть
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
