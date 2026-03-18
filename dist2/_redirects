@@ -1,1 +1,5 @@
+# Force HTTPS
+https://clinicaldan.ru/*    https://clinicaldan.ru/:splat    301!
+
+# SPA fallback
 /*    /index.html   200

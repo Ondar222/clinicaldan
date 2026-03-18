@@ -478,6 +478,8 @@ class ArchimedService {
     const experienceInfo = item.experienceStartYear ? `Врачебный стаж с ${item.experienceStartYear} г.` : '';
     const extraInfo = extraTypes.length > 0 ? `Смежные специальности: ${extraTypes.join(', ')}` : '';
     const info = [experienceInfo, extraInfo].filter(Boolean).join('\n');
+    // Кужугет Росси - 20 минут, остальные - 30 минут
+    const isKuzhuget = lastName.toLowerCase() === 'кужугет' && firstName.toLowerCase() === 'росси';
     return {
       id,
       name: lastName,
@@ -485,7 +487,7 @@ class ArchimedService {
       name2: middleName,
       type: typeName,
       code: '',
-      max_time: '30',
+      max_time: isKuzhuget ? '20' : '30',
       phone: '',
       snils: '',
       info,
