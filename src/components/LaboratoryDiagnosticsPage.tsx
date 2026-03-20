@@ -3,19 +3,12 @@ import { Link } from 'react-router-dom';
 import archimedService from '../services/archimed';
 import type { ApiService } from '../types/cms';
 import { SERVICE_CATEGORIES, groupServicesByCategory } from '../services/serviceCategories';
-import AppointmentModal from './AppointmentModal';
 
 const LaboratoryDiagnosticsPage: React.FC = () => {
   const [services, setServices] = useState<ApiService[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [appointmentModal, setAppointmentModal] = useState<{
-    isOpen: boolean;
-    service?: ApiService;
-  }>({
-    isOpen: false
-  });
 
   useEffect(() => {
     const loadServices = async () => {
@@ -87,17 +80,6 @@ const LaboratoryDiagnosticsPage: React.FC = () => {
 
   const getServicePrice = (service: ApiService): number => {
     return service.base_cost || 0;
-  };
-
-  const handleAppointmentClick = (service?: ApiService) => {
-    setAppointmentModal({
-      isOpen: true,
-      service
-    });
-  };
-
-  const handleAppointmentSuccess = () => {
-    console.log('Appointment created successfully');
   };
 
   const categoryNames = {
@@ -237,12 +219,6 @@ const LaboratoryDiagnosticsPage: React.FC = () => {
                           )}
                           <div className="flex justify-between items-center">
                             <span className="text-primary font-bold text-sm">{getServicePrice(service).toLocaleString('ru-RU')} ₽</span>
-                            <button 
-                              onClick={() => handleAppointmentClick(service)}
-                              className="px-3 py-1 bg-primary text-white rounded text-xs hover:bg-primaryDark transition-colors"
-                            >
-                              Записаться
-                            </button>
                           </div>
                         </div>
                       ))}
@@ -274,12 +250,6 @@ const LaboratoryDiagnosticsPage: React.FC = () => {
                   </div>
                   <div className="flex justify-between items-center mt-auto pt-3 sm:pt-4">
                     <span className="text-primary font-bold text-base sm:text-lg">{getServicePrice(service).toLocaleString('ru-RU')} ₽</span>
-                    <button 
-                      onClick={() => handleAppointmentClick(service)}
-                      className="px-4 sm:px-6 py-1.5 sm:py-2 bg-primary text-white rounded-lg hover:bg-primaryDark transition-colors font-medium text-xs sm:text-sm"
-                    >
-                      Записаться
-                    </button>
                   </div>
                 </div>
               ))}
@@ -325,32 +295,6 @@ const LaboratoryDiagnosticsPage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Кнопка записи */}
-      <section className="py-8 sm:py-10 md:py-12 bg-primary">
-        <div className="container mx-auto px-3 sm:px-4 text-center">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 sm:mb-6">
-            Записаться на анализы
-          </h2>
-          <p className="text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto text-sm sm:text-base">
-            Оставьте заявку и наш администратор свяжется с вами для уточнения деталей записи
-          </p>
-          <button 
-            onClick={() => handleAppointmentClick()}
-            className="px-6 sm:px-8 py-2 sm:py-3 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors text-sm sm:text-base md:text-lg"
-          >
-            Записаться онлайн
-          </button>
-        </div>
-      </section>
-
-      {/* Модальное окно записи на прием */}
-      <AppointmentModal
-        isOpen={appointmentModal.isOpen}
-        onClose={() => setAppointmentModal({ isOpen: false })}
-        service={appointmentModal.service}
-        onSuccess={handleAppointmentSuccess}
-      />
     </div>
   );
 };

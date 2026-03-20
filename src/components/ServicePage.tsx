@@ -12,7 +12,7 @@ import {
   getServiceCategory,
   getServiceSubcategory,
 } from "../services/serviceCategories";
-import AppointmentModal from "./AppointmentModal";
+import { tools } from "../data/tools";
 
 const ServicePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -22,13 +22,6 @@ const ServicePage: React.FC = () => {
   const [doctors, setDoctors] = useState<ArchimedDoctor[]>([]);
   const [showAllServices, setShowAllServices] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [appointmentModal, setAppointmentModal] = useState<{
-    isOpen: boolean;
-    service?: ApiService;
-    doctor?: ArchimedDoctor;
-  }>({
-    isOpen: false,
-  });
 
   const direction = useMemo(
     () => (slug ? getDirectionBySlug(slug) : undefined),
@@ -307,22 +300,6 @@ const ServicePage: React.FC = () => {
 
   const getDoctorInitials = (doctor: ArchimedDoctor) => {
     return `${doctor?.name} ${doctor?.name1?.charAt(0)}. ${doctor?.name2?.charAt(0)}.`;
-  };
-
-  const handleAppointmentClick = (
-    service?: ApiService,
-    doctor?: ArchimedDoctor
-  ) => {
-    setAppointmentModal({
-      isOpen: true,
-      service,
-      doctor,
-    });
-  };
-
-  const handleAppointmentSuccess = () => {
-    // Можно добавить уведомление об успешной записи
-    console.log("Appointment created successfully");
   };
 
   return (
@@ -671,30 +648,56 @@ const ServicePage: React.FC = () => {
         </section>
       )}
 
-      {/* Кнопка записи */}
-      <section className="py-8 sm:py-10 md:py-12 lg:py-14 bg-primary">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-white/95 mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
-            Оставьте заявку и наш администратор свяжется с вами для уточнения
-            деталей записи
-          </p>
-          <button
-            onClick={() => handleAppointmentClick()}
-            className="px-6 sm:px-8 md:px-10 py-3 sm:py-3.5 md:py-4 bg-white text-primary font-semibold rounded-lg sm:rounded-xl hover:bg-gray-100 active:scale-95 transition-all duration-200 text-sm sm:text-base md:text-lg shadow-lg hover:shadow-xl"
-          >
-            Записаться онлайн
-          </button>
-        </div>
-      </section>
-
-      {/* Модальное окно записи на прием */}
-      <AppointmentModal
-        isOpen={appointmentModal.isOpen}
-        onClose={() => setAppointmentModal({ isOpen: false })}
-        service={appointmentModal.service}
-        doctor={appointmentModal.doctor}
-        onSuccess={handleAppointmentSuccess}
-      />
+      {/* Инструменты для этого направления */}
+      {(() => {
+        const relatedTools = tools.filter(tool => 
+          tool.directions?.includes(direction.slug)
+        );
+        
+        if (relatedTools.length === 0) return null;
+        
+        return (
+          <section className="py-6 sm:py-8 md:py-10 lg:py-12 bg-white">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6 md:mb-8 text-gray-900">
+                Оборудование и технологии
+              </h2>
+              <p className="text-gray-600 text-center mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto text-sm sm:text-base">
+                Современное оборудование, которое мы используем для диагностики и лечения по направлению "{direction.title}"
+              </p>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+                {relatedTools.map((tool) => (
+                  <div
+                    key={tool.id}
+                    className="bg-gray-50 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group"
+                  >
+                    <div className="aspect-square overflow-hidden bg-gray-100">
+                      <img
+                        src={tool.image}
+                        alt={tool.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23e5e7eb' width='400' height='300'/%3E%3Ctext fill='%239ca3af' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='16'%3EНет изображения%3C/text%3E%3C/svg%3E";
+                        }}
+                      />
+                    </div>
+                    <div className="p-3 sm:p-4">
+                      <h3 className="font-semibold text-gray-900 mb-1 sm:mb-2 text-xs sm:text-sm leading-tight line-clamp-2">
+                        {tool.title}
+                      </h3>
+                      <p className="text-gray-600 text-[10px] sm:text-xs leading-relaxed line-clamp-3">
+                        {tool.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
     </div>
   );
 };
