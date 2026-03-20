@@ -7,91 +7,80 @@ export default function DocumentsPage() {
       title: "Лицензия на медицинскую деятельность",
       description: "Лицензия на осуществление медицинской деятельности",
       fileType: "PDF",
-      fileSize: "2.1 MB",
-      downloadUrl:
-        "https://clinicaldan.ru/upload/iblock/f4b/70jj4rxxrs5otk5k73lp87r10e7ea2j0.pdf",
+      fileSize: "—",
+      downloadUrl: "/documents/document3.pdf",
     },
     {
       id: 2,
       title: "Свидетельство о государственной регистрации",
-      description:
-        "Свидетельство о государственной регистрации юридического лица",
-      fileType: "PDF",
-      fileSize: "1.8 MB",
-      downloadUrl:
-        "https://clinicaldan.ru/upload/iblock/d01/d01f535a0a6bf5cc9394eb2bf0f38438.jpg",
+      description: "Свидетельство о государственной регистрации юридического лица",
+      fileType: "JPG",
+      fileSize: "—",
+      downloadUrl: "/documents/document4.jpg",
     },
     {
       id: 3,
       title: "Порядок записи",
       description: "Порядок записи",
-      fileType: "PDF",
-      fileSize: "0.9 MB",
-      downloadUrl:
-        "https://clinicaldan.ru/upload/iblock/62a/62ab4cdae4befe8c5596fda9b2d6198a.doc",
+      fileType: "DOC",
+      fileSize: "—",
+      downloadUrl: "/documents/document5.doc",
     },
     {
       id: 4,
       title: "Правила внутреннего распорядка",
       description: "Правила внутреннего трудового распорядка",
-      fileType: "PDF",
-      fileSize: "1.5 MB",
-      downloadUrl:
-        "https://clinicaldan.ru/upload/iblock/0eb/0eb1b06986fb47255992bcc389ce6f73.docx",
+      fileType: "DOCX",
+      fileSize: "—",
+      downloadUrl: "/documents/document1.docx",
     },
     {
       id: 5,
       title: "Договор оказания платных медицинских услуг",
       description: "Правила оказания платных медицинских услуг",
-      fileType: "PDF",
-      fileSize: "1.5 MB",
-      downloadUrl:
-        "https://clinicaldan.ru/upload/iblock/b11/b117be5ed3e4155d214105ea7fa24a07.doc",
+      fileType: "DOC",
+      fileSize: "—",
+      downloadUrl: "/documents/document2.docx",
     },
     {
       id: 6,
       title: "ПРАВИЛА ВНУТРЕННЕГО РАСПОРЯДКА ДЛЯ ПАЦИЕНТОВ МЕДИЦИНСКОГО ЦЕНТРА ООО «АЛДАН»",
       description: "ПРАВИЛА ВНУТРЕННЕГО РАСПОРЯДКА ДЛЯ ПАЦИЕНТОВ МЕДИЦИНСКОГО ЦЕНТРА ООО «АЛДАН»",
-      fileType: "PDF",
-      fileSize: "1.5 MB",
-      downloadUrl:
-        "/documents/document1.docx",
+      fileType: "DOCX",
+      fileSize: "—",
+      downloadUrl: "/documents/document1.docx",
     },
     {
       id: 7,
       title: "Порядок записи на первичный прием (консультацию, обследование)",
       description: "Порядок записи на первичный прием (консультацию, обследование)",
-      fileType: "PDF",
-      fileSize: "1.5 MB",
-      downloadUrl:
-        "/documents/document2.docx",
+      fileType: "DOCX",
+      fileSize: "—",
+      downloadUrl: "/documents/document2.docx",
     },
     {
       id: 8,
       title: "Выписка из реестра",
       description: "Выписка из реестра",
       fileType: "PDF",
-      fileSize: "1.5 MB",
-      downloadUrl:
-        "/documents/document3.pdf",
+      fileSize: "—",
+      downloadUrl: "/documents/document3.pdf",
     },
     {
       id: 9,
       title: "Свидетельство о государственной регистрации юридического лица",
       description: "Свидетельство о государственной регистрации юридического лица",
-      fileType: "PDF",
-      fileSize: "1.5 MB",
-      downloadUrl:
-        "/documents/document4.jpg",
+      fileType: "JPG",
+      fileSize: "—",
+      downloadUrl: "/documents/document4.jpg",
     },
     {
       id: 10,
       title: "Договор оказания платных медицинских услуг № ___",
       description: "Договор оказания платных медицинских услуг № ___",
-      fileType: "PDF",
-      fileSize: "1.5 MB",
-      downloadUrl:
-        "/documents/document5.doc",
+      fileType: "DOC",
+      fileSize: "—",
+      downloadUrl: "/documents/document5.doc",
     },
     {
       id: 11,
@@ -107,7 +96,7 @@ export default function DocumentsPage() {
       description: "Согласие на обработку персональных данных, размещенных на сайте",
       fileType: "DOCX",
       fileSize: "—",
-      downloadUrl: "/documents/согласие_на_персданные_на_сайт.docx",
+      downloadUrl: "/documents/согласие_на_персданные_на_сайт.docx",
     },
   ];
 
@@ -158,7 +147,8 @@ export default function DocumentsPage() {
                     <a
                       href={doc.downloadUrl}
                       className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primaryDark text-white text-sm font-medium rounded-lg transition-colors w-full justify-center"
-                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       <svg
                         className="w-4 h-4 mr-2"

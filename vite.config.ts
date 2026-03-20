@@ -1,12 +1,47 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { readFileSync } from "fs";
-import { join } from "path";
+import { readFileSync, createReadStream, existsSync } from "fs";
+import { join, extname } from "path";
+
+// MIME types для документов
+const MIME_TYPES: Record<string, string> = {
+	".pdf": "application/pdf",
+	".doc": "application/msword",
+	".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	".jpg": "image/jpeg",
+	".jpeg": "image/jpeg",
+	".png": "image/png",
+};
 
 // https://vite.dev/config/
 export default defineConfig({
 	plugins: [
 		react(),
+		// Отдача файлов из /documents/ с правильным Content-Type
+		{
+			name: "serve-documents",
+			configureServer(server) {
+				const publicDir = join(process.cwd(), "public");
+				server.middlewares.use((req, res, next) => {
+					const pathname = (req.url ?? "").split("?")[0];
+					if (!pathname.startsWith("/documents/")) { next(); return; }
+					if (req.method !== "GET") { next(); return; }
+					
+					const fileName = pathname.replace("/documents/", "");
+					const filePath = join(publicDir, "documents", fileName);
+					
+					if (!existsSync(filePath)) { next(); return; }
+					
+					const ext = extname(filePath).toLowerCase();
+					const contentType = MIME_TYPES[ext] || "application/octet-stream";
+					
+					res.setHeader("Content-Type", contentType);
+					res.setHeader("Cache-Control", "public, max-age=31536000");
+					res.statusCode = 200;
+					createReadStream(filePath).pipe(res);
+				});
+			},
+		},
 		// Явно отдаём статические страницы успеха/отмены из public/ с no-cache, чтобы не подставлялся закэшированный index.html
 		{
 			name: "serve-certificates-static",
@@ -100,6 +135,37 @@ export default defineConfig({
 	server: {
 		proxy: {
 			// Сначала более специфичные пути (Directus на 8055)
+			'/api/directus': {
+				target: 'http://localhost:8055',
+				changeOrigin: true,
+				secure: false,
+				rewrite: (path) => path.replace(/^\/api\/directus/, ''),
+			},
+			'/api': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+			},
+			'/certificate': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+			},
+			'/api/certificate': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+				rewrite: (path) => path.replace(/^\/api\/certificate/, '/certificate'),
+			},
+			'/vk': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+			},
+		}
+	},
+	preview: {
+		proxy: {
 			'/api/directus': {
 				target: 'http://localhost:8055',
 				changeOrigin: true,
