@@ -51,7 +51,7 @@ export default function ToolDetailsPage() {
             <img
               src={tool.image}
               alt={tool.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
               loading="eager"
               decoding="async"
             />
