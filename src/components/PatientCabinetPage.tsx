@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 export default function PatientCabinetPage() {
   useEffect(() => {
     // Редирект на внешний сервис личного кабинета
-    window.location.href = 'http://user.clinicaldan.ru/login';
+    window.location.href = 'https://user.clinicaldan.ru/login';
   }, []);
 
   return (
@@ -18,7 +18,7 @@ export default function PatientCabinetPage() {
           <p className="text-sm text-gray-500">
             Если переход не произошел автоматически, 
             <a 
-              href="http://user.clinicaldan.ru/login" 
+              href="https://user.clinicaldan.ru/login" 
               className="text-primary hover:text-primaryDark underline ml-1"
             >
               нажмите здесь
