@@ -13,6 +13,8 @@ import type {
 } from '../types/cms';
 import { mockServices } from '../data/mockServices';
 import { mockDoctors, mockBranches } from '../data/mockDoctors';
+import doctorsDataRaw from '../data/doctors.json';
+import prodoctorovDataRaw from '../data/prodoctorov.json';
 
 // Archimed API: в dev и prod идём через тот же origin (Vite proxy или nginx), чтобы не было CORS
 const ARCHIMED_API_URL = import.meta.env.VITE_ARCHIMED_API_URL || '/api/archimed';
@@ -178,17 +180,16 @@ class ArchimedService {
     console.log('getDoctors called - loading from local files only (no API)');
 
     try {
-      // 1) Load from doctors.json (real data snapshot)
-      const localModule = await import('../data/doctors.json');
-      const raw = (localModule as any).default;
+      // 1) Load from doctors.json (real data snapshot) - using static import
+      const raw = (doctorsDataRaw as any);
       let localDoctors: ArchimedDoctor[] = Array.isArray(raw)
         ? (raw as ArchimedDoctor[])
         : (Array.isArray(raw?.data) ? (raw.data as ArchimedDoctor[]) : []);
 
       console.log('Loaded from doctors.json:', localDoctors.length);
 
-      // 2) Enrich from ProDoctorov snapshot
-      const proDocs = await this.loadProdoctorovSnapshot();
+      // 2) Enrich from ProDoctorov snapshot - using static import
+      const proDocs = await this.loadProdoctorovSnapshotStatic();
       if (proDocs.length > 0) {
         console.log('Enriching with ProDoctorov snapshot:', proDocs.length);
         localDoctors = this.mergeDoctors(localDoctors, proDocs);
@@ -205,7 +206,7 @@ class ArchimedService {
       console.warn('Не удалось загрузить doctors.json, используем mockDoctors. Ошибка:', e);
       // Fallback to mock data
       this.doctorsCache = mockDoctors;
-      const proDocs = await this.loadProdoctorovSnapshot();
+      const proDocs = await this.loadProdoctorovSnapshotStatic();
       if (proDocs.length > 0) {
         console.log('Enriching mock doctors with ProDoctorov snapshot:', proDocs.length);
         this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
@@ -433,11 +434,10 @@ class ArchimedService {
     return all;
   }
 
-  // Load and map ProDoctorov snapshot if present
-  private async loadProdoctorovSnapshot(): Promise<ArchimedDoctor[]> {
+  // Load and map ProDoctorov snapshot if present - using static import for faster loading
+  private async loadProdoctorovSnapshotStatic(): Promise<ArchimedDoctor[]> {
     try {
-      const module = await import('../data/prodoctorov.json');
-      const raw = (module as any).default;
+      const raw = (prodoctorovDataRaw as any);
       const list: Array<{
         fullName: string;
         specialty: string;

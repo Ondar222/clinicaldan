@@ -10,6 +10,7 @@ import archimedService from "../services/archimed";
 import ErrorComponent from "./ErrorComponent";
 import AppointmentModal from "./AppointmentModal";
 import prodoctorovData from "../data/prodoctorov.json";
+import { mockBranches } from "../data/mockDoctors";
 
 // Создаем мапу фото из prodoctorov.json
 const doctorPhotoMap = new Map<string, string>();
@@ -22,13 +23,13 @@ if (Array.isArray(prodoctorovData)) {
 }
 
 export default function DoctorsPage() {
+  // Initialize with empty arrays - data will load immediately
   const [doctors, setDoctors] = useState<ArchimedDoctor[]>([]);
-  const [branches, setBranches] = useState<ArchimedBranch[]>([]);
+  const [branches, setBranches] = useState<ArchimedBranch[]>(mockBranches);
   const [categories, setCategories] = useState<ArchimedCategory[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 12;
@@ -46,66 +47,80 @@ export default function DoctorsPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        setIsLoading(true);
         setError(null);
 
         console.log("Начинаем загрузку данных...");
 
-        const [doctorsData, branchesData, categoriesData, servicesData] =
-          await Promise.all([
-            archimedService.getDoctors(),
-            archimedService.getBranches(),
-            archimedService
-              .getCategories()
-              .catch(() => [] as unknown as ArchimedCategory[]),
-            archimedService
-              .getServices()
-              .catch(() => [] as unknown as ApiService[]),
-          ]);
-
-        console.log("Loaded doctors:", doctorsData);
-        console.log("Loaded branches:", branchesData);
-        console.log("Loaded categories:", categoriesData);
-        console.log("Doctors count:", doctorsData?.length || 0);
-
+        // Load doctors first and immediately to show them ASAP
+        // This is critical - doctors data is shown as soon as it arrives
+        const doctorsData = await archimedService.getDoctors();
+        console.log("Loaded doctors:", doctorsData.length);
         setDoctors(doctorsData || []);
-        setBranches(branchesData || []);
-        setCategories(categoriesData || []);
-        // Build simple specialty-based mapping of services to doctors
-        try {
-          const norm = (s: string) =>
-            (s || "").toLowerCase().replace(/ё/g, "е");
-          const toks = (s: string) => norm(s).split(/\s+/).filter(Boolean);
-          const svcTokensList = (servicesData as ApiService[]).map((s) => ({
-            s,
-            set: new Set<string>([...toks(s.group_name), ...toks(s.name)]),
-          }));
-          const counts: Record<number, number> = {};
-          (doctorsData || []).forEach((d: ArchimedDoctor) => {
-            const docTokens = new Set<string>([
-              ...toks(d.type),
-              ...(d.types || []).flatMap((t) => toks(t.name)),
-            ]);
-            let count = 0;
-            for (const { set } of svcTokensList) {
-              let matched = false;
-              for (const t of docTokens) {
-                if (set.has(t)) {
-                  matched = true;
-                  break;
-                }
+
+        // Load branches, categories, and services in background
+        // These don't block the display of doctors
+        Promise.all([
+          archimedService.getBranches().then((branchesData) => {
+            console.log("Loaded branches:", branchesData.length);
+            setBranches(branchesData || []);
+          }).catch((err) => {
+            console.warn("Failed to load branches:", err);
+          }),
+          archimedService
+            .getCategories()
+            .then((categoriesData) => {
+              console.log("Loaded categories:", categoriesData.length);
+              setCategories(categoriesData || []);
+            })
+            .catch(() => {
+              console.log("Categories not available");
+            }),
+          archimedService
+            .getServices()
+            .then((servicesData) => {
+              console.log("Loaded services:", servicesData.length);
+              // Build specialty-based mapping of services to doctors
+              try {
+                const norm = (s: string) =>
+                  (s || "").toLowerCase().replace(/ё/g, "е");
+                const toks = (s: string) => norm(s).split(/\s+/).filter(Boolean);
+                const svcTokensList = (servicesData as ApiService[]).map((s) => ({
+                  s,
+                  set: new Set<string>([...toks(s.group_name), ...toks(s.name)]),
+                }));
+                const counts: Record<number, number> = {};
+                (doctorsData || []).forEach((d: ArchimedDoctor) => {
+                  const docTokens = new Set<string>([
+                    ...toks(d.type),
+                    ...(d.types || []).flatMap((t) => toks(t.name)),
+                  ]);
+                  let count = 0;
+                  for (const { set } of svcTokensList) {
+                    let matched = false;
+                    for (const t of docTokens) {
+                      if (set.has(t)) {
+                        matched = true;
+                        break;
+                      }
+                    }
+                    if (matched) count++;
+                  }
+                  if (count > 0) counts[d.id] = count;
+                });
+                setDoctorServicesCount(counts);
+              } catch (e) {
+                console.warn("Failed to build services count:", e);
               }
-              if (matched) count++;
-            }
-            if (count > 0) counts[d.id] = count;
-          });
-          setDoctorServicesCount(counts);
-        } catch {}
+            })
+            .catch((err) => {
+              console.warn("Failed to load services:", err);
+            }),
+        ]).catch((err) => {
+          console.warn("Some background data failed to load:", err);
+        });
       } catch (err) {
         console.error("Ошибка загрузки данных:", err);
         setError("Не удалось загрузить данные о врачах. Попробуйте позже.");
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -258,42 +273,7 @@ export default function DoctorsPage() {
     console.log("Appointment created successfully");
   };
 
-  // Instant skeleton to make page feel snappy
-  if (isLoading && doctors.length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-6 sm:py-8 md:py-12">
-        <div className="container mx-auto px-3 sm:px-4">
-          <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dark mb-3 sm:mb-4">
-              Наши специалисты
-            </h1>
-            <p className="text-sm sm:text-base md:text-xl text-gray-600 max-w-3xl mx-auto">
-              Высококвалифицированные врачи клиники Алдан с многолетним опытом
-              работы.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-5">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse"
-              >
-                <div className="h-28 sm:h-36 bg-gray-200" />
-                <div className="p-3 sm:p-5 space-y-2 sm:space-y-3">
-                  <div className="h-4 sm:h-5 bg-gray-200 rounded w-2/3" />
-                  <div className="h-3 sm:h-4 bg-gray-200 rounded w-1/3" />
-                  <div className="h-3 sm:h-4 bg-gray-200 rounded w-1/2" />
-                  <div className="h-6 sm:h-8 bg-gray-200 rounded" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
+  if (error && doctors.length === 0) {
     return (
       <ErrorComponent
         title="Ошибка загрузки врачей"
