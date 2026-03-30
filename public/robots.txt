@@ -1,7 +1,23 @@
+# Yandex
+User-agent: Yandex
+Allow: /
+Disallow: /staff
+Disallow: /certificates/success
+Disallow: /certificates/cancel
+Disallow: /api/
+Clean-Cache: true
+
+# Google
+User-agent: Googlebot
+Allow: /
+Disallow: /staff
+Disallow: /certificates/success
+Disallow: /certificates/cancel
+Disallow: /api/
+
+# Остальные роботы
 User-agent: *
 Allow: /
-
-# Закрываем технические/служебные страницы
 Disallow: /staff
 Disallow: /certificates/success
 Disallow: /certificates/cancel

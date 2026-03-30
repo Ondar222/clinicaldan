@@ -1,0 +1,10 @@
+/* TEAM */
+Developer: ClinicalDan Team
+Site: https://clinicaldan.ru
+Location: Kyzyl, Russia
+
+/* THANKS */
+Yandex Metrika
+Vite
+React
+TailwindCSS

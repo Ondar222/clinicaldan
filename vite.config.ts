@@ -207,5 +207,7 @@ export default defineConfig({
 				}
 			}
 		}
-	}
+	},
+	// Копирование SEO-файлов при сборке
+	publicDir: "public",
 });
