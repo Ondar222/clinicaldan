@@ -28,6 +28,7 @@ import PriceListPage from "./components/PriceListPage";
 import GiftCertificatesPage from "./components/GiftCertificatesPage";
 import PaymentSuccessPage from "./components/PaymentSuccessPage";
 import PaymentCancelPage from "./components/PaymentCancelPage";
+import PaymentFailedPage from "./components/PaymentFailedPage";
 import ServicePage from "./components/ServicePage";
 import StaffDashboard from "./components/StaffDashboard";
 import NotFoundPage from "./components/NotFoundPage";
@@ -107,6 +108,10 @@ function App() {
             <Route
               path="/certificates/cancel"
               element={<PaymentCancelPage />}
+            />
+            <Route
+              path="/payment-failed"
+              element={<PaymentFailedPage />}
             />
             {/* Временно скрыто - маршруты сертификатов и записи на прием
             

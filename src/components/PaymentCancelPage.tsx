@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 export default function PaymentCancelPage() {
@@ -7,6 +7,14 @@ export default function PaymentCancelPage() {
 
   const orderId = searchParams.get("orderId");
 
+  useEffect(() => {
+    // Перенаправляем на страницу PaymentFailedPage для лучшей обработки
+    if (orderId) {
+      navigate(`/payment-failed?orderId=${encodeURIComponent(orderId)}`, { replace: true });
+    }
+  }, [orderId, navigate]);
+
+  // Fallback UI на случай если JS еще не загрузился
   const handleGoHome = () => {
     navigate("/");
   };
@@ -60,6 +68,12 @@ export default function PaymentCancelPage() {
               className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-md font-medium transition-colors"
             >
               На главную
+            </button>
+            <button
+              onClick={handleGoToCertificates}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-md font-medium transition-colors"
+            >
+              К сертификатам
             </button>
           </div>
         </div>
