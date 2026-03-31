@@ -80,6 +80,7 @@ export interface ArchimedDoctor {
   building_web_name: string | null;
   primary_type_id: number;
   types: ArchimedDoctorType[];
+  experienceStartYear?: number; // Automatically calculated from prodoctorov data
 }
 
 export interface ArchimedDoctorType {

@@ -11,6 +11,7 @@ import ErrorComponent from "./ErrorComponent";
 import AppointmentModal from "./AppointmentModal";
 import prodoctorovData from "../data/prodoctorov.json";
 import { mockBranches } from "../data/mockDoctors";
+import { getDoctorExperience } from "../utils/doctorExperience";
 
 // Создаем мапу фото из prodoctorov.json
 const doctorPhotoMap = new Map<string, string>();
@@ -233,17 +234,7 @@ export default function DoctorsPage() {
   };
 
   const getExperienceYears = (doctor: ArchimedDoctor): number | undefined => {
-    const info = doctor?.info || "";
-    const m =
-      info.match(/стаж\s+с\s+(\d{4})/i) ||
-      info.match(/Врачебный\s+стаж\s+с\s+(\d{4})/i);
-    if (m && m[1]) {
-      const start = parseInt(m[1], 10);
-      if (!isNaN(start) && start > 1900 && start <= new Date().getFullYear()) {
-        return Math.max(0, new Date().getFullYear() - start);
-      }
-    }
-    return undefined;
+    return getDoctorExperience(doctor);
   };
 
   const formatSpecialtyName = (raw: string | undefined | null): string => {

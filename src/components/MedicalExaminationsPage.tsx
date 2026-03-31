@@ -4,6 +4,7 @@ import AppointmentModal from "./AppointmentModal";
 import archimedService from "../services/archimed";
 import type { ArchimedDoctor } from "../types/cms";
 import prodoctorovData from "../data/prodoctorov.json";
+import { getDoctorExperience } from "../utils/doctorExperience";
 
 interface CheckupType {
   id: string;
@@ -244,17 +245,7 @@ const getDoctorInitials = (doctor: ArchimedDoctor) => {
 };
 
 const getExperienceYears = (doctor: ArchimedDoctor): number | undefined => {
-  const info = doctor?.info || "";
-  const m =
-    info.match(/стаж\s+с\s+(\d{4})/i) ||
-    info.match(/Врачебный\s+стаж\s+с\s+(\d{4})/i);
-  if (m && m[1]) {
-    const start = parseInt(m[1], 10);
-    if (!isNaN(start) && start > 1900 && start <= new Date().getFullYear()) {
-      return Math.max(0, new Date().getFullYear() - start);
-    }
-  }
-  return undefined;
+  return getDoctorExperience(doctor);
 };
 
 const formatSpecialtyName = (raw: string | undefined | null): string => {

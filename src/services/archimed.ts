@@ -505,7 +505,8 @@ class ArchimedService {
       building_name: 'Поликлиника №1',
       building_web_name: 'Поликлиника №1',
       primary_type_id: 0,
-      types: [{ id: 0, name: typeName }, ...extraTypes.map((n, i) => ({ id: i + 1, name: n }))]
+      types: [{ id: 0, name: typeName }, ...extraTypes.map((n, i) => ({ id: i + 1, name: n }))],
+      experienceStartYear: item.experienceStartYear
     };
   }
 
@@ -529,6 +530,11 @@ class ArchimedService {
       const addDeg = normalize(add.scientific_degree || '');
       if ((isEmpty(base.scientific_degree) || baseDeg === 'без степени') && addDeg && addDeg !== 'без степени') {
         merged.scientific_degree = add.scientific_degree;
+      }
+
+      // Experience start year: prefer explicit year from prodoctorov data
+      if (!base.experienceStartYear && add.experienceStartYear) {
+        merged.experienceStartYear = add.experienceStartYear;
       }
 
       // Category: prefer explicit categories like "Высшая категория", "Первая категория", etc.
