@@ -50,7 +50,7 @@ class CertificateService {
       // В production всегда используем абсолютный HTTPS URL
       const url = import.meta.env.PROD
         ? 'https://clinicaldan.ru/api/certificate'
-        : (this.apiUrl ? `${this.apiUrl.replace(/\/$/, '')}/certificate` : '/certificate');
+        : (this.apiUrl ? `${this.apiUrl.replace(/\/$/, '')}/certificate` : '/api/certificate');
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -97,7 +97,7 @@ class CertificateService {
    */
   async checkPaymentStatus(orderNumber: string): Promise<CheckPaymentResponse> {
     try {
-      const base = this.apiUrl ? this.apiUrl.replace(/\/$/, '') : '';
+      const base = this.apiUrl ? this.apiUrl.replace(/\/$/, '') : '/api';
       const response = await fetch(`${base}/certificate/check-payment/${orderNumber}`, {
         method: 'POST',
         headers: {
