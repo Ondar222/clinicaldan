@@ -48,9 +48,14 @@ export default function ContactForm() {
     setIsSubmitting(true);
 
     // Отправка формы на email через backend
-    const API_URL = import.meta.env.VITE_API_URL || 'https://clinicaldan.ru/api';
+    // В dev режиме используем относительный URL (через proxy)
+    const isDev = import.meta.env.DEV;
+    const API_URL = import.meta.env.VITE_API_URL || (isDev ? '/api' : 'https://clinicaldan.ru/api');
+    const endpoint = `${API_URL}/contact`;
     
-    fetch(`${API_URL}/contact`, {
+    console.log('Sending contact form to:', endpoint, '(dev:', isDev, ')');
+    
+    fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -63,11 +68,23 @@ export default function ContactForm() {
         recipient: 'clinicaldan@mail.ru'
       })
     })
-    .then(response => {
-      if (!response.ok) throw new Error('Ошибка отправки');
+    .then(async response => {
+      console.log('Response status:', response.status);
+      
+      // Если 404 - backend endpoint не существует
+      if (response.status === 404) {
+        throw new Error('Endpoint не найден на сервере. Необходима настройка backend.');
+      }
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.details || 'Ошибка отправки');
+      }
+      
       return response.json();
     })
     .then(data => {
+      console.log('Form submitted successfully:', data);
       setIsSubmitting(false);
       setIsSubmitted(true);
       setFormData({
@@ -87,7 +104,13 @@ export default function ContactForm() {
     .catch(error => {
       console.error('Form submission error:', error);
       setIsSubmitting(false);
-      setValidationError('Ошибка отправки. Попробуйте позже или позвоните нам.');
+      
+      // Показываем более информативное сообщение
+      const errorMsg = error.message.includes('404') 
+        ? 'Ошибка настройки сервера. Пожалуйста, позвоните нам или отправьте email напрямую.'
+        : 'Ошибка отправки. Попробуйте позже или позвоните нам.';
+      
+      setValidationError(errorMsg);
       
       // Fallback: открываем почтовый клиент
       const subject = encodeURIComponent('Заявка с сайта ClinicalDan');
@@ -97,7 +120,11 @@ export default function ContactForm() {
         `Email: ${formData.email}\n` +
         `Сообщение: ${formData.message}`
       );
-      window.location.href = `mailto:clinicaldan@mail.ru?subject=${subject}&body=${body}`;
+      
+      // Открываем почтовый клиент через 2 секунды
+      setTimeout(() => {
+        window.location.href = `mailto:clinicaldan@mail.ru?subject=${subject}&body=${body}`;
+      }, 2000);
     });
   };
 
