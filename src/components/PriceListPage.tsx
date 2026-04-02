@@ -588,7 +588,7 @@ export default function PriceListPage() {
         {popularServices.length > 0 && (
           <div className="mb-8 md:mb-12">
             <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-dark mb-3 md:mb-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-dark mb-3 md:mb-4">
                 Популярные услуги
               </h2>
               <p className="text-sm sm:text-base text-gray-600">
@@ -606,23 +606,23 @@ export default function PriceListPage() {
                 isMobile ? (
                   <div
                     key={service.id}
-                    className="border border-gray-200 rounded-lg p-2 hover:shadow-sm bg-white"
+                    className="border border-gray-200 rounded-lg p-3 hover:shadow-sm bg-white"
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1">
-                          <h3 className="text-xs font-semibold text-dark leading-tight pr-1 line-clamp-2">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm md:text-base font-semibold text-dark leading-tight pr-1 line-clamp-2">
                             {service.name}
                           </h3>
                           {service.cito_cost > 0 &&
                             service.cito_cost !== service.base_cost && (
-                              <span className="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded-full text-[10px] font-medium flex-shrink-0">
+                              <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium flex-shrink-0">
                                 Срочно
                               </span>
                             )}
                         </div>
                       </div>
-                      <div className="text-primary font-bold text-sm flex-shrink-0">
+                      <div className="text-primary font-bold text-base md:text-lg flex-shrink-0">
                         {formatPrice(getServicePrice(service))}
                       </div>
                       {(service.info ||
@@ -630,7 +630,7 @@ export default function PriceListPage() {
                           service.altname !== service.name)) && (
                         <button
                           onClick={() => toggleServiceDesc(service.id)}
-                          className="px-2 py-1 text-[10px] text-primary border border-primary rounded-md whitespace-nowrap"
+                          className="px-3 py-1.5 text-xs text-primary border border-primary rounded-md whitespace-nowrap"
                         >
                           Описание
                         </button>
@@ -639,7 +639,7 @@ export default function PriceListPage() {
                     {(service.info ||
                       (service.altname && service.altname !== service.name)) &&
                       expandedService[service.id] && (
-                        <div className="mt-2 text-xs text-gray-600">
+                        <div className="mt-2 text-sm text-gray-600">
                           {service.altname &&
                             service.altname !== service.name && (
                               <p className="italic mb-1">{service.altname}</p>
@@ -653,25 +653,25 @@ export default function PriceListPage() {
                 ) : (
                   <div
                     key={service.id}
-                    className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-4 md:p-6"
+                    className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-5 md:p-6"
                   >
-                    <div className="flex justify-between items-start mb-3 md:mb-4">
-                      <h3 className="text-base md:text-lg font-semibold text-dark line-clamp-2">
+                    <div className="flex justify-between items-start mb-4 md:mb-4">
+                      <h3 className="text-lg md:text-xl font-semibold text-dark line-clamp-2">
                         {service.name}
                       </h3>
                       <div className="text-right ml-4">
-                        <div className="text-xl md:text-2xl font-bold text-primary">
+                        <div className="text-2xl md:text-3xl font-bold text-primary">
                           {formatPrice(getServicePrice(service))}
                         </div>
                         {service.cito_cost > 0 &&
                           service.cito_cost !== service.base_cost && (
-                            <div className="text-xs md:text-sm text-gray-500">
+                            <div className="text-sm md:text-base text-gray-500">
                               Срочно: {service.cito_cost.toLocaleString()} ₽
                             </div>
                           )}
                       </div>
                     </div>
-                    <div className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">
+                    <div className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
                       <div className="flex items-center mb-2">
                         <svg
                           className="w-4 h-4 mr-2 text-primary"
