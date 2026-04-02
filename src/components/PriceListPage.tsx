@@ -59,66 +59,23 @@ export default function PriceListPage() {
         setIsLoading(true);
         setError(null);
 
-        // Загружаем все страницы лабораторных услуг (группа 1002) - ПАРАЛЛЕЛЬНО для ускорения
-        let labServices: ApiService[] | null = null;
-        let labTotal = 0;
-        try {
-          const apiUrl = import.meta.env.VITE_API_URL || 'https://clinicaldan.ru/api';
-          const limit = 100;
-          const maxPages = 50; // защитный предел
-          
-          // Сначала загружаем первую страницу, чтобы узнать total
-          const firstResp = await fetch(`${apiUrl}/archimed/groupservices/1002?page=1`);
-          if (firstResp.ok) {
-            const firstJson = await firstResp.json();
-            const firstChunk = Array.isArray(firstJson?.data?.services) ? firstJson.data.services : [];
-            labTotal = parseInt(firstJson?.meta?.pagination?.total || '0', 10);
-            const totalPages = labTotal ? Math.ceil(labTotal / limit) : 1;
-            const pagesToLoad = Math.min(totalPages, maxPages);
-            
-            // Загружаем остальные страницы ПАРАЛЛЕЛЬНО (батчами по 5 для оптимизации)
-            const all: ApiService[] = [...firstChunk];
-            const batchSize = 5; // загружаем по 5 страниц параллельно
-            
-            for (let batchStart = 2; batchStart <= pagesToLoad; batchStart += batchSize) {
-              const batchEnd = Math.min(batchStart + batchSize - 1, pagesToLoad);
-              const batchPromises = Array.from({ length: batchEnd - batchStart + 1 }, (_, i) => {
-                const page = batchStart + i;
-                return fetch(`${apiUrl}/archimed/groupservices/1002?page=${page}`)
-                  .then(resp => resp.ok ? resp.json() : null)
-                  .catch(() => null);
-              });
-              
-              const batchResults = await Promise.all(batchPromises);
-              for (const json of batchResults) {
-                if (json?.data?.services && Array.isArray(json.data.services)) {
-                  all.push(...json.data.services);
-                }
-              }
-            }
-            
-            if (all.length > 0) {
-              labServices = all;
-              setLaboratoryGroupData({
-                services: all,
-                total: labTotal || all.length,
-                page: 1,
-              });
-            }
-          }
-        } catch (e) {
-          console.warn('Ошибка загрузки groupservices/1002', e);
+        // Загружаем ВСЕ услуги через archimedService (с кэшем, дедупликацией и параллельной пагинацией)
+        const allServices = await archimedService.getServices();
+        
+        // Лабораторные услуги (группа 1002) уже включены в allServices
+        const labServices = allServices.filter(s => s.group_id === 1002);
+        if (labServices.length > 0) {
+          setLaboratoryGroupData({
+            services: labServices,
+            total: labServices.length,
+            page: 1,
+          });
         }
 
-        const services = await archimedService.getServices();
-
         // Группируем услуги по group_name
-        const groupedServices = services.reduce(
+        const groupedServices = allServices.reduce(
           (groups: ServiceGroup[], service: ApiService) => {
-            // Исключаем лабораторные из общего списка, если загрузили их отдельно
-            if (labServices && service.group_id === 1002) {
-              return groups;
-            }
+            // Лабораторные услуги уже отфильтрованы, просто добавляем все
             const existingGroup = groups.find(
               (group) => group.id === service.group_id
             );
@@ -225,7 +182,7 @@ export default function PriceListPage() {
         setServiceGroups(cleanedGroups);
 
         // Определяем популярные услуги (первые 6 с наименьшей стоимостью)
-        const popular = services
+        const popular = allServices
           .filter((service) => service.base_cost > 0)
           .sort((a, b) => a.base_cost - b.base_cost)
           .slice(0, 6);
