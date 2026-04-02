@@ -574,7 +574,7 @@ export default function PriceListPage() {
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         <div className="text-center mb-8 md:mb-12">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dark mb-3 md:mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-dark mb-3 md:mb-4">
             Прайс-лист клиники
           </h1>
           <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
