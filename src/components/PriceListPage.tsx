@@ -3,6 +3,7 @@ import type { ApiService, ServiceGroup, ArchimedDoctor } from "../types/cms";
 import archimedService from "../services/archimed";
 import ErrorComponent from "./ErrorComponent";
 import AppointmentModal from "./AppointmentModal";
+import SchemaOrg from "./SchemaOrg";
 
 export default function PriceListPage() {
   const [serviceGroups, setServiceGroups] = useState<ServiceGroup[]>([]);
@@ -547,7 +548,29 @@ export default function PriceListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 md:py-12">
+    <>
+      {/* Schema.org structured data for SEO */}
+      <SchemaOrg
+        pageName="Прайс-лист клиники Алдан"
+        pageDescription="Актуальные цены на все услуги клиники Алдан. Более 3600 услуг: лабораторные исследования, УЗИ, консультации врачей и другие медицинские услуги."
+        pageUrl="https://clinicaldan.ru/prices"
+        breadcrumbs={[
+          { name: 'Главная', url: 'https://clinicaldan.ru/' },
+          { name: 'Прайс-лист', url: 'https://clinicaldan.ru/prices' }
+        ]}
+        services={popularServices.slice(0, 5).map(s => ({
+          name: s.name,
+          description: s.info || undefined,
+          price: s.base_cost > 0 ? s.base_cost : undefined,
+          currency: 'RUB'
+        }))}
+        aggregateRating={{
+          ratingValue: 4.9,
+          reviewCount: 250
+        }}
+      />
+      
+      <div className="min-h-screen bg-gray-50 py-6 md:py-12">
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         <div className="text-center mb-8 md:mb-12">
@@ -1380,5 +1403,6 @@ export default function PriceListPage() {
         />
       </div>
     </div>
+    </>
   );
 }

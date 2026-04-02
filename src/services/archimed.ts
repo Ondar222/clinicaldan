@@ -15,6 +15,7 @@ import { mockServices } from '../data/mockServices';
 import { mockDoctors, mockBranches } from '../data/mockDoctors';
 import doctorsDataRaw from '../data/doctors.json';
 import prodoctorovDataRaw from '../data/prodoctorov.json';
+import { indexedDBCache, IndexedDBCache } from './indexedDBCache';
 
 // Archimed API: в dev и prod идём через тот же origin (Vite proxy или nginx), чтобы не было CORS
 const ARCHIMED_API_URL = import.meta.env.VITE_ARCHIMED_API_URL || '/api/archimed';
@@ -30,16 +31,17 @@ const ARCHIMED_CATEGORIES_ENABLED = false;
 
 // Local cache settings
 const DOCTORS_CACHE_KEY = 'archimed_doctors_v5_no_cache';
-const SERVICES_CACHE_KEY = 'archimed_services_v1';
+const SERVICES_CACHE_KEY = 'archimed_services_v2'; // v2 with IndexedDB
 const DOCTORS_CACHE_TTL_MS = 0; // Disabled - always fetch fresh data to ensure blacklist is applied
-const SERVICES_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
-const DEFAULT_REQUEST_TIMEOUT_MS = 20000; // 20s
+const SERVICES_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days (increased for better caching)
+const DEFAULT_REQUEST_TIMEOUT_MS = 30000; // 30s (increased for slow connections)
 
 // Old cache keys to clean up
 const OLD_DOCTORS_CACHE_KEYS = ['archimed_doctors_v2', 'archimed_doctors_v3', 'archimed_doctors_v4', 'archimed_doctors_v5_no_cache'];
+const OLD_SERVICES_CACHE_KEYS = ['archimed_services_v1']; // Clean up old localStorage cache
 const DEFAULT_API_PAGE_LIMIT = 500; // Increased page size to reduce number of requests
 const MAX_API_PAGES = 50; // hard cap to prevent runaway loops
-const PARALLEL_PAGES = 5; // Number of pages to fetch in parallel
+const PARALLEL_PAGES = 10; // Increased parallel batches for faster loading
 
 // Helpers for name normalization and blacklist
 const normalizeRu = (s: string) =>
@@ -72,6 +74,7 @@ class ArchimedService {
   private servicesCache: ApiService[] = [];
   private doctorsCache: ArchimedDoctor[] = [];
   private servicesFetchPromise: Promise<ApiService[]> | null = null; // Deduplicate concurrent fetches
+  private indexedDBAvailable: boolean = false;
 
   constructor() {
     this.baseUrl = ARCHIMED_API_URL;
@@ -83,12 +86,23 @@ class ArchimedService {
     console.log('ArchimedService constructor, API URL:', this.baseUrl);
     console.log('API Token configured:', !!ARCHIMED_API_TOKEN);
 
+    // Check IndexedDB availability
+    this.indexedDBAvailable = IndexedDBCache.isAvailable();
+    console.log('IndexedDB available:', this.indexedDBAvailable);
+
     // Clean up old cache keys to force fresh data with blacklist applied
     try {
       OLD_DOCTORS_CACHE_KEYS.forEach(key => {
         try {
           window.localStorage?.removeItem(key);
           console.log('Cleared old cache key:', key);
+        } catch {}
+      });
+      // Clean up old services cache to migrate to IndexedDB
+      OLD_SERVICES_CACHE_KEYS.forEach(key => {
+        try {
+          window.localStorage?.removeItem(key);
+          console.log('Cleared old services cache key:', key);
         } catch {}
       });
     } catch (error) {
@@ -245,40 +259,57 @@ class ArchimedService {
     return data.data;
   }
 
-  // Services (from Archimed)
+  // Services (from Archimed) - OPTIMIZED with IndexedDB + Progressive Loading
   async getServices(): Promise<ApiService[]> {
-    // Return cached data immediately (fastest path)
+    // 1. Return memory cache immediately (fastest - ~5ms)
     if (this.servicesCache.length > 0) {
-      // Background refresh without blocking
-      this.refreshServices();
+      this.refreshServices(); // Background refresh
       return this.servicesCache;
     }
 
-    // Check localStorage cache
+    // 2. Try IndexedDB (fast - ~50-100ms for 3646 services)
+    if (this.indexedDBAvailable) {
+      const fromIndexedDB = await indexedDBCache.get<ApiService[]>(SERVICES_CACHE_KEY, SERVICES_CACHE_TTL_MS);
+      if (fromIndexedDB && fromIndexedDB.length > 0) {
+        this.servicesCache = fromIndexedDB;
+        this.refreshServices(); // Background refresh
+        console.log('Loaded services from IndexedDB:', fromIndexedDB.length);
+        return this.servicesCache;
+      }
+    }
+
+    // 3. Try localStorage (slower - ~200-500ms)
     const fromStorage = this.readFromStorage<ApiService[]>(SERVICES_CACHE_KEY, SERVICES_CACHE_TTL_MS);
     if (fromStorage && fromStorage.length > 0) {
       this.servicesCache = fromStorage;
-      // Background refresh without blocking
       this.refreshServices();
+      console.log('Loaded services from localStorage:', fromStorage.length);
       return this.servicesCache;
     }
 
-    // Deduplicate concurrent fetches
+    // 4. Deduplicate concurrent fetches
     if (this.servicesFetchPromise) {
       return this.servicesFetchPromise;
     }
 
-    // Fetch from API with promise tracking
+    // 5. Fetch from API with promise tracking
     this.servicesFetchPromise = this.fetchAllServicesFromAPI()
       .then((allServices) => {
         this.servicesCache = allServices;
+        // Save to both IndexedDB and localStorage for compatibility
+        if (this.indexedDBAvailable) {
+          indexedDBCache.set(SERVICES_CACHE_KEY, allServices, SERVICES_CACHE_TTL_MS);
+        }
         this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
+        console.log('Loaded services from API:', allServices.length);
         return this.servicesCache;
       })
       .catch((error) => {
         console.warn('API недоступен, используем моковые данные для услуг:', error);
-        // Fallback to mock data on API failure
         this.servicesCache = mockServices;
+        if (this.indexedDBAvailable) {
+          indexedDBCache.set(SERVICES_CACHE_KEY, mockServices, SERVICES_CACHE_TTL_MS);
+        }
         this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
         return this.servicesCache;
       })
@@ -289,7 +320,7 @@ class ArchimedService {
     return this.servicesFetchPromise;
   }
 
-  private async fetchAllServicesFromAPI(): Promise<ApiService[]> {
+  private async fetchAllServicesFromAPI(onProgress?: (loaded: number, total: number, partialData: ApiService[]) => void): Promise<ApiService[]> {
     const all: ApiService[] = [];
 
     // If base URL is not configured, short-circuit
@@ -311,6 +342,8 @@ class ArchimedService {
 
       if (Array.isArray(first?.data)) {
         all.push(...first.data);
+        // Report progress after first page (show data early!)
+        if (onProgress) onProgress(all.length, total, [...all]);
       }
 
       const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
@@ -346,10 +379,15 @@ class ArchimedService {
             if (pageData.length > 0) {
               all.push(...pageData);
             }
-            // Stop if we got a partial page (indicates last page)
-            if (pageData.length < limit) {
-              return all;
-            }
+          }
+
+          // Report progress after each batch (progressive loading)
+          if (onProgress) onProgress(all.length, total, [...all]);
+
+          // Check if we got a partial page (indicates last page)
+          const lastBatchHadPartial = results.some(r => r.length < limit);
+          if (lastBatchHadPartial) {
+            return all;
           }
         }
       }

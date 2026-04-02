@@ -1,86 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  <!-- Homepage -->
   <url>
     <loc>https://clinicaldan.ru/</loc>
-    <lastmod>2026-03-31</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <priority>1.0</priority>
     <changefreq>daily</changefreq>
   </url>
+  
+  <!-- Main pages -->
   <url>
     <loc>https://clinicaldan.ru/directions</loc>
-    <lastmod>2026-03-31</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <priority>0.9</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
+    <loc>https://clinicaldan.ru/prices</loc>
+    <lastmod>2026-04-02</lastmod>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://clinicaldan.ru/doctors</loc>
+    <lastmod>2026-04-02</lastmod>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://clinicaldan.ru/contacts</loc>
+    <lastmod>2026-04-02</lastmod>
+    <priority>0.9</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  
+  <!-- Services pages -->
+  <url>
     <loc>https://clinicaldan.ru/laboratory</loc>
-    <lastmod>2026-03-31</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://clinicaldan.ru/about</loc>
-    <lastmod>2026-03-31</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://clinicaldan.ru/doctors</loc>
-    <lastmod>2026-03-31</lastmod>
-    <priority>0.8</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://clinicaldan.ru/news</loc>
-    <lastmod>2026-03-31</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <priority>0.8</priority>
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://clinicaldan.ru/reviews</loc>
-    <lastmod>2026-03-31</lastmod>
-    <priority>0.7</priority>
+    <loc>https://clinicaldan.ru/stock</loc>
+    <lastmod>2026-04-02</lastmod>
+    <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
+  
+  <!-- Patient resources -->
   <url>
-    <loc>https://clinicaldan.ru/stock</loc>
-    <lastmod>2026-03-31</lastmod>
+    <loc>https://clinicaldan.ru/reviews</loc>
+    <lastmod>2026-04-02</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://clinicaldan.ru/contacts</loc>
-    <lastmod>2026-03-31</lastmod>
-    <priority>0.9</priority>
-    <changefreq>monthly</changefreq>
+    <loc>https://clinicaldan.ru/questions</loc>
+    <lastmod>2026-04-02</lastmod>
+    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://clinicaldan.ru/questions</loc>
-    <lastmod>2026-03-31</lastmod>
+    <loc>https://clinicaldan.ru/certificates</loc>
+    <lastmod>2026-04-02</lastmod>
     <priority>0.7</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://clinicaldan.ru/documents</loc>
-    <lastmod>2026-03-31</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <priority>0.6</priority>
     <changefreq>monthly</changefreq>
   </url>
-  <url>
-    <loc>https://clinicaldan.ru/certificates</loc>
-    <lastmod>2026-03-31</lastmod>
-    <priority>0.7</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://clinicaldan.ru/prices</loc>
-    <lastmod>2026-03-31</lastmod>
-    <priority>0.9</priority>
-    <changefreq>weekly</changefreq>
-  </url>
+  
+  <!-- Legal pages -->
   <url>
     <loc>https://clinicaldan.ru/cookie-policy</loc>
-    <lastmod>2026-03-31</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <priority>0.5</priority>
     <changefreq>yearly</changefreq>
   </url>
