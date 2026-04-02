@@ -886,7 +886,7 @@ export default function PriceListPage() {
                     <h2 className="text-lg md:text-xl font-semibold">
                       {group.name}
                     </h2>
-                    <p className="text-primaryLight text-xs md:text-sm mt-1">
+                    <p className="text-gray-200 font-medium text-sm md:text-base mt-1">
                       {(() => {
                         const filteredServices = group.services.filter(
                           (service) =>
