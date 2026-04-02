@@ -47,13 +47,12 @@ export default function ContactForm() {
     setValidationError(null);
     setIsSubmitting(true);
 
-    // Отправка формы на email через backend
-    // В dev режиме используем относительный URL (через proxy)
-    const isDev = import.meta.env.DEV;
-    const API_URL = import.meta.env.VITE_API_URL || (isDev ? '/api' : 'https://clinicaldan.ru/api');
-    const endpoint = `${API_URL}/contact`;
+    // Используем относительный URL для работы на любом домене
+    // На production: /api/contact → nginx → localhost:5002
+    // В dev: /api/contact → vite proxy → localhost:5002
+    const endpoint = '/api/contact';
     
-    console.log('Sending contact form to:', endpoint, '(dev:', isDev, ')');
+    console.log('Sending contact form to:', endpoint);
     
     fetch(endpoint, {
       method: 'POST',
