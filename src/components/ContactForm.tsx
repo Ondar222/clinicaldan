@@ -47,8 +47,27 @@ export default function ContactForm() {
     setValidationError(null);
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
+    // Отправка формы на email через backend
+    const API_URL = import.meta.env.VITE_API_URL || 'https://clinicaldan.ru/api';
+    
+    fetch(`${API_URL}/contact`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        message: formData.message,
+        recipient: 'clinicaldan@mail.ru'
+      })
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Ошибка отправки');
+      return response.json();
+    })
+    .then(data => {
       setIsSubmitting(false);
       setIsSubmitted(true);
       setFormData({
@@ -64,7 +83,22 @@ export default function ContactForm() {
       setTimeout(() => {
         setIsSubmitted(false);
       }, 3000);
-    }, 1000);
+    })
+    .catch(error => {
+      console.error('Form submission error:', error);
+      setIsSubmitting(false);
+      setValidationError('Ошибка отправки. Попробуйте позже или позвоните нам.');
+      
+      // Fallback: открываем почтовый клиент
+      const subject = encodeURIComponent('Заявка с сайта ClinicalDan');
+      const body = encodeURIComponent(
+        `Имя: ${formData.name}\n` +
+        `Телефон: ${formData.phone}\n` +
+        `Email: ${formData.email}\n` +
+        `Сообщение: ${formData.message}`
+      );
+      window.location.href = `mailto:clinicaldan@mail.ru?subject=${subject}&body=${body}`;
+    });
   };
 
   return (
