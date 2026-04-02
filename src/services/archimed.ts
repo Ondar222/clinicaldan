@@ -37,8 +37,9 @@ const DEFAULT_REQUEST_TIMEOUT_MS = 20000; // 20s
 
 // Old cache keys to clean up
 const OLD_DOCTORS_CACHE_KEYS = ['archimed_doctors_v2', 'archimed_doctors_v3', 'archimed_doctors_v4', 'archimed_doctors_v5_no_cache'];
-const DEFAULT_API_PAGE_LIMIT = 200; // request large page size to reduce pagination
+const DEFAULT_API_PAGE_LIMIT = 500; // Increased page size to reduce number of requests
 const MAX_API_PAGES = 50; // hard cap to prevent runaway loops
+const PARALLEL_PAGES = 5; // Number of pages to fetch in parallel
 
 // Helpers for name normalization and blacklist
 const normalizeRu = (s: string) =>
@@ -70,6 +71,7 @@ class ArchimedService {
   private headers: HeadersInit;
   private servicesCache: ApiService[] = [];
   private doctorsCache: ArchimedDoctor[] = [];
+  private servicesFetchPromise: Promise<ApiService[]> | null = null; // Deduplicate concurrent fetches
 
   constructor() {
     this.baseUrl = ARCHIMED_API_URL;
@@ -109,7 +111,11 @@ class ArchimedService {
     let response: Response;
     try {
       response = await fetch(url, {
-        headers: this.headers,
+        headers: {
+          ...this.headers,
+          'Accept': 'application/json',
+          'Accept-Encoding': 'gzip, deflate', // Request compression
+        },
         signal: controller.signal,
         ...options,
       });
@@ -241,34 +247,50 @@ class ArchimedService {
 
   // Services (from Archimed)
   async getServices(): Promise<ApiService[]> {
+    // Return cached data immediately (fastest path)
     if (this.servicesCache.length > 0) {
-      this.refreshServices();
-      return this.servicesCache;
-    }
-    const fromStorage = this.readFromStorage<ApiService[]>(SERVICES_CACHE_KEY, SERVICES_CACHE_TTL_MS);
-    if (fromStorage && fromStorage.length > 0) {
-      this.servicesCache = fromStorage;
+      // Background refresh without blocking
       this.refreshServices();
       return this.servicesCache;
     }
 
-    try {
-      const allServices = await this.fetchAllServicesFromAPI();
-      this.servicesCache = allServices;
-      this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
-      return this.servicesCache;
-    } catch (error) {
-      console.warn('API недоступен, используем моковые данные для услуг:', error);
-      // Используем моковые данные при ошибке API
-      this.servicesCache = mockServices;
-      this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
+    // Check localStorage cache
+    const fromStorage = this.readFromStorage<ApiService[]>(SERVICES_CACHE_KEY, SERVICES_CACHE_TTL_MS);
+    if (fromStorage && fromStorage.length > 0) {
+      this.servicesCache = fromStorage;
+      // Background refresh without blocking
+      this.refreshServices();
       return this.servicesCache;
     }
+
+    // Deduplicate concurrent fetches
+    if (this.servicesFetchPromise) {
+      return this.servicesFetchPromise;
+    }
+
+    // Fetch from API with promise tracking
+    this.servicesFetchPromise = this.fetchAllServicesFromAPI()
+      .then((allServices) => {
+        this.servicesCache = allServices;
+        this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
+        return this.servicesCache;
+      })
+      .catch((error) => {
+        console.warn('API недоступен, используем моковые данные для услуг:', error);
+        // Fallback to mock data on API failure
+        this.servicesCache = mockServices;
+        this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
+        return this.servicesCache;
+      })
+      .finally(() => {
+        this.servicesFetchPromise = null;
+      });
+
+    return this.servicesFetchPromise;
   }
 
   private async fetchAllServicesFromAPI(): Promise<ApiService[]> {
     const all: ApiService[] = [];
-    let page = 1;
 
     // If base URL is not configured, short-circuit
     if (!this.baseUrl) {
@@ -276,42 +298,64 @@ class ArchimedService {
       return all;
     }
 
-    // Try to fetch a large single page first
+    // Fetch first page to get total count
     try {
       const first = await this.request<{ data: ApiService[]; total: number | string; page: number; limit: number }>(
-        `/services?page=${page}&limit=${DEFAULT_API_PAGE_LIMIT}`,
+        `/services?page=1&limit=${DEFAULT_API_PAGE_LIMIT}`,
         { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
       );
+
       // total может быть строкой или числом
       const total = typeof first.total === 'string' ? parseInt(first.total, 10) : (first.total ?? first.data?.length ?? 0);
       const limit = first.limit ?? DEFAULT_API_PAGE_LIMIT;
+
       if (Array.isArray(first?.data)) {
         all.push(...first.data);
       }
-      const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
 
-      // Fetch remaining pages if needed
-      for (page = 2; page <= Math.min(totalPages, MAX_API_PAGES); page++) {
-        try {
-          const next = await this.request<{ data: ApiService[]; total: number | string; page: number; limit: number }>(
-            `/services?page=${page}&limit=${limit}`,
-            { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
+      const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
+      const cappedTotalPages = Math.min(totalPages, MAX_API_PAGES);
+
+      // Fetch remaining pages in parallel batches
+      if (cappedTotalPages > 1) {
+        const pagesToFetch: number[] = [];
+        for (let p = 2; p <= cappedTotalPages; p++) {
+          pagesToFetch.push(p);
+        }
+
+        // Process pages in parallel batches
+        for (let i = 0; i < pagesToFetch.length; i += PARALLEL_PAGES) {
+          const batch = pagesToFetch.slice(i, i + PARALLEL_PAGES);
+          const results = await Promise.all(
+            batch.map(async (page) => {
+              try {
+                const response = await this.request<{ data: ApiService[]; total: number | string; page: number; limit: number }>(
+                  `/services?page=${page}&limit=${limit}`,
+                  { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
+                );
+                return response?.data || [];
+              } catch (pageError) {
+                console.warn(`Error fetching services page ${page}:`, pageError);
+                return [];
+              }
+            })
           );
-          if (Array.isArray(next?.data) && next.data.length > 0) {
-            all.push(...next.data);
-            if (next.data.length < limit) break; // last page
-          } else {
-            break;
+
+          // Merge results from this batch
+          for (const pageData of results) {
+            if (pageData.length > 0) {
+              all.push(...pageData);
+            }
+            // Stop if we got a partial page (indicates last page)
+            if (pageData.length < limit) {
+              return all;
+            }
           }
-        } catch (pageError) {
-          console.warn(`Error fetching services page ${page}, stopping pagination:`, pageError);
-          break; // Останавливаем пагинацию при ошибке
         }
       }
     } catch (e) {
       console.warn('Error fetching services from API:', e);
       // Не пробрасываем ошибку, возвращаем то что успели получить (может быть пустой массив)
-      return all;
     }
 
     return all;
