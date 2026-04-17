@@ -31,6 +31,8 @@ export interface ListCertificatesParams {
   query?: string;
   page?: number;
   limit?: number;
+  includeFailed?: boolean;
+  includeUnsuccessful?: boolean;
 }
 
 export interface RedeemCertificateRequest {
@@ -174,6 +176,8 @@ class CertificateAdminService {
     if (params.query) search.append("query", params.query.trim());
     if (params.page) search.append("page", String(params.page));
     if (params.limit) search.append("limit", String(params.limit));
+    if (params.includeFailed) search.append("includeFailed", "true");
+    if (params.includeUnsuccessful) search.append("includeUnsuccessful", "true");
 
     const queryString = search.toString();
     const response = await fetch(

@@ -56,6 +56,8 @@ const StaffDashboard: React.FC = () => {
         query: query?.trim() || undefined,
         page: 1,
         limit: 20,
+        includeFailed: true,
+        includeUnsuccessful: true,
       });
       const sorted = [...data.data].sort((a, b) => {
         const aTs = a.createdAt ? new Date(a.createdAt).getTime() : 0;
