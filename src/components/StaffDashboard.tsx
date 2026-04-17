@@ -55,9 +55,14 @@ const StaffDashboard: React.FC = () => {
       const data = await certificateAdminService.listCertificates({
         query: query?.trim() || undefined,
         page: 1,
-        limit: 100,
+        limit: 20,
       });
-      setCertificates(data.data);
+      const sorted = [...data.data].sort((a, b) => {
+        const aTs = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bTs = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return bTs - aTs;
+      });
+      setCertificates(sorted.slice(0, 20));
     } catch (err) {
       console.error('Ошибка загрузки сертификатов:', err);
       setCertificatesError(err instanceof Error ? err.message : 'Не удалось загрузить сертификаты.');
@@ -394,7 +399,7 @@ const StaffDashboard: React.FC = () => {
               </button>
             </form>
             <p className="mt-2 text-sm text-gray-500">
-              Поиск выполняется по номеру сертификата, например <span className="font-mono">CERT-2026-0001</span>.
+              Показаны последние 20 сертификатов. Можно отфильтровать по номеру, например <span className="font-mono">CERT-2026-0001</span>.
             </p>
           </div>
 

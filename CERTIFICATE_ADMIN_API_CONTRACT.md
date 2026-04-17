@@ -18,7 +18,7 @@ Admin endpoints for searching certificates and writing off a partial amount.
 - Query params:
   - `query` (optional, string) - certificate number or part of it
   - `page` (optional, number, default `1`)
-  - `limit` (optional, number, default `50`)
+  - `limit` (optional, number, default `20`, allowed range `1..20`)
 
 ### Response `200`
 
@@ -39,9 +39,13 @@ Admin endpoints for searching certificates and writing off a partial amount.
   ],
   "total": 1,
   "page": 1,
-  "limit": 50
+  "limit": 20
 }
 ```
+
+Notes:
+- Without query params, endpoint returns latest 20 certificates.
+- If `limit > 20`, backend returns max 20.
 
 ## 2) Redeem (partial write-off)
 
