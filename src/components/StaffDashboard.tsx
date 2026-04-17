@@ -60,39 +60,51 @@ const StaffDashboard: React.FC = () => {
       setCertificatesError(null);
       setTransactionsError(null);
 
-      // Единый запрос к /admin/staff-dashboard
-      const dashboardData: StaffDashboardResponse = await certificateAdminService.fetchStaffDashboardData({
+      // Загружаем сертификаты
+      const certsData = await certificateAdminService.listCertificates({
+        query: query?.trim() || undefined,
         page: 1,
         limit: 20,
-        transactionsLimit: 50,
-        purchasedLimit: 20,
         includeFailed: true,
         includeUnsuccessful: true,
       });
 
       // Сортируем сертификаты по дате (новые сверху)
-      const certsSorted = [...dashboardData.certificates.data].sort((a, b) => {
+      const certsSorted = [...certsData.data].sort((a, b) => {
         const aTs = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const bTs = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         return bTs - aTs;
       });
       setCertificates(certsSorted.slice(0, 20));
 
+      // Загружаем транзакции
+      let txRows: CertificateTransactionRow[] = [];
+      try {
+        txRows = await certificateAdminService.listTransactions(50);
+      } catch (txErr) {
+        console.warn('Список транзакций недоступен:', txErr);
+      }
+
+      // Если транзакций нет, строим из сертификатов
+      if (txRows.length === 0) {
+        txRows = certificateAdminService.mapCertificatesToTransactionRows(certsSorted);
+      }
+
       // Сортируем транзакции по дате (новые сверху)
-      const txSorted = [...dashboardData.transactions.data].sort((a, b) => {
+      const txSorted = [...txRows].sort((a, b) => {
         const aTs = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const bTs = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         return bTs - aTs;
       });
       setTransactions(txSorted.slice(0, 50));
 
-      // Сортируем оплаченные сертификаты по дате (новые сверху)
-      const purchasedSorted = [...dashboardData.purchasedCertificates.data].sort((a, b) => {
-        const aTs = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-        const bTs = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-        return bTs - aTs;
+      // Купленные сертификаты (успешно оплаченные) - из основного списка с фильтром по статусу оплаты
+      const purchased = certsSorted.filter(cert => {
+        const bankStatus = cert.payment?.bankStatus;
+        const bs = typeof bankStatus === 'string' ? Number.parseInt(bankStatus, 10) : bankStatus;
+        return bs === 2; // Статус 2 = оплачен
       });
-      setPurchasedCertificates(purchasedSorted.slice(0, 20));
+      setPurchasedCertificates(purchased.slice(0, 20));
     } catch (err) {
       console.error('Ошибка загрузки данных панели:', err);
       setCertificatesError(err instanceof Error ? err.message : 'Не удалось загрузить данные панели.');
