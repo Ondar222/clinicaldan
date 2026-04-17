@@ -153,6 +153,32 @@ const StaffDashboard: React.FC = () => {
     }
   };
 
+  const getBankStatusMeta = (status?: number | string, statusName?: string) => {
+    const normalized = typeof status === 'string' ? Number.parseInt(status, 10) : status;
+    if (normalized === 2) {
+      return {
+        label: statusName || 'Оплачен',
+        className: 'bg-green-100 text-green-800',
+      };
+    }
+    if (normalized === 0 || normalized === 1 || normalized === 5) {
+      return {
+        label: statusName || 'В обработке',
+        className: 'bg-yellow-100 text-yellow-800',
+      };
+    }
+    if (normalized === 3 || normalized === 4 || normalized === 6) {
+      return {
+        label: statusName || 'Неуспешно',
+        className: 'bg-red-100 text-red-800',
+      };
+    }
+    return {
+      label: statusName || 'Неизвестно',
+      className: 'bg-slate-100 text-slate-700',
+    };
+  };
+
   const handleCertificateSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     await loadCertificates(certificateQuery);
@@ -417,6 +443,12 @@ const StaffDashboard: React.FC = () => {
             <div className="divide-y divide-gray-200">
               {certificates.map((certificate) => (
                 <div key={certificate.code} className="p-6">
+                  {(() => {
+                    const bankMeta = getBankStatusMeta(
+                      certificate.payment?.bankStatus,
+                      certificate.payment?.bankStatusName
+                    );
+                    return (
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div className="space-y-2">
                       <div className="flex items-center gap-3 flex-wrap">
@@ -424,13 +456,33 @@ const StaffDashboard: React.FC = () => {
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusClassName(certificate.status)}`}>
                           {getStatusLabel(certificate.status)}
                         </span>
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${bankMeta.className}`}>
+                          Банк: {bankMeta.label}
+                        </span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
                         <p><span className="font-medium">Номинал:</span> {formatCurrency(certificate.nominalAmount)}</p>
                         <p><span className="font-medium">Остаток:</span> {formatCurrency(certificate.remainingAmount)}</p>
                         <p><span className="font-medium">Клиент:</span> {certificate.customerName || 'Не указан'}</p>
                         <p><span className="font-medium">Телефон:</span> {certificate.customerPhone || 'Не указан'}</p>
+                        <p><span className="font-medium">Order ID:</span> {certificate.payment?.orderId || '—'}</p>
+                        <p><span className="font-medium">Payment order ID:</span> {certificate.payment?.paymentOrderId || '—'}</p>
+                        <p><span className="font-medium">Локальный статус:</span> {certificate.payment?.localStatus ?? '—'}</p>
+                        <p><span className="font-medium">Статус банка:</span> {certificate.payment?.bankStatus ?? '—'} {certificate.payment?.bankStatusName ? `(${certificate.payment.bankStatusName})` : ''}</p>
                       </div>
+                      {certificate.payment?.formUrl && (
+                        <p className="text-sm">
+                          <span className="font-medium text-gray-700">Ссылка на оплату:</span>{' '}
+                          <a
+                            href={certificate.payment.formUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline break-all"
+                          >
+                            Открыть форму оплаты
+                          </a>
+                        </p>
+                      )}
                     </div>
 
                     <div className="w-full lg:w-[360px] space-y-3">
@@ -484,6 +536,8 @@ const StaffDashboard: React.FC = () => {
                       </button>
                     </div>
                   </div>
+                    );
+                  })()}
 
                   {expandedHistoryByCode[certificate.code] && (
                     <div className="mt-5 pt-5 border-t border-gray-200">

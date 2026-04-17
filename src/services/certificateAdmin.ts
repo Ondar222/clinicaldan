@@ -10,6 +10,14 @@ export interface AdminCertificate {
   expiresAt?: string;
   customerName?: string;
   customerPhone?: string;
+  payment?: {
+    orderId?: string;
+    paymentOrderId?: string;
+    localStatus?: number | string;
+    bankStatus?: number | string;
+    bankStatusName?: string;
+    formUrl?: string;
+  };
 }
 
 export interface ListCertificatesResponse {
@@ -127,6 +135,9 @@ class CertificateAdminService {
   }
 
   private normalizeCertificate(raw: Record<string, unknown>): AdminCertificate {
+    const paymentRaw = raw.payment && typeof raw.payment === "object"
+      ? (raw.payment as Record<string, unknown>)
+      : null;
     return {
       id: Number(raw.id ?? raw.certificateId ?? 0),
       code: String(raw.code ?? raw.certificateNumber ?? raw.number ?? ""),
@@ -137,6 +148,20 @@ class CertificateAdminService {
       expiresAt: typeof raw.expiresAt === "string" ? raw.expiresAt : undefined,
       customerName: typeof raw.customerName === "string" ? raw.customerName : undefined,
       customerPhone: typeof raw.customerPhone === "string" ? raw.customerPhone : undefined,
+      payment: paymentRaw
+        ? {
+            orderId: typeof paymentRaw.orderId === "string" ? paymentRaw.orderId : undefined,
+            paymentOrderId: typeof paymentRaw.paymentOrderId === "string" ? paymentRaw.paymentOrderId : undefined,
+            localStatus: (typeof paymentRaw.localStatus === "number" || typeof paymentRaw.localStatus === "string")
+              ? paymentRaw.localStatus
+              : undefined,
+            bankStatus: (typeof paymentRaw.bankStatus === "number" || typeof paymentRaw.bankStatus === "string")
+              ? paymentRaw.bankStatus
+              : undefined,
+            bankStatusName: typeof paymentRaw.bankStatusName === "string" ? paymentRaw.bankStatusName : undefined,
+            formUrl: typeof paymentRaw.formUrl === "string" ? paymentRaw.formUrl : undefined,
+          }
+        : undefined,
     };
   }
 
