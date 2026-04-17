@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import type { ArchimedAppointment, ArchimedDoctor, ApiService } from '../types/cms';
 import archimedService from '../services/archimed';
+import type { AdminCertificate, CertificateRedeemOperation } from '../services/certificateAdmin';
+import certificateAdminService from '../services/certificateAdmin';
 
 const StaffDashboard: React.FC = () => {
   const [appointments, setAppointments] = useState<ArchimedAppointment[]>([]);
   const [doctors, setDoctors] = useState<ArchimedDoctor[]>([]);
   const [services, setServices] = useState<ApiService[]>([]);
+  const [certificates, setCertificates] = useState<AdminCertificate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCertificatesLoading, setIsCertificatesLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [certificatesError, setCertificatesError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [certificateQuery, setCertificateQuery] = useState('');
+  const [redeemValues, setRedeemValues] = useState<Record<string, string>>({});
+  const [redeemReasons, setRedeemReasons] = useState<Record<string, string>>({});
+  const [isRedeemingByCode, setIsRedeemingByCode] = useState<Record<string, boolean>>({});
+  const [expandedHistoryByCode, setExpandedHistoryByCode] = useState<Record<string, boolean>>({});
+  const [historyByCode, setHistoryByCode] = useState<Record<string, CertificateRedeemOperation[]>>({});
+  const [isHistoryLoadingByCode, setIsHistoryLoadingByCode] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const loadData = async () => {
@@ -36,6 +48,30 @@ const StaffDashboard: React.FC = () => {
     loadData();
   }, []);
 
+  const loadCertificates = async (query?: string) => {
+    try {
+      setIsCertificatesLoading(true);
+      setCertificatesError(null);
+      const data = await certificateAdminService.listCertificates({
+        query: query?.trim() || undefined,
+        page: 1,
+        limit: 100,
+      });
+      setCertificates(data.data);
+    } catch (err) {
+      console.error('Ошибка загрузки сертификатов:', err);
+      setCertificatesError(err instanceof Error ? err.message : 'Не удалось загрузить сертификаты.');
+    } finally {
+      setIsCertificatesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCertificates().catch((err) => {
+      console.error('Ошибка начальной загрузки сертификатов:', err);
+    });
+  }, []);
+
   const getDoctorName = (doctorId?: number) => {
     if (!doctorId) return 'Неизвестный врач';
     const doctor = doctors.find(d => d.id === doctorId);
@@ -60,6 +96,118 @@ const StaffDashboard: React.FC = () => {
   const formatTime = (timeString?: string) => {
     if (!timeString) return 'Не указано';
     return timeString.substring(0, 5); // HH:MM format
+  };
+
+  const formatCurrency = (amount: number) => {
+    return `${amount.toLocaleString('ru-RU')} ₽`;
+  };
+
+  const formatDateTime = (isoDate: string) => {
+    const dt = new Date(isoDate);
+    if (Number.isNaN(dt.getTime())) return isoDate;
+    return dt.toLocaleString('ru-RU', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'Активен';
+      case 'partially_used':
+        return 'Частично использован';
+      case 'used':
+        return 'Использован';
+      case 'expired':
+        return 'Истек';
+      case 'blocked':
+        return 'Заблокирован';
+      default:
+        return status;
+    }
+  };
+
+  const getStatusClassName = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'partially_used':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'used':
+        return 'bg-gray-100 text-gray-700';
+      case 'expired':
+        return 'bg-orange-100 text-orange-800';
+      case 'blocked':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-slate-100 text-slate-700';
+    }
+  };
+
+  const handleCertificateSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await loadCertificates(certificateQuery);
+  };
+
+  const handleRedeem = async (certificate: AdminCertificate) => {
+    const code = certificate.code;
+    const value = redeemValues[code] ?? '';
+    const writeOffAmount = Number.parseInt(value, 10);
+    if (!Number.isFinite(writeOffAmount) || writeOffAmount <= 0) {
+      setCertificatesError('Введите корректную сумму списания.');
+      return;
+    }
+    if (writeOffAmount > certificate.remainingAmount) {
+      setCertificatesError('Сумма списания не может быть больше остатка сертификата.');
+      return;
+    }
+
+    try {
+      setCertificatesError(null);
+      setIsRedeemingByCode((prev) => ({ ...prev, [code]: true }));
+      const result = await certificateAdminService.redeemCertificate({
+        code,
+        writeOffAmount,
+        reason: redeemReasons[code] || undefined,
+      });
+
+      setCertificates((prev) =>
+        prev.map((item) => (item.code === code ? result.certificate : item))
+      );
+      setRedeemValues((prev) => ({ ...prev, [code]: '' }));
+      setHistoryByCode((prev) => ({ ...prev, [code]: [] }));
+    } catch (err) {
+      console.error('Ошибка списания сертификата:', err);
+      setCertificatesError(err instanceof Error ? err.message : 'Не удалось списать сертификат.');
+    } finally {
+      setIsRedeemingByCode((prev) => ({ ...prev, [code]: false }));
+    }
+  };
+
+  const loadCertificateHistory = async (code: string) => {
+    try {
+      setIsHistoryLoadingByCode((prev) => ({ ...prev, [code]: true }));
+      setCertificatesError(null);
+      const history = await certificateAdminService.getCertificateHistory(code);
+      setHistoryByCode((prev) => ({ ...prev, [code]: history }));
+    } catch (err) {
+      console.error('Ошибка загрузки истории списаний:', err);
+      setCertificatesError(err instanceof Error ? err.message : 'Не удалось загрузить историю списаний.');
+    } finally {
+      setIsHistoryLoadingByCode((prev) => ({ ...prev, [code]: false }));
+    }
+  };
+
+  const toggleHistory = async (code: string) => {
+    const nextExpanded = !expandedHistoryByCode[code];
+    setExpandedHistoryByCode((prev) => ({ ...prev, [code]: nextExpanded }));
+    if (nextExpanded && !historyByCode[code]) {
+      await loadCertificateHistory(code);
+    }
   };
 
   const filteredAppointments = appointments.filter(appointment => {
@@ -207,6 +355,162 @@ const StaffDashboard: React.FC = () => {
                       </div>
                     </div>
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Certificates Management */}
+        <div className="mt-10 bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="px-6 py-4 bg-primary text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <h2 className="text-xl font-semibold">Сертификаты</h2>
+            <button
+              onClick={() => {
+                loadCertificates(certificateQuery).catch((err) => {
+                  console.error('Ошибка обновления сертификатов:', err);
+                });
+              }}
+              className="px-4 py-2 text-sm bg-white text-primary rounded hover:bg-gray-100 transition-colors"
+            >
+              Обновить
+            </button>
+          </div>
+
+          <div className="p-6 border-b border-gray-200">
+            <form onSubmit={handleCertificateSearch} className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="text"
+                value={certificateQuery}
+                onChange={(e) => setCertificateQuery(e.target.value)}
+                placeholder="Поиск по номеру сертификата"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
+              <button
+                type="submit"
+                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primaryDark transition-colors"
+              >
+                Найти
+              </button>
+            </form>
+            <p className="mt-2 text-sm text-gray-500">
+              Поиск выполняется по номеру сертификата, например <span className="font-mono">CERT-2026-0001</span>.
+            </p>
+          </div>
+
+          {certificatesError && (
+            <div className="mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              {certificatesError}
+            </div>
+          )}
+
+          {isCertificatesLoading ? (
+            <div className="p-8 text-center text-gray-600">Загрузка сертификатов...</div>
+          ) : certificates.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">Сертификаты не найдены</div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {certificates.map((certificate) => (
+                <div key={certificate.code} className="p-6">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <h3 className="text-lg font-semibold text-dark">№ {certificate.code}</h3>
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusClassName(certificate.status)}`}>
+                          {getStatusLabel(certificate.status)}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
+                        <p><span className="font-medium">Номинал:</span> {formatCurrency(certificate.nominalAmount)}</p>
+                        <p><span className="font-medium">Остаток:</span> {formatCurrency(certificate.remainingAmount)}</p>
+                        <p><span className="font-medium">Клиент:</span> {certificate.customerName || 'Не указан'}</p>
+                        <p><span className="font-medium">Телефон:</span> {certificate.customerPhone || 'Не указан'}</p>
+                      </div>
+                    </div>
+
+                    <div className="w-full lg:w-[360px] space-y-3">
+                      <input
+                        type="number"
+                        min={1}
+                        max={certificate.remainingAmount}
+                        step={1}
+                        value={redeemValues[certificate.code] ?? ''}
+                        onChange={(e) => {
+                          const nextValue = e.target.value;
+                          setRedeemValues((prev) => ({ ...prev, [certificate.code]: nextValue }));
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="Сумма списания"
+                      />
+                      <input
+                        type="text"
+                        value={redeemReasons[certificate.code] ?? ''}
+                        onChange={(e) => {
+                          const nextValue = e.target.value;
+                          setRedeemReasons((prev) => ({ ...prev, [certificate.code]: nextValue }));
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="Комментарий (услуга, причина)"
+                      />
+                      <button
+                        onClick={() => {
+                          handleRedeem(certificate).catch((err) => {
+                            console.error('Ошибка при обработке списания:', err);
+                          });
+                        }}
+                        disabled={isRedeemingByCode[certificate.code] || certificate.remainingAmount <= 0}
+                        className={`w-full px-4 py-2 rounded-md text-white transition-colors ${
+                          isRedeemingByCode[certificate.code] || certificate.remainingAmount <= 0
+                            ? 'bg-gray-400 cursor-not-allowed'
+                            : 'bg-primary hover:bg-primaryDark'
+                        }`}
+                      >
+                        {isRedeemingByCode[certificate.code] ? 'Списание...' : 'Списать сумму'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          toggleHistory(certificate.code).catch((err) => {
+                            console.error('Ошибка открытия истории:', err);
+                          });
+                        }}
+                        className="w-full px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        {expandedHistoryByCode[certificate.code] ? 'Скрыть историю списаний' : 'Показать историю списаний'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {expandedHistoryByCode[certificate.code] && (
+                    <div className="mt-5 pt-5 border-t border-gray-200">
+                      <h4 className="text-sm font-semibold text-gray-800 mb-3">История списаний</h4>
+                      {isHistoryLoadingByCode[certificate.code] ? (
+                        <p className="text-sm text-gray-500">Загрузка истории...</p>
+                      ) : (historyByCode[certificate.code] ?? []).length === 0 ? (
+                        <p className="text-sm text-gray-500">Списаний пока нет.</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {(historyByCode[certificate.code] ?? []).map((operation) => (
+                            <div key={operation.id} className="p-3 rounded-md bg-gray-50 text-sm text-gray-700">
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                <p>
+                                  <span className="font-medium">Списано:</span> {formatCurrency(operation.writeOffAmount)}
+                                  {' '}| <span className="font-medium">Остаток после:</span> {formatCurrency(operation.remainingAmountAfter)}
+                                </p>
+                                <p className="text-gray-500">{formatDateTime(operation.createdAt)}</p>
+                              </div>
+                              <p className="mt-1">
+                                <span className="font-medium">Причина/услуга:</span>{' '}
+                                {operation.reason || operation.serviceName || 'Не указано'}
+                              </p>
+                              <p className="mt-1">
+                                <span className="font-medium">Администратор:</span> {operation.adminName || 'Не указан'}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
