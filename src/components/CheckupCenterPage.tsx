@@ -319,7 +319,7 @@ export default function CheckupCenterPage() {
           id: doctor.id,
           name: `${doctor.name} ${doctor.name1} ${doctor.name2}`.trim(),
           specialty: doctor.category || doctor.type || 'Врач',
-          experience: doctor.max_time ? parseInt(doctor.max_time, 10) || 0 : 0,
+          experience: doctor.max_time ? Number.parseInt(doctor.max_time, 10) || 0 : 0,
           image: getDoctorPhotoUrl(doctor),
           isAvailable: true,
         }));

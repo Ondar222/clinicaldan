@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useState, useEffect } from 'react';
 import type { ArchimedAppointment, ArchimedDoctor, ApiService } from '../types/cms';
 import archimedService from '../services/archimed';
-import type { AdminCertificate, CertificateRedeemOperation } from '../services/certificateAdmin';
+import type { AdminCertificate, CertificateRedeemOperation, CertificateTransactionRow, StaffDashboardResponse } from '../services/certificateAdmin';
 import certificateAdminService from '../services/certificateAdmin';
 
 const StaffDashboard: React.FC = () => {
@@ -9,10 +10,14 @@ const StaffDashboard: React.FC = () => {
   const [doctors, setDoctors] = useState<ArchimedDoctor[]>([]);
   const [services, setServices] = useState<ApiService[]>([]);
   const [certificates, setCertificates] = useState<AdminCertificate[]>([]);
+  const [transactions, setTransactions] = useState<CertificateTransactionRow[]>([]);
+  const [purchasedCertificates, setPurchasedCertificates] = useState<AdminCertificate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCertificatesLoading, setIsCertificatesLoading] = useState(true);
+  const [isTransactionsLoading, setIsTransactionsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [certificatesError, setCertificatesError] = useState<string | null>(null);
+  const [transactionsError, setTransactionsError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [certificateQuery, setCertificateQuery] = useState('');
   const [redeemValues, setRedeemValues] = useState<Record<string, string>>({});
@@ -48,33 +53,57 @@ const StaffDashboard: React.FC = () => {
     loadData();
   }, []);
 
-  const loadCertificates = async (query?: string) => {
+  const loadCertificatesPanel = async (query?: string) => {
     try {
       setIsCertificatesLoading(true);
+      setIsTransactionsLoading(true);
       setCertificatesError(null);
-      const data = await certificateAdminService.listCertificates({
-        query: query?.trim() || undefined,
+      setTransactionsError(null);
+
+      // Единый запрос к /admin/staff-dashboard
+      const dashboardData: StaffDashboardResponse = await certificateAdminService.fetchStaffDashboardData({
         page: 1,
         limit: 20,
+        transactionsLimit: 50,
+        purchasedLimit: 20,
         includeFailed: true,
         includeUnsuccessful: true,
       });
-      const sorted = [...data.data].sort((a, b) => {
+
+      // Сортируем сертификаты по дате (новые сверху)
+      const certsSorted = [...dashboardData.certificates.data].sort((a, b) => {
         const aTs = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const bTs = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         return bTs - aTs;
       });
-      setCertificates(sorted.slice(0, 20));
+      setCertificates(certsSorted.slice(0, 20));
+
+      // Сортируем транзакции по дате (новые сверху)
+      const txSorted = [...dashboardData.transactions.data].sort((a, b) => {
+        const aTs = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bTs = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return bTs - aTs;
+      });
+      setTransactions(txSorted.slice(0, 50));
+
+      // Сортируем оплаченные сертификаты по дате (новые сверху)
+      const purchasedSorted = [...dashboardData.purchasedCertificates.data].sort((a, b) => {
+        const aTs = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bTs = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return bTs - aTs;
+      });
+      setPurchasedCertificates(purchasedSorted.slice(0, 20));
     } catch (err) {
-      console.error('Ошибка загрузки сертификатов:', err);
-      setCertificatesError(err instanceof Error ? err.message : 'Не удалось загрузить сертификаты.');
+      console.error('Ошибка загрузки данных панели:', err);
+      setCertificatesError(err instanceof Error ? err.message : 'Не удалось загрузить данные панели.');
     } finally {
       setIsCertificatesLoading(false);
+      setIsTransactionsLoading(false);
     }
   };
 
   useEffect(() => {
-    loadCertificates().catch((err) => {
+    loadCertificatesPanel().catch((err) => {
       console.error('Ошибка начальной загрузки сертификатов:', err);
     });
   }, []);
@@ -183,7 +212,7 @@ const StaffDashboard: React.FC = () => {
 
   const handleCertificateSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    await loadCertificates(certificateQuery);
+    await loadCertificatesPanel(certificateQuery);
   };
 
   const handleRedeem = async (certificate: AdminCertificate) => {
@@ -213,6 +242,11 @@ const StaffDashboard: React.FC = () => {
       );
       setRedeemValues((prev) => ({ ...prev, [code]: '' }));
       setHistoryByCode((prev) => ({ ...prev, [code]: [] }));
+      try {
+        await loadCertificatesPanel(certificateQuery);
+      } catch (reloadErr) {
+        console.warn('Не удалось обновить списки после списания:', reloadErr);
+      }
     } catch (err) {
       console.error('Ошибка списания сертификата:', err);
       setCertificatesError(err instanceof Error ? err.message : 'Не удалось списать сертификат.');
@@ -394,20 +428,97 @@ const StaffDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* Certificates Management */}
+        {/* Транзакции оплаты (как в кабинете банка) */}
         <div className="mt-10 bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="px-6 py-4 bg-primary text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <h2 className="text-xl font-semibold">Сертификаты</h2>
+            <h2 className="text-xl font-semibold">Транзакции оплаты сертификатов</h2>
             <button
               onClick={() => {
-                loadCertificates(certificateQuery).catch((err) => {
-                  console.error('Ошибка обновления сертификатов:', err);
+                loadCertificatesPanel(certificateQuery).catch((err) => {
+                  console.error('Ошибка обновления:', err);
                 });
               }}
               className="px-4 py-2 text-sm bg-white text-primary rounded hover:bg-gray-100 transition-colors"
             >
               Обновить
             </button>
+          </div>
+          <p className="px-6 py-3 text-sm text-gray-600 border-b border-gray-200">
+            Последние операции: успешные и отклонённые. Если на бэкенде нет отдельного списка, строки строятся из данных оплаты в списке купленных сертификатов ниже.
+          </p>
+          {transactionsError && (
+            <div className="mx-6 mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-sm">
+              {transactionsError}
+            </div>
+          )}
+          {isTransactionsLoading ? (
+            <div className="p-8 text-center text-gray-600">Загрузка транзакций...</div>
+          ) : transactions.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">Транзакций пока нет</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm text-left">
+                <thead className="bg-gray-100 text-gray-700">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Сумма</th>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Статус</th>
+                    <th className="px-4 py-3 font-semibold min-w-[200px]">Код ответа</th>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Номер заказа</th>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Платёжное средство</th>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Сертификат</th>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Дата</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {transactions.map((row) => {
+                    const bankMeta = getBankStatusMeta(row.bankStatus, row.responseCode);
+                    return (
+                      <tr key={row.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 whitespace-nowrap font-medium">
+                          {formatCurrency(row.amount)} {row.currency && row.currency !== 'RUR' ? row.currency : ''}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${bankMeta.className}`}>
+                            {row.statusLabel}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-gray-700">{row.responseCode || '—'}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-primary break-all max-w-[200px]">
+                          {row.orderId || row.paymentOrderId || '—'}
+                        </td>
+                        <td className="px-4 py-3 text-gray-700">{row.paymentMethod || '—'}</td>
+                        <td className="px-4 py-3 font-mono text-xs">{row.certificateCode || '—'}</td>
+                        <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                          {row.createdAt ? formatDateTime(row.createdAt) : '—'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Купленные сертификаты (успешно оплаченные) */}
+        <div className="mt-10 bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="px-6 py-4 bg-primary text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <h2 className="text-xl font-semibold">Купленные сертификаты (PAID)</h2>
+            <div className="flex gap-2">
+              <span className="text-sm text-white/90">
+                Всего: {purchasedCertificates.length}
+              </span>
+              <button
+                onClick={() => {
+                  loadCertificatesPanel(certificateQuery).catch((err) => {
+                    console.error('Ошибка обновления сертификатов:', err);
+                  });
+                }}
+                className="px-4 py-2 text-sm bg-white text-primary rounded hover:bg-gray-100 transition-colors"
+              >
+                Обновить
+              </button>
+            </div>
           </div>
 
           <div className="p-6 border-b border-gray-200">
@@ -427,7 +538,7 @@ const StaffDashboard: React.FC = () => {
               </button>
             </form>
             <p className="mt-2 text-sm text-gray-500">
-              Показаны последние 20 сертификатов. Можно отфильтровать по номеру, например <span className="font-mono">CERT-2026-0001</span>.
+              Показаны успешно оплаченные сертификаты (PAID). Можно отфильтровать по номеру, например <span className="font-mono">CERT-2026-0001</span>.
             </p>
           </div>
 
@@ -439,11 +550,11 @@ const StaffDashboard: React.FC = () => {
 
           {isCertificatesLoading ? (
             <div className="p-8 text-center text-gray-600">Загрузка сертификатов...</div>
-          ) : certificates.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">Сертификаты не найдены</div>
+          ) : purchasedCertificates.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">Оплаченных сертификатов не найдено</div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {certificates.map((certificate) => (
+              {purchasedCertificates.map((certificate) => (
                 <div key={certificate.code} className="p-6">
                   {(() => {
                     const bankMeta = getBankStatusMeta(

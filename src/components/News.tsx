@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import vkService, { VKPost } from "../services/vk";
+import vkService, { type VKPost } from "../services/vk";
 
 interface NewsProps {
   limit?: number;

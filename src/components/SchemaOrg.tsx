@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { generatePageSchema, type ClinicInfo, type ServiceData, type DoctorData } from '../utils/schemaOrg';
 
 interface SchemaOrgProps {

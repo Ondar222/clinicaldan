@@ -74,7 +74,7 @@ class ArchimedService {
   private servicesCache: ApiService[] = [];
   private doctorsCache: ArchimedDoctor[] = [];
   private servicesFetchPromise: Promise<ApiService[]> | null = null; // Deduplicate concurrent fetches
-  private indexedDBAvailable: boolean = false;
+  private indexedDBAvailable = false;
 
   constructor() {
     this.baseUrl = ARCHIMED_API_URL;
@@ -337,7 +337,7 @@ class ArchimedService {
       );
 
       // total может быть строкой или числом
-      const total = typeof first.total === 'string' ? parseInt(first.total, 10) : (first.total ?? first.data?.length ?? 0);
+      const total = typeof first.total === 'string' ? Number.parseInt(first.total, 10) : (first.total ?? first.data?.length ?? 0);
       const limit = first.limit ?? DEFAULT_API_PAGE_LIMIT;
 
       if (Array.isArray(first?.data)) {
@@ -879,7 +879,7 @@ class ArchimedService {
     }
   }
 
-  async getGroupServices(groupId: number, page: number = 1): Promise<GroupServicesResponse> {
+  async getGroupServices(groupId: number, page = 1): Promise<GroupServicesResponse> {
     try {
       const response = await this.request<GroupServicesResponse>(
         `/groupservices/${groupId}?page=${page}`,

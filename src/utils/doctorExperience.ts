@@ -32,7 +32,7 @@ export function extractExperienceStartYearFromInfo(info: string): number | undef
   for (const pattern of patterns) {
     const match = info.match(pattern);
     if (match && match[1]) {
-      const year = parseInt(match[1], 10);
+      const year = Number.parseInt(match[1], 10);
       if (!isNaN(year) && year >= 1900 && year <= new Date().getFullYear()) {
         return year;
       }

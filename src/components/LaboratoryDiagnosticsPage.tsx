@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import type React from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import archimedService from '../services/archimed';
 import type { ApiService } from '../types/cms';

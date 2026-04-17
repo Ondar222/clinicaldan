@@ -46,6 +46,7 @@ Admin endpoints for searching certificates and writing off a partial amount.
 Notes:
 - Without query params, endpoint returns latest 20 certificates.
 - If `limit > 20`, backend returns max 20.
+- Optional: `includeFailed=true`, `includeUnsuccessful=true` — включать неуспешные попытки в выдачу (если поддерживается бэкендом).
 
 ## 2) Redeem (partial write-off)
 
@@ -114,6 +115,39 @@ Example: `/admin/history/CERT-2026-0001`
   ]
 }
 ```
+
+## 4) Список транзакций оплаты (для таблицы на `/staff`)
+
+Фронт запрашивает по очереди (первый доступный ответ используется):
+
+1. `GET /admin/transactions-list?limit=20`
+2. `GET /admin/transactions?limit=20`
+
+Если оба маршрута отсутствуют (`404`), фронт строит таблицу из полей `payment` в ответе `GET /admin/list`.
+
+### Response `200`
+
+```json
+{
+  "data": [
+    {
+      "id": "pay_1",
+      "amount": 1000,
+      "currency": "RUR",
+      "orderId": "cc70011f-eea9-4096-bc48-52d1ac21f3a6",
+      "paymentOrderId": "optional-bank-order-id",
+      "bankStatus": 6,
+      "bankStatusName": "(-2014) Клиент не вернулся с Платежной страницы",
+      "paymentMethod": "Платежная карта | Card",
+      "certificateCode": "CERT-2026-0042",
+      "createdAt": "2026-04-17T17:32:59.000Z",
+      "formUrl": "https://pay.alfabank.ru/..."
+    }
+  ]
+}
+```
+
+Допустимые алиасы полей (фронт нормализует): `sum` / `orderAmount`, `mdOrder` / `orderNumber`, `orderStatus`, `actionCodeDescription`, `registeredAt` / `registered_at`.
 
 ## Error responses
 

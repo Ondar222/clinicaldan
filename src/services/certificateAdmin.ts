@@ -59,6 +59,55 @@ export interface CertificateRedeemOperation {
   createdAt: string;
 }
 
+/** Строка таблицы транзакций (аналог списка в кабинете банка). */
+export interface CertificateTransactionRow {
+  id: string;
+  amount: number;
+  currency?: string;
+  /** Краткий статус для бейджа: Завершён / Отклонён / В обработке */
+  statusLabel: string;
+  bankStatus?: number | string;
+  /** Код ответа / расшифровка банка */
+  responseCode?: string;
+  orderId?: string;
+  paymentOrderId?: string;
+  paymentMethod?: string;
+  certificateCode?: string;
+  createdAt?: string;
+  formUrl?: string;
+}
+
+/** Ответ единого endpoint /admin/staff-dashboard */
+export interface StaffDashboardResponse {
+  certificates: {
+    data: AdminCertificate[];
+    total: number;
+    page: number;
+    limit: number;
+  };
+  transactions: {
+    data: CertificateTransactionRow[];
+    total: number;
+    page: number;
+    limit: number;
+  };
+  purchasedCertificates: {
+    data: AdminCertificate[];
+    total: number;
+    limit: number;
+  };
+}
+
+/** Параметры запроса к /admin/staff-dashboard */
+export interface StaffDashboardParams {
+  page?: number;
+  limit?: number;
+  transactionsLimit?: number;
+  purchasedLimit?: number;
+  includeFailed?: boolean;
+  includeUnsuccessful?: boolean;
+}
+
 class CertificateAdminService {
   private apiBase: string;
   private readonly authTokenKey = "auth_token";
@@ -164,6 +213,205 @@ class CertificateAdminService {
             formUrl: typeof paymentRaw.formUrl === "string" ? paymentRaw.formUrl : undefined,
           }
         : undefined,
+    };
+  }
+
+  private normalizeTransactionRow(raw: Record<string, unknown>): CertificateTransactionRow {
+    const bankStatus = raw.bankStatus ?? raw.orderStatus ?? raw.status;
+    const amount = Number(raw.amount ?? raw.sum ?? raw.orderAmount ?? 0);
+    const orderId =
+      typeof raw.orderId === "string" ? raw.orderId
+        : typeof raw.mdOrder === "string" ? raw.mdOrder
+          : typeof raw.orderNumber === "string" ? raw.orderNumber
+            : undefined;
+    const paymentOrderId = typeof raw.paymentOrderId === "string" ? raw.paymentOrderId : undefined;
+    const responseCode =
+      typeof raw.bankStatusName === "string" ? raw.bankStatusName
+        : typeof raw.actionCodeDescription === "string" ? raw.actionCodeDescription
+          : typeof raw.responseMessage === "string" ? raw.responseMessage
+            : undefined;
+    const paymentMethod =
+      typeof raw.paymentMethod === "string" ? raw.paymentMethod
+        : typeof raw.pan === "string" ? raw.pan
+          : typeof raw.card === "string" ? raw.card
+            : undefined;
+    const createdAt =
+      typeof raw.createdAt === "string" ? raw.createdAt
+        : typeof raw.registeredAt === "string" ? raw.registeredAt
+          : typeof raw.registered_at === "string" ? raw.registered_at
+            : undefined;
+    const certificateCode =
+      typeof raw.certificateCode === "string" ? raw.certificateCode
+        : typeof raw.code === "string" ? raw.code
+          : undefined;
+    const formUrl = typeof raw.formUrl === "string" ? raw.formUrl : undefined;
+    const id = String(raw.id ?? orderId ?? paymentOrderId ?? `tx_${Math.random().toString(36).slice(2)}`);
+
+    const bs = typeof bankStatus === "string" ? Number.parseInt(bankStatus, 10) : bankStatus;
+    let statusLabel = "Неизвестно";
+    if (bs === 2) statusLabel = "Завершён";
+    else if (bs === 0 || bs === 1 || bs === 5) statusLabel = "В обработке";
+    else if (bs === 3 || bs === 4 || bs === 6) statusLabel = "Отклонён";
+
+    return {
+      id,
+      amount,
+      currency: typeof raw.currency === "string" ? raw.currency : "RUR",
+      statusLabel,
+      bankStatus: bankStatus as number | string | undefined,
+      responseCode,
+      orderId,
+      paymentOrderId,
+      paymentMethod,
+      certificateCode,
+      createdAt,
+      formUrl,
+    };
+  }
+
+  /** Если отдельного API нет — одна строка на сертификат из данных оплаты в списке сертификатов. */
+  mapCertificatesToTransactionRows(certificates: AdminCertificate[]): CertificateTransactionRow[] {
+    return certificates.map((c) => {
+      const p = c.payment;
+      const bs = p?.bankStatus;
+      const nbs = typeof bs === "string" ? Number.parseInt(bs, 10) : bs;
+      let statusLabel = "Неизвестно";
+      if (nbs === 2) statusLabel = "Завершён";
+      else if (nbs === 0 || nbs === 1 || nbs === 5) statusLabel = "В обработке";
+      else if (nbs === 3 || nbs === 4 || nbs === 6) statusLabel = "Отклонён";
+      return {
+        id: `from-cert-${c.id}-${p?.orderId ?? c.code}`,
+        amount: c.nominalAmount,
+        currency: "RUR",
+        statusLabel,
+        bankStatus: bs,
+        responseCode: p?.bankStatusName,
+        orderId: p?.orderId,
+        paymentOrderId: p?.paymentOrderId,
+        paymentMethod: undefined,
+        certificateCode: c.code,
+        createdAt: c.createdAt,
+        formUrl: p?.formUrl,
+      };
+    });
+  }
+
+  /**
+   * Список транзакций оплаты сертификатов.
+   * Порядок: GET /admin/transactions-list → GET /admin/transactions → пусто (фронт подставит из сертификатов).
+   */
+  async listTransactions(limit = 20): Promise<CertificateTransactionRow[]> {
+    if (this.fallbackModeEnabled) {
+      return [];
+    }
+
+    const paths = [
+      `/admin/transactions-list?limit=${limit}`,
+      `/admin/transactions?limit=${limit}`,
+    ];
+
+    for (const path of paths) {
+      const response = await fetch(`${this.apiBase}${path}`, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
+      if (response.status === 404) continue;
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          this.fallbackModeEnabled = true;
+          return [];
+        }
+        continue;
+      }
+      const json = await response.json().catch(() => ({} as Record<string, unknown>));
+      const rowsRaw: unknown[] = Array.isArray(json.data) ? json.data : [];
+      if (rowsRaw.length === 0) continue;
+      return rowsRaw
+        .filter((item: unknown): item is Record<string, unknown> => !!item && typeof item === "object")
+        .map((item: Record<string, unknown>) => this.normalizeTransactionRow(item));
+    }
+    return [];
+  }
+
+  /**
+   * Единый запрос для панели сотрудника: сертификаты, транзакции и оплаченные сертификаты.
+   * GET /admin/staff-dashboard?page=1&limit=20&transactionsLimit=50&purchasedLimit=20&includeFailed=true&includeUnsuccessful=true
+   */
+  async fetchStaffDashboardData(params: StaffDashboardParams = {}): Promise<StaffDashboardResponse> {
+    if (this.fallbackModeEnabled) {
+      const certs = this.getFallbackCertificates();
+      return {
+        certificates: { data: certs, total: certs.length, page: 1, limit: params.limit ?? 20 },
+        transactions: { data: [], total: 0, page: 1, limit: params.transactionsLimit ?? 50 },
+        purchasedCertificates: { data: [], total: 0, limit: params.purchasedLimit ?? 20 },
+      };
+    }
+
+    const search = new URLSearchParams();
+    if (params.page) search.append("page", String(params.page));
+    if (params.limit) search.append("limit", String(params.limit));
+    if (params.transactionsLimit) search.append("transactionsLimit", String(params.transactionsLimit));
+    if (params.purchasedLimit) search.append("purchasedLimit", String(params.purchasedLimit));
+    if (params.includeFailed) search.append("includeFailed", "true");
+    if (params.includeUnsuccessful) search.append("includeUnsuccessful", "true");
+
+    const queryString = search.toString();
+    const response = await fetch(
+      `${this.apiBase}/admin/staff-dashboard${queryString ? `?${queryString}` : ""}`,
+      { method: "GET", headers: this.getAuthHeaders(), credentials: "include" }
+    );
+
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        this.fallbackModeEnabled = true;
+        return {
+          certificates: { data: [], total: 0, page: 1, limit: params.limit ?? 20 },
+          transactions: { data: [], total: 0, page: 1, limit: params.transactionsLimit ?? 50 },
+          purchasedCertificates: { data: [], total: 0, limit: params.purchasedLimit ?? 20 },
+        };
+      }
+      await this.parseApiError(response);
+    }
+
+    const json = await response.json().catch(() => ({} as Record<string, unknown>));
+
+    // Normalize certificates
+    const certsRaw: unknown[] = Array.isArray(json.certificates?.data) ? json.certificates.data : [];
+    const certificates = certsRaw
+      .filter((item: unknown): item is Record<string, unknown> => !!item && typeof item === "object")
+      .map((item: Record<string, unknown>) => this.normalizeCertificate(item));
+
+    // Normalize transactions
+    const txRaw: unknown[] = Array.isArray(json.transactions?.data) ? json.transactions.data : [];
+    const transactions = txRaw
+      .filter((item: unknown): item is Record<string, unknown> => !!item && typeof item === "object")
+      .map((item: Record<string, unknown>) => this.normalizeTransactionRow(item));
+
+    // Normalize purchased certificates (only PAID)
+    const purchasedRaw: unknown[] = Array.isArray(json.purchasedCertificates?.data) ? json.purchasedCertificates.data : [];
+    const purchasedCertificates = purchasedRaw
+      .filter((item: unknown): item is Record<string, unknown> => !!item && typeof item === "object")
+      .map((item: Record<string, unknown>) => this.normalizeCertificate(item));
+
+    return {
+      certificates: {
+        data: certificates,
+        total: Number(json.certificates?.total ?? certificates.length),
+        page: Number(json.certificates?.page ?? 1),
+        limit: Number(json.certificates?.limit ?? params.limit ?? 20),
+      },
+      transactions: {
+        data: transactions,
+        total: Number(json.transactions?.total ?? transactions.length),
+        page: Number(json.transactions?.page ?? 1),
+        limit: Number(json.transactions?.limit ?? params.transactionsLimit ?? 50),
+      },
+      purchasedCertificates: {
+        data: purchasedCertificates,
+        total: Number(json.purchasedCertificates?.total ?? purchasedCertificates.length),
+        limit: Number(json.purchasedCertificates?.limit ?? params.purchasedLimit ?? 20),
+      },
     };
   }
 

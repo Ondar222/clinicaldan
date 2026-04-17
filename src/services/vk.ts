@@ -21,7 +21,7 @@ class VKService {
    * @param offset - смещение для пагинации
    * @param count - количество постов
    */
-  async getPosts(offset: number = 0, count: number = 10): Promise<VKPostsResponse> {
+  async getPosts(offset = 0, count = 10): Promise<VKPostsResponse> {
     try {
       const url = `${this.apiBaseUrl}/posts?count=${count}&offset=${offset}`;
       const response = await fetch(url);
@@ -116,7 +116,7 @@ class VKService {
   /**
    * Обрезает текст поста до указанной длины
    */
-  truncateText(text: string, maxLength: number = 200): string {
+  truncateText(text: string, maxLength = 200): string {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + '...';
   }

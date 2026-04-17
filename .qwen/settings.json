@@ -5,7 +5,10 @@
       "Bash(find *)",
       "Bash(curl *)",
       "Bash(cat *)",
-      "Bash(ls *)"
+      "Bash(ls *)",
+      "Bash(bun *)",
+      "Bash(true)",
+      "Bash(npx *)"
     ]
   },
   "$version": 3

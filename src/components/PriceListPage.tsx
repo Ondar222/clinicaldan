@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import type { ApiService, ServiceGroup, ArchimedDoctor } from "../types/cms";
 import archimedService from "../services/archimed";
 import ErrorComponent from "./ErrorComponent";
@@ -1171,7 +1172,7 @@ export default function PriceListPage() {
                                       const total = totalPages;
                                       const pages = [] as React.ReactNode[];
                                       let start = Math.max(1, current - 2);
-                                      let end = Math.min(total, start + 4);
+                                      const end = Math.min(total, start + 4);
                                       if (end - start < 4) {
                                         start = Math.max(1, end - 4);
                                       }
