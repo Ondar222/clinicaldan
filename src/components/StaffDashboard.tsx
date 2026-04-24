@@ -22,6 +22,7 @@ const StaffDashboard: React.FC = () => {
   const [certificateQuery, setCertificateQuery] = useState('');
   const [redeemValues, setRedeemValues] = useState<Record<string, string>>({});
   const [redeemReasons, setRedeemReasons] = useState<Record<string, string>>({});
+  const [redeemNotifyEmail, setRedeemNotifyEmail] = useState<Record<string, boolean>>({});
   const [isRedeemingByCode, setIsRedeemingByCode] = useState<Record<string, boolean>>({});
   const [expandedHistoryByCode, setExpandedHistoryByCode] = useState<Record<string, boolean>>({});
   const [historyByCode, setHistoryByCode] = useState<Record<string, CertificateRedeemOperation[]>>({});
@@ -106,13 +107,8 @@ const StaffDashboard: React.FC = () => {
       });
       setTransactions(txSorted.slice(0, 50));
 
-      // Купленные сертификаты (успешно оплаченные) - из основного списка с фильтром по статусу оплаты
-      const purchased = certsSorted.filter(cert => {
-        const bankStatus = cert.payment?.bankStatus;
-        const bs = typeof bankStatus === 'string' ? Number.parseInt(bankStatus, 10) : bankStatus;
-        return bs === 2; // Статус 2 = оплачен
-      });
-      setPurchasedCertificates(purchased.slice(0, 20));
+      // Все сертификаты (без фильтрации — показываем любые статусы)
+      setPurchasedCertificates(certsSorted.slice(0, 50));
     } catch (err) {
       console.error('Ошибка загрузки данных панели:', err);
       setCertificatesError(err instanceof Error ? err.message : 'Не удалось загрузить данные панели.');
@@ -255,6 +251,7 @@ const StaffDashboard: React.FC = () => {
         code,
         writeOffAmount,
         reason: redeemReasons[code] || undefined,
+        notifyEmail: redeemNotifyEmail[code] ?? true,
       });
 
       setCertificates((prev) =>
@@ -523,7 +520,7 @@ const StaffDashboard: React.FC = () => {
         {/* Купленные сертификаты (успешно оплаченные) */}
         <div className="mt-10 bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="px-6 py-4 bg-primary text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <h2 className="text-xl font-semibold">Купленные сертификаты (PAID)</h2>
+            <h2 className="text-xl font-semibold">Все сертификаты</h2>
             <div className="flex gap-2">
               <span className="text-sm text-white/90">
                 Всего: {purchasedCertificates.length}
@@ -558,7 +555,7 @@ const StaffDashboard: React.FC = () => {
               </button>
             </form>
             <p className="mt-2 text-sm text-gray-500">
-              Показаны успешно оплаченные сертификаты (PAID). Можно отфильтровать по номеру, например <span className="font-mono">CERT-2026-0001</span>.
+              Показаны все сертификаты (любой статус). Можно отфильтровать по номеру, например <span className="font-mono">CERT-2026-0001</span>.
             </p>
           </div>
 
@@ -598,6 +595,7 @@ const StaffDashboard: React.FC = () => {
                         <p><span className="font-medium">Остаток:</span> {formatCurrency(certificate.remainingAmount)}</p>
                         <p><span className="font-medium">Клиент:</span> {certificate.customerName || 'Не указан'}</p>
                         <p><span className="font-medium">Телефон:</span> {certificate.customerPhone || 'Не указан'}</p>
+                        <p><span className="font-medium">Email:</span> {certificate.customerEmail || 'Не указан'}</p>
                         <p><span className="font-medium">Order ID:</span> {certificate.payment?.orderId || '—'}</p>
                         <p><span className="font-medium">Payment order ID:</span> {certificate.payment?.paymentOrderId || '—'}</p>
                         <p><span className="font-medium">Локальный статус:</span> {certificate.payment?.localStatus ?? '—'}</p>
@@ -642,6 +640,17 @@ const StaffDashboard: React.FC = () => {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                         placeholder="Комментарий (услуга, причина)"
                       />
+                      <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={redeemNotifyEmail[certificate.code] ?? true}
+                          onChange={(e) => {
+                            setRedeemNotifyEmail((prev) => ({ ...prev, [certificate.code]: e.target.checked }));
+                          }}
+                          className="h-4 w-4 text-primary focus:ring-primary rounded border-gray-300"
+                        />
+                        Уведомить клиента по email
+                      </label>
                       <button
                         onClick={() => {
                           handleRedeem(certificate).catch((err) => {

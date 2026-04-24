@@ -10,6 +10,7 @@ export interface AdminCertificate {
   expiresAt?: string;
   customerName?: string;
   customerPhone?: string;
+  customerEmail?: string;
   payment?: {
     orderId?: string;
     paymentOrderId?: string;
@@ -40,6 +41,8 @@ export interface RedeemCertificateRequest {
   writeOffAmount: number;
   reason?: string;
   serviceName?: string;
+  /** Отправить email-уведомление клиенту о списании */
+  notifyEmail?: boolean;
 }
 
 export interface RedeemCertificateResponse {
@@ -199,6 +202,7 @@ class CertificateAdminService {
       expiresAt: typeof raw.expiresAt === "string" ? raw.expiresAt : undefined,
       customerName: typeof raw.customerName === "string" ? raw.customerName : undefined,
       customerPhone: typeof raw.customerPhone === "string" ? raw.customerPhone : undefined,
+      customerEmail: typeof raw.customerEmail === "string" ? raw.customerEmail : undefined,
       payment: paymentRaw
         ? {
             orderId: typeof paymentRaw.orderId === "string" ? paymentRaw.orderId : undefined,
