@@ -61,13 +61,21 @@ const StaffDashboard: React.FC = () => {
       setTransactionsError(null);
 
       // Загружаем сертификаты
-      const certsData = await certificateAdminService.listCertificates({
-        query: query?.trim() || undefined,
-        page: 1,
-        limit: 20,
-        includeFailed: true,
-        includeUnsuccessful: true,
-      });
+      let certsData;
+      try {
+        certsData = await certificateAdminService.listCertificates({
+          query: query?.trim() || undefined,
+          page: 1,
+          limit: 20,
+          includeFailed: true,
+          includeUnsuccessful: true,
+        });
+      } catch (certErr) {
+        console.error('Ошибка загрузки списка сертификатов:', certErr);
+        // Используем fallback-данные при ошибке бэкенда
+        certsData = { data: [], total: 0, page: 1, limit: 20 };
+        setCertificatesError(`Бэкенд недоступен: ${certErr instanceof Error ? certErr.message : 'Ошибка'}. Показаны сохранённые данные.`);
+      }
 
       // Сортируем сертификаты по дате (новые сверху)
       const certsSorted = [...certsData.data].sort((a, b) => {
