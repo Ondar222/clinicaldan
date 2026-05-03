@@ -36,26 +36,206 @@ if (Array.isArray(prodoctorovData)) {
 
 const checkupTypes: CheckupType[] = [
   {
-    id: 'sanatorium',
-    title: 'Для санаторно-курортного лечения',
-    description: 'Справка по форме №070/у. Обследование для получения путёвки в санаторий.',
-    price: 2200,
+    id: 'gossluzhba-001',
+    title: 'Госслужба 001',
+    description: 'Для государственной службы. Женщины без анализов до 40 лет',
+    price: 5150,
     duration: '1-2 дня',
     features: [
       'Осмотр терапевтом',
+      'Осмотр неврологом',
+      'Флюорография',
+      'ЭКГ',
+    ],
+    icon: '🏛️',
+  },
+  {
+    id: 'gossluzhba-001-m',
+    title: 'Госслужба 001 (мужчины)',
+    description: 'Для государственной службы. Мужчины без анализов до 40 лет',
+    price: 4950,
+    duration: '1-2 дня',
+    features: [
+      'Осмотр терапевтом',
+      'Осмотр неврологом',
+      'Флюорография',
+      'ЭКГ',
+    ],
+    icon: '🏛️',
+  },
+  {
+    id: 'gossluzhba-001-analizy-zh',
+    title: 'Госслужба 001 с анализами (женщины)',
+    description: 'Для государственной службы. Женщины с анализами до 40 лет',
+    price: 9040,
+    duration: '1-2 дня',
+    features: [
+      'Осмотр терапевтом',
+      'Осмотр неврологом',
+      'Общий анализ крови',
+      'Общий анализ мочи',
+      'Биохимия крови',
+      'Флюорография',
+      'ЭКГ',
+    ],
+    icon: '🏛️',
+  },
+  {
+    id: 'gossluzhba-001-analizy-m',
+    title: 'Госслужба 001 с анализами (мужчины)',
+    description: 'Для государственной службы. Мужчины с анализами до 40 лет',
+    price: 8280,
+    duration: '1-2 дня',
+    features: [
+      'Осмотр терапевтом',
+      'Осмотр неврологом',
+      'Общий анализ крови',
+      'Общий анализ мочи',
+      'Биохимия крови',
+      'Флюорография',
+      'ЭКГ',
+    ],
+    icon: '🏛️',
+  },
+  {
+    id: 'gossluzhba-001-vozrast-zh',
+    title: 'Госслужба 001 (женщины от 40)',
+    description: 'Для государственной службы. Женщины с анализами от 40 лет',
+    price: 14385,
+    duration: '2-3 дня',
+    features: [
+      'Осмотр терапевтом',
+      'Осмотр неврологом',
+      'Осмотр гинекологом',
+      'Общий анализ крови',
+      'Общий анализ мочи',
+      'Биохимия крови',
+      'Флюорография',
+      'ЭКГ',
+    ],
+    icon: '🏛️',
+  },
+  {
+    id: 'gossluzhba-001-vozrast-m',
+    title: 'Госслужба 001 (мужчины от 40)',
+    description: 'Для государственной службы. Мужчины с анализами от 40 лет',
+    price: 11705,
+    duration: '2-3 дня',
+    features: [
+      'Осмотр терапевтом',
+      'Осмотр неврологом',
+      'Осмотр хирургом',
+      'Общий анализ крови',
+      'Общий анализ мочи',
+      'Биохимия крови',
+      'Флюорография',
+      'ЭКГ',
+    ],
+    icon: '🏛️',
+  },
+  {
+    id: 'gossluzhba-001-bez-analizov-vozrast-zh',
+    title: 'Госслужба 001 без анализов (женщины от 40)',
+    description: 'Для государственной службы. Женщины без анализов от 40 лет',
+    price: 6850,
+    duration: '1-2 дня',
+    features: [
+      'Осмотр терапевтом',
+      'Осмотр неврологом',
+      'Флюорография',
+      'ЭКГ',
+    ],
+    icon: '🏛️',
+  },
+  {
+    id: 'gossluzhba-001-bez-analizov-vozrast-m',
+    title: 'Госслужба 001 без анализов (мужчины от 40)',
+    description: 'Для государственной службы. Мужчины без анализов от 40 лет',
+    price: 4950,
+    duration: '1-2 дня',
+    features: [
+      'Осмотр терапевтом',
+      'Осмотр неврологом',
+      'Флюорография',
+      'ЭКГ',
+    ],
+    icon: '🏛️',
+  },
+  {
+    id: 'sanatorium-card-zh',
+    title: 'Санаторно-курортная карта (женщины)',
+    description: 'Форма №072/у. Комплексное обследование для лечения в санатории',
+    price: 7650,
+    duration: '2-3 дня',
+    features: [
+      'Осмотр терапевтом',
+      'Осмотр гинекологом',
+      'Общий анализ крови',
+      'Общий анализ мочи',
+      'Биохимия крови',
+      'Флюорография',
+      'ЭКГ',
+      'УЗИ органов брюшной полости',
+    ],
+    icon: '📋',
+  },
+  {
+    id: 'sanatorium-card-m',
+    title: 'Санаторно-курортная карта (мужчины)',
+    description: 'Форма №072/у. Комплексное обследование для лечения в санатории',
+    price: 4100,
+    duration: '2-3 дня',
+    features: [
+      'Осмотр терапевтом',
+      'Осмотр хирургом',
+      'Общий анализ крови',
+      'Общий анализ мочи',
+      'Биохимия крови',
+      'Флюорография',
+      'ЭКГ',
+    ],
+    icon: '📋',
+  },
+  {
+    id: 'sanatorium-card-deti',
+    title: 'Санаторно-курортная карта (дети)',
+    description: 'Форма №072/у. Для детей при направлении в санаторий',
+    price: 4720,
+    duration: '2-3 дня',
+    features: [
+      'Осмотр педиатром',
+      'Осмотр хирургом',
       'Общий анализ крови',
       'Общий анализ мочи',
       'Флюорография',
       'ЭКГ',
-      'Осмотр гинеколога (для женщин)',
     ],
-    icon: '🏖️',
+    icon: '📋',
   },
   {
-    id: 'vuz',
-    title: 'Для поступления в ВУЗы, ССУЗы (форма 086/у)',
-    description: 'Для абитуриентов при поступлении. Женщины — 4 850 ₽, Мужчины — 4 450 ₽',
+    id: '086-zh',
+    title: 'Справка 086/у (женщины)',
+    description: 'Для поступления в ВУЗы, ССУЗы. Женский вариант',
     price: 4850,
+    duration: '1-2 дня',
+    features: [
+      'Осмотр терапевтом',
+      'Осмотр хирургом',
+      'Осмотр неврологом',
+      'Осмотр гинекологом',
+      'Осмотр офтальмологом',
+      'Осмотр ЛОРом',
+      'Флюорография',
+      'Общий анализ крови',
+      'Общий анализ мочи',
+    ],
+    icon: '🎓',
+  },
+  {
+    id: '086-m',
+    title: 'Справка 086/у (мужчины)',
+    description: 'Для поступления в ВУЗы, ССУЗы. Мужской вариант',
+    price: 4450,
     duration: '1-2 дня',
     features: [
       'Осмотр терапевтом',
@@ -70,45 +250,10 @@ const checkupTypes: CheckupType[] = [
     icon: '🎓',
   },
   {
-    id: 'sanatorium-card',
-    title: 'Санаторно-курортная карта (форма 072/у)',
-    description: 'Комплексное обследование для лечения в санатории. Женщины — 7 650 ₽, Мужчины — 4 100 ₽, Дети — 4 720 ₽',
-    price: 7650,
-    duration: '2-3 дня',
-    features: [
-      'Осмотр терапевтом',
-      'Общий анализ крови',
-      'Общий анализ мочи',
-      'Биохимия крови',
-      'Флюорография',
-      'ЭКГ',
-      'УЗИ органов брюшной полости',
-      'Осмотр гинеколога (для женщин)',
-    ],
-    icon: '📋',
-  },
-  {
-    id: 'investigative',
-    title: 'В Следственный комитет',
-    description: 'По форме 500. Для сотрудников и кандидатов в СК.',
+    id: 'voditel-b',
+    title: 'Водительская справка (категория B)',
+    description: 'Для категорий B, BE, B1. Для получения/замены водительского удостоверения',
     price: 2500,
-    duration: '1-2 дня',
-    features: [
-      'Осмотр терапевтом',
-      'Осмотр неврологом',
-      'Осмотр психиатром',
-      'Осмотр наркологом',
-      'Офтальмология',
-      'Флюорография',
-      'Анализы крови и мочи',
-    ],
-    icon: '⚖️',
-  },
-  {
-    id: 'gibdd',
-    title: 'В ГИБДД (форма 003-в/у)',
-    description: 'Для получения/замены водительского удостоверения. Категория "В" — 2 500 ₽, Категории "C/D" — 4 800 ₽',
-    price: 4800,
     duration: '1-2 часа',
     features: [
       'Осмотр терапевтом',
@@ -120,100 +265,20 @@ const checkupTypes: CheckupType[] = [
     icon: '🚗',
   },
   {
-    id: 'civil-service',
-    title: 'При поступлении на гос.службу (форма 001-ГС/у)',
-    description: 'Для кандидатов на государственную службу. от 4 950 ₽ до 14 385 ₽ (зависит от пола, возраста и анализов)',
-    price: 5150,
+    id: 'voditel-cd',
+    title: 'Водительская справка (категории C, D)',
+    description: 'Для категорий C, D, CE, DE, Tm, Tb и подкатегорий',
+    price: 4800,
     duration: '1-2 дня',
     features: [
       'Осмотр терапевтом',
+      'Осмотр офтальмологом',
       'Осмотр неврологом',
       'Осмотр психиатром',
       'Осмотр наркологом',
-      'Флюорография',
-      'Анализы крови и мочи',
+      'ЭЭГ (электроэнцефалограмма)',
     ],
-    icon: '🏛️',
-  },
-  {
-    id: 'pool',
-    title: 'В бассейн',
-    description: 'По форме № 083/4-89. Справка для посещения бассейна.',
-    price: 800,
-    duration: '1 час',
-    features: [
-      'Осмотр терапевтом',
-      'Соскоб на энтеробиоз',
-      'Анализ на яйцеглист',
-    ],
-    icon: '🏊',
-  },
-  {
-    id: 'dormitory',
-    title: 'При заселении в общежитие',
-    description: 'По форме № 20. Для студентов и работников при заселении.',
-    price: 1200,
-    duration: '1 день',
-    features: [
-      'Осмотр терапевтом',
-      'Флюорография',
-      'Анализ крови',
-      'Осмотр дерматолога',
-    ],
-    icon: '🏠',
-  },
-  {
-    id: 'foreign-vuz',
-    title: 'Для поступления в ВУЗы, ССУЗы (заграничные)',
-    description: 'По международной форме. Для обучения за рубежом.',
-    price: 4500,
-    duration: '2-3 дня',
-    features: [
-      'Осмотр терапевтом',
-      'Осмотр хирургом',
-      'Осмотр неврологом',
-      'Осмотр офтальмологом',
-      'Осмотр ЛОРом',
-      'Флюорография',
-      'Развёрнутые анализы крови',
-      'Перевод на иностранный язык',
-    ],
-    icon: '🌍',
-  },
-  {
-    id: 'state-secret',
-    title: 'Для работы с гос. тайной',
-    description: 'Справка по форме №989н. Для допуска к секретной информации.',
-    price: 2800,
-    duration: '1-2 дня',
-    features: [
-      'Осмотр терапевтом',
-      'Осмотр неврологом',
-      'Осмотр психиатром',
-      'Осмотр наркологом',
-      'Флюорография',
-      'Анализы крови и мочи',
-      'ЭКГ',
-    ],
-    icon: '🔒',
-  },
-  {
-    id: 'employment',
-    title: 'При приеме на работу',
-    description: 'По форме №086/у. Для лиц старше 18 лет.',
-    price: 2500,
-    duration: '1-2 дня',
-    features: [
-      'Осмотр терапевтом',
-      'Осмотр хирургом',
-      'Осмотр неврологом',
-      'Осмотр офтальмологом',
-      'Осмотр ЛОРом',
-      'Флюорография',
-      'Общий анализ крови',
-      'Общий анализ мочи',
-    ],
-    icon: '💼',
+    icon: '🚛',
   },
 ];
 
@@ -685,7 +750,7 @@ export default function CheckupCenterPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              href="tel:+73953123456"
+              href="tel:+79233816060"
               className="bg-white text-primary px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -704,6 +769,205 @@ export default function CheckupCenterPage() {
             >
               Заказать звонок
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Detailed Price Table */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-4 text-dark">Подробный прайс-лист</h2>
+            <p className="text-gray-600 text-center mb-10 max-w-3xl mx-auto">
+              Многопрофильный медицинский центр "Алдан"<br/>
+              Телефон: +7 (923) 381-60-60 | E-mail: clinic@aldan@mail.ru
+            </p>
+
+            {/* Госслужба */}
+            <div className="mb-10">
+              <h3 className="text-2xl font-bold text-dark mb-4 flex items-center gap-2">
+                <span>🏛️</span> Государственная служба (форма 001-ГС/у)
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+                  <thead className="bg-primary text-white">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">№ п/п</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">Наименование услуги</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">Код МЗ</th>
+                      <th className="px-4 py-3 text-right text-sm font-semibold">Цена</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">1</td>
+                      <td className="px-4 py-3 text-sm">Госслужба 001 — Женщины без анализов до 40 лет</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">001-ГС/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">5 150 ₽</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">2</td>
+                      <td className="px-4 py-3 text-sm">Госслужба 001 — Мужчины без анализов до 40 лет</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">001-ГС/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">4 950 ₽</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">3</td>
+                      <td className="px-4 py-3 text-sm">Госслужба 001 — Женщины с анализами до 40 лет</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">001-ГС/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">9 040 ₽</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">4</td>
+                      <td className="px-4 py-3 text-sm">Госслужба 001 — Мужчины с анализами до 40 лет</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">001-ГС/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">8 280 ₽</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">5</td>
+                      <td className="px-4 py-3 text-sm">Госслужба 001 — Женщины с анализами от 40 лет</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">001-ГС/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">14 385 ₽</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">6</td>
+                      <td className="px-4 py-3 text-sm">Госслужба 001 — Мужчины с анализами от 40 лет</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">001-ГС/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">11 705 ₽</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">7</td>
+                      <td className="px-4 py-3 text-sm">Госслужба 001 — Женщины без анализов от 40 лет</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">001-ГС/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">6 850 ₽</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">8</td>
+                      <td className="px-4 py-3 text-sm">Госслужба 001 — Мужчины без анализов от 40 лет</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">001-ГС/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">4 950 ₽</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Санаторно-курортные карты */}
+            <div className="mb-10">
+              <h3 className="text-2xl font-bold text-dark mb-4 flex items-center gap-2">
+                <span>📋</span> Санаторно-курортные карты (форма 072/у)
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+                  <thead className="bg-primary text-white">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">№ п/п</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">Наименование услуги</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">Код МЗ</th>
+                      <th className="px-4 py-3 text-right text-sm font-semibold">Цена</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">1</td>
+                      <td className="px-4 py-3 text-sm">Санаторно-курортная карта женщины</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">072/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">7 650 ₽</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">2</td>
+                      <td className="px-4 py-3 text-sm">Санаторно-курортная карта мужчины</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">072/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">4 100 ₽</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">3</td>
+                      <td className="px-4 py-3 text-sm">Санаторно-курортная карта дети</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">072/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">4 720 ₽</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Справки 086/у */}
+            <div className="mb-10">
+              <h3 className="text-2xl font-bold text-dark mb-4 flex items-center gap-2">
+                <span>🎓</span> Справки для ВУЗов (форма 086/у)
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+                  <thead className="bg-primary text-white">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">№ п/п</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">Наименование услуги</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">Код МЗ</th>
+                      <th className="px-4 py-3 text-right text-sm font-semibold">Цена</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">1</td>
+                      <td className="px-4 py-3 text-sm">Справка 086/у женщины</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">086/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">4 850 ₽</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">2</td>
+                      <td className="px-4 py-3 text-sm">Справка 086/у мужчины</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">086/у</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">4 450 ₽</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Водительские справки */}
+            <div className="mb-10">
+              <h3 className="text-2xl font-bold text-dark mb-4 flex items-center gap-2">
+                <span>🚗</span> Водительские справки
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+                  <thead className="bg-primary text-white">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">№ п/п</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">Наименование услуги</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">Код</th>
+                      <th className="px-4 py-3 text-right text-sm font-semibold">Цена</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">1</td>
+                      <td className="px-4 py-3 text-sm">Водительская справка категории "В" или "ВЕ", подкатегории "В1"</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">005</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">2 500 ₽</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm">2</td>
+                      <td className="px-4 py-3 text-sm">Водительская справка категорий "С", "D", "СЕ", "DE" и др.</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">006</td>
+                      <td className="px-4 py-3 text-sm font-bold text-right text-primary">4 800 ₽</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Примечание */}
+            <div className="mt-10 p-6 bg-gray-50 rounded-lg border border-gray-200">
+              <h4 className="font-bold text-dark mb-3">Примечание:</h4>
+              <ul className="text-sm text-gray-700 space-y-2">
+                <li>• Цены указаны без учёта НДС (работаем по упрощённой системе налогообложения)</li>
+                <li>• Стоимость медосмотра зависит от пола, возраста и необходимого перечня анализов</li>
+                <li>• Для организаций доступны специальные цены при групповых медосмотрах</li>
+                <li>• По желанию можно расширить программу обследования дополнительными исследованиями</li>
+                <li>• Результаты медосмотра готовы через 1-3 рабочих дня</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
