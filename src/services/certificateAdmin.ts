@@ -121,7 +121,11 @@ class CertificateAdminService {
     const certEnv = import.meta.env.VITE_CERTIFICATE_API_URL ?? import.meta.env.VITE_API_URL;
     const raw = typeof certEnv === "string" ? certEnv.replace(/[\s;]+$/, "").replace(/\/+$/, "") : "";
     const isArchimed = /archimed/i.test(raw);
-    const url = raw && !isArchimed ? raw : (import.meta.env.PROD ? "https://clinicaldan.ru/api" : "");
+    
+    // Если не указан кастомный URL и это не archimed, используем относительный путь /api/certificate
+    // В production это будет https://clinicaldan.ru/api/certificate (через nginx/proxy)
+    // В development это будет /api/certificate (через vite proxy на localhost:5002)
+    const url = raw && !isArchimed ? raw : "";
     this.apiBase = url ? `${url.replace(/\/$/, "")}/certificate` : "/api/certificate";
   }
 
@@ -192,11 +196,50 @@ class CertificateAdminService {
     const paymentRaw = raw.payment && typeof raw.payment === "object"
       ? (raw.payment as Record<string, unknown>)
       : null;
+    
+    const nominal = Number(raw.nominalAmount ?? raw.amount ?? raw.initialAmount ?? 0);
+    const bankStatus = paymentRaw?.bankStatus ?? paymentRaw?.orderStatus ?? raw.status;
+    const normalizedBankStatus = typeof bankStatus === "string" ? Number.parseInt(bankStatus, 10) : bankStatus;
+    const isPaid = normalizedBankStatus === 2; // 2 = оплачен/завершён
+    
+    // Попытка получить remainingAmount из различных полей
+    let remainingAmount = Number(raw.remainingAmount ?? raw.balance ?? raw.currentAmount ?? raw.currentBalance ?? undefined);
+    
+    // Если remainingAmount не получен или <= 0, вычисляем на основе статуса и других полей
+    if (!Number.isFinite(remainingAmount) || remainingAmount <= 0) {
+      const status = String(raw.status ?? "active");
+      const usedAmount = Number(raw.usedAmount ?? raw.spentAmount ?? raw.deductedAmount ?? 0);
+      
+      if (Number.isFinite(nominal) && nominal > 0) {
+        // Если сертификат оплачен (bankStatus = 2) и статус active/partially_used, предполагаем что есть полный остаток
+        if (isPaid && (status === "active" || status === "partially_used")) {
+          if (Number.isFinite(usedAmount) && usedAmount >= 0 && usedAmount < nominal) {
+            remainingAmount = nominal - usedAmount;
+          } else {
+            // Если usedAmount нет или он равен 0, считаем что остаток равен номиналу
+            remainingAmount = nominal;
+          }
+        } else if (status === "active" || status === "partially_used") {
+          // Для неоплаченных активных сертификатов
+          if (Number.isFinite(usedAmount) && usedAmount >= 0 && usedAmount < nominal) {
+            remainingAmount = nominal - usedAmount;
+          } else {
+            remainingAmount = nominal;
+          }
+        } else if (status === "used") {
+          remainingAmount = 0;
+        } else {
+          // Для expired/blocked используем номинал как остаток
+          remainingAmount = nominal;
+        }
+      }
+    }
+    
     return {
       id: Number(raw.id ?? raw.certificateId ?? 0),
       code: String(raw.code ?? raw.certificateNumber ?? raw.number ?? ""),
-      nominalAmount: Number(raw.nominalAmount ?? raw.amount ?? raw.initialAmount ?? 0),
-      remainingAmount: Number(raw.remainingAmount ?? raw.balance ?? 0),
+      nominalAmount: Number.isFinite(nominal) && nominal > 0 ? nominal : 0,
+      remainingAmount: Number.isFinite(remainingAmount) && remainingAmount > 0 ? remainingAmount : 0,
       status: String(raw.status ?? "active") as CertificateStatus,
       createdAt: typeof raw.createdAt === "string" ? raw.createdAt : undefined,
       expiresAt: typeof raw.expiresAt === "string" ? raw.expiresAt : undefined,

@@ -134,30 +134,21 @@ export default defineConfig({
 	],
 	server: {
 		proxy: {
-			// Сначала более специфичные пути (Directus на 8055)
+			// Directus API
 			'/api/directus': {
 				target: 'http://localhost:8055',
 				changeOrigin: true,
 				secure: false,
 				rewrite: (path) => path.replace(/^\/api\/directus/, ''),
 			},
+			// Certificate API - все маршруты с /api префиксом
 			'/api': {
 				target: 'http://localhost:5002',
 				changeOrigin: true,
 				secure: false,
 			},
-			'/certificate': {
-				target: 'http://localhost:5002',
-				changeOrigin: true,
-				secure: false,
-			},
-			'/api/certificate': {
-				target: 'http://localhost:5002',
-				changeOrigin: true,
-				secure: false,
-				rewrite: (path) => path.replace(/^\/api\/certificate/, '/certificate'),
-			},
-			'/vk': {
+			// VK API
+			'/api/vk': {
 				target: 'http://localhost:5002',
 				changeOrigin: true,
 				secure: false,
@@ -177,18 +168,7 @@ export default defineConfig({
 				changeOrigin: true,
 				secure: false,
 			},
-			'/certificate': {
-				target: 'http://localhost:5002',
-				changeOrigin: true,
-				secure: false,
-			},
-			'/api/certificate': {
-				target: 'http://localhost:5002',
-				changeOrigin: true,
-				secure: false,
-				rewrite: (path) => path.replace(/^\/api\/certificate/, '/certificate'),
-			},
-			'/vk': {
+			'/api/vk': {
 				target: 'http://localhost:5002',
 				changeOrigin: true,
 				secure: false,

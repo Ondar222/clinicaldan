@@ -294,6 +294,32 @@ const StaffDashboard: React.FC = () => {
     }
   };
 
+  /**
+   * Проверяет, доступен ли сертификат для списания.
+   * Кнопка "Списать сумму" доступна если:
+   * - Сертификат НЕ имеет статус "used" (полностью использован)
+   * - ИЛИ remainingAmount > 0 (есть остаток)
+   * - ИЛИ payment.bankStatus = 2 (оплачен)
+   */
+  const isRedeemable = (certificate: AdminCertificate): boolean => {
+    // Если статус "used" - сертификат полностью использован, списать нельзя
+    if (certificate.status === 'used') return false;
+    
+    // Если есть остаток - можно списывать
+    if (certificate.remainingAmount > 0) return true;
+    
+    // Если сертификат оплачен (bankStatus = 2) но remainingAmount = 0,
+    // это может быть баг бэкенда - всё равно разрешаем списание
+    const bankStatus = certificate.payment?.bankStatus;
+    const normalizedBankStatus = typeof bankStatus === 'string' 
+      ? Number.parseInt(bankStatus, 10) 
+      : bankStatus;
+    if (normalizedBankStatus === 2) return true; // оплачен
+    
+    // Для всех остальных случаев используем remainingAmount
+    return certificate.remainingAmount > 0;
+  };
+
   const filteredAppointments = appointments.filter(appointment => {
     if (!selectedDate) return true;
     if (!appointment.preferred_date) return false;
@@ -657,9 +683,9 @@ const StaffDashboard: React.FC = () => {
                             console.error('Ошибка при обработке списания:', err);
                           });
                         }}
-                        disabled={isRedeemingByCode[certificate.code] || certificate.remainingAmount <= 0}
+                        disabled={isRedeemingByCode[certificate.code] || !isRedeemable(certificate)}
                         className={`w-full px-4 py-2 rounded-md text-white transition-colors ${
-                          isRedeemingByCode[certificate.code] || certificate.remainingAmount <= 0
+                          isRedeemingByCode[certificate.code] || !isRedeemable(certificate)
                             ? 'bg-gray-400 cursor-not-allowed'
                             : 'bg-primary hover:bg-primaryDark'
                         }`}
