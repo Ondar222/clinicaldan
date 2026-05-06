@@ -20,6 +20,7 @@
 #### Добавлена функция `isRedeemable()` для проверки доступности кнопки "Списать сумму":
 
 ```typescript
+//fdfdf
 const isRedeemable = (certificate: AdminCertificate): boolean => {
   // Если статус "used" - сертификат полностью использован, списать нельзя
   if (certificate.status === 'used') return false;
