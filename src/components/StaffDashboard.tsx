@@ -250,7 +250,7 @@ const StaffDashboard: React.FC = () => {
       const result = await certificateAdminService.redeemCertificate({
         code,
         writeOffAmount,
-        reason: redeemReasons[code] || undefined,
+        reason: redeemReasons[code] || '',
         notifyEmail: redeemNotifyEmail[code] ?? true,
       });
 

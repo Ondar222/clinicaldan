@@ -529,11 +529,20 @@ class CertificateAdminService {
       };
     }
 
+    // Исправляем валидацию reason: отправляем только если это непустая строка
+    const payloadToSend = {
+      code: payload.code,
+      writeOffAmount: payload.writeOffAmount,
+      ...(payload.reason && typeof payload.reason === 'string' && payload.reason.trim() ? { reason: payload.reason.trim() } : { reason: "" }),
+      ...(payload.serviceName ? { serviceName: payload.serviceName } : {}),
+      ...(payload.notifyEmail !== undefined ? { notifyEmail: payload.notifyEmail } : {}),
+    };
+
     const response = await fetch(`${this.apiBase}/admin/redeem`, {
       method: "POST",
       headers: this.getAuthHeaders(),
       credentials: "include",
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payloadToSend),
     });
 
     if (!response.ok) {
