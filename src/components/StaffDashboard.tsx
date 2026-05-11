@@ -86,12 +86,13 @@ const StaffDashboard: React.FC = () => {
       });
       setCertificates(certsSorted.slice(0, 20));
 
-      // Загружаем транзакции
+      // Загружаем транзакции (игнорируем ошибки 404)
       let txRows: CertificateTransactionRow[] = [];
       try {
         txRows = await certificateAdminService.listTransactions(50);
       } catch (txErr) {
         console.warn('Список транзакций недоступен:', txErr);
+        // Не показываем ошибку пользователю, просто строим из сертификатов
       }
 
       // Если транзакций нет, строим из сертификатов
