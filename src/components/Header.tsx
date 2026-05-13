@@ -80,7 +80,7 @@ export default function Header() {
             <img
               src={logoSrc}
               alt="Клиника Алдан"
-              className="block h-32 sm:h-36 md:h-32 lg:h-28 xl:h-32 w-auto object-contain -my-2 sm:-my-2 md:-my-2"
+              className="block h-28 sm:h-32 md:h-28 lg:h-24 xl:h-28 w-auto object-contain -my-2 sm:-my-2 md:-my-2"
               loading="eager"
               onError={handleLogoError}
             />
@@ -92,7 +92,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Главная
                 </Link>
@@ -100,7 +100,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/about"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   О клинике
                 </Link>
@@ -108,15 +108,23 @@ export default function Header() {
               <li>
                 <Link
                   to="/doctors"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Врачи
                 </Link>
               </li>
               <li>
                 <Link
+                  to="/directions"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                >
+                  Направления
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/prices"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Прайс-лист
                 </Link>
@@ -124,7 +132,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/stock"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Акции
                 </Link>
@@ -132,7 +140,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/news"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Новости
                 </Link>
@@ -140,7 +148,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/certificates"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Сертификаты
                 </Link>
@@ -148,7 +156,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/checkups"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Медосмотры 
                 </Link>
@@ -156,7 +164,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/reviews"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Отзывы
                 </Link>
@@ -164,7 +172,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/questions"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Вопросы
                 </Link>
@@ -172,7 +180,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/documents"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Документы
                 </Link>
@@ -181,7 +189,7 @@ export default function Header() {
                 <li>
                   <Link
                     to="/staff"
-                    className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                    className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                   >
                     Панель сотрудника
                   </Link>
@@ -190,7 +198,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/contacts"
-                  className="text-dark text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
+                  className="text-dark text-[8px] sm:text-[9px] md:text-[8px] lg:text-[11px] xl:text-sm hover:text-primary transition-colors whitespace-nowrap"
                 >
                   Контакты
                 </Link>
@@ -312,6 +320,15 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Врачи
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/directions"
+                className="block py-2 text-dark text-sm hover:text-primary transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Направления
               </Link>
             </li>
             <li>

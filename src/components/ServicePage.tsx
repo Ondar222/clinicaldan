@@ -367,6 +367,143 @@ const ServicePage: React.FC = () => {
                 </div>
               </div>
               
+              {/* Специальный контент для флебологии */}
+              {direction.slug === 'vascular-surgery-phlebology' && (
+                <div className="space-y-6 sm:space-y-8">
+                  {/* Когда нужно обратиться к флебологу */}
+                  <div className="bg-blue-50 rounded-xl p-6 sm:p-8 border border-blue-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Когда нужно обратиться к флебологу</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">Запишитесь на приём, если вас беспокоит хотя бы один из этих симптомов:</p>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>тяжесть и усталость в ногах к вечеру</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>отёки щиколоток и голеней</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>видимые вены, выступающие над кожей</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>сосудистые звёздочки и сеточки на ногах</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>судороги в икрах по ночам</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>боль и жжение по ходу вен</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>изменение цвета кожи на голенях</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      Чем раньше вы обратитесь к специалисту, тем проще и дешевле лечение. Запущенный варикоз требует хирургического вмешательства, а на ранней стадии достаточно консервативной терапии.
+                    </p>
+                  </div>
+
+                  {/* Что мы лечим */}
+                  <div className="bg-green-50 rounded-xl p-6 sm:p-8 border border-green-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Что мы лечим</h3>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Варикозное расширение вен нижних конечностей</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Хроническая венозная недостаточность</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Сосудистые звёздочки и телеангиэктазии</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Тромбофлебит и тромбоз вен</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Трофические язвы голеней</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Лимфостаз нижних конечностей</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Заболевания артерий нижних конечностей</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Диагностика и лечение */}
+                  <div className="bg-purple-50 rounded-xl p-6 sm:p-8 border border-purple-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Диагностика и лечение</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      На первичном приёме сосудистый хирург проведёт осмотр, соберёт анамнез и при необходимости направит на ультразвуковое дуплексное сканирование вен — оно выполняется прямо в клинике в тот же день.
+                    </p>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4 font-medium">По результатам обследования врач подберёт лечение:</p>
+                    <ul className="space-y-2">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span><strong>Консервативное лечение</strong> — компрессионная терапия, флебопротекторы</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span><strong>Склеротерапия</strong> — введение препарата в вену для её закрытия</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span><strong>Лазерная коагуляция</strong> сосудистых звёздочек</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span><strong>Хирургическое лечение</strong> при запущенных формах варикоза</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* FAQ для флебологии */}
+                  <div className="bg-amber-50 rounded-xl p-6 sm:p-8 border border-amber-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                    <div className="space-y-4 sm:space-y-6">
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Сколько стоит приём флеболога в Кызыле?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Стоимость первичного приёма сосудистого хирурга-флеболога уточняйте по телефону <a href="tel:+79233176060" className="text-primary hover:underline font-medium">+7 (923) 317-60-60</a>. Мы стараемся держать цены доступными для жителей Кызыла и Республики Тыва.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Нужно ли направление от терапевта?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Нет, вы можете записаться к сосудистому хирургу самостоятельно, без направления. Достаточно позвонить или оставить заявку онлайн.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Делают ли в клинике УЗИ вен?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Да, дуплексное сканирование вен нижних конечностей выполняется в Клинике Алдан в Кызыле. Исследование можно пройти в день обращения.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Как записаться к флебологу в Кызыле?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Позвоните по номеру <a href="tel:+79233176060" className="text-primary hover:underline font-medium">+7 (923) 317-60-60</a> или воспользуйтесь формой онлайн-записи на сайте. Клиника работает ежедневно, в будни до 22:00.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               {/* Список услуг */}
               {effectiveServices.length > 0 && (
                 <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-200">

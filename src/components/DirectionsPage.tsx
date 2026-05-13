@@ -30,6 +30,7 @@ export default function DirectionsPage() {
   const [error, setError] = useState<string | null>(null);
   const [services, setServices] = useState<ApiService[]>([]);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     document.title = "Направления | Клиника Алдан";
@@ -71,6 +72,16 @@ export default function DirectionsPage() {
     return map;
   }, [services]);
 
+  const filteredDirections = useMemo(() => {
+    if (!searchQuery.trim()) return DIRECTIONS;
+    const query = searchQuery.toLowerCase().trim();
+    return DIRECTIONS.filter(
+      (d) =>
+        d.title.toLowerCase().includes(query) ||
+        (d.description && d.description.toLowerCase().includes(query))
+    );
+  }, [searchQuery]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
@@ -92,6 +103,49 @@ export default function DirectionsPage() {
       {/* Directions tiles (same block as on home) */}
       <ServiceGrid />
 
+      {/* Поиск по направлениям */}
+      <section className="py-6 sm:py-8 bg-white border-t">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Поиск направления..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 sm:px-5 py-3 sm:py-4 pl-12 sm:pl-14 pr-4 text-sm sm:text-base border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+              />
+              <svg
+                className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+            <p className="text-xs sm:text-sm text-gray-500 mt-2 text-center">
+              Найдено направлений: {filteredDirections.length}
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Directions list with descriptions + services */}
       <section className="py-8 sm:py-10 md:py-12 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -107,7 +161,7 @@ export default function DirectionsPage() {
             )}
 
             <div className="space-y-4 sm:space-y-5">
-              {DIRECTIONS.map((direction) => {
+              {filteredDirections.map((direction) => {
                 const isOpen = openSlug === direction.slug;
                 const dirServices = servicesByDirection.get(direction.slug) || [];
                 const shown = dirServices.slice(0, 12);
