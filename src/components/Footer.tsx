@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { CLINIC_CONFIG, getTelLink, getMailLink } from "../data/clinicConfig";
 
 export default function Footer() {
   return (
@@ -21,7 +22,7 @@ export default function Footer() {
               to="/"
               className="text-lg sm:text-xl md:text-2xl font-semibold text-white block mb-3 sm:mb-4 hover:text-primary transition-colors"
             >
-              КЛИНИКА АЛДАН
+              {CLINIC_CONFIG.siteName}
             </Link>
             <p className="text-gray-200 mb-3 sm:mb-4 leading-relaxed text-sm sm:text-base">
               Современная медицинская клиника с высококвалифицированными
@@ -42,7 +43,7 @@ export default function Footer() {
                   className="text-gray-200 hover:text-primary transition-colors flex items-center group text-sm sm:text-base"
                 >
                   <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full mr-2 sm:mr-3 group-hover:scale-125 transition-transform flex-shrink-0" />
-                  ONLINE консультации
+                  Врачи
                 </Link>
               </li>
               <li>
@@ -67,7 +68,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="/documents/согласие_на_персданные_на_сайт.docx"
+                  href="/documents/согласие_на_персданные_на_сайт.docx"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-200 hover:text-primary transition-colors flex items-center group text-sm sm:text-base"
@@ -151,59 +152,11 @@ export default function Footer() {
                   </svg>
                 </div>
                 <a
-                  href="tel:+79233816060"
+                  href={getTelLink()}
                   className="hover:text-primary transition-colors text-sm sm:text-base"
                 >
-                  +7 (923) 381-60-60
+                  {CLINIC_CONFIG.phoneFormatted}
                 </a>
-              </div>
-              <div className="flex items-center text-gray-200 group">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/20 rounded-full flex items-center justify-center mr-3 sm:mr-4 group-hover:bg-primary/30 transition-colors flex-shrink-0">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 sm:h-5 sm:w-5 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                    />
-                  </svg>
-                </div>
-                <a
-                  href="tel:+79233176060"
-                  className="hover:text-primary transition-colors text-sm sm:text-base"
-                >
-                  +7 (923) 317-60-60
-                </a>
-              </div>
-              <div className="flex items-center text-gray-200 group">
-                {/* <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-primary/30 transition-colors">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 sm:h-5 sm:w-5 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                    />
-                  </svg>
-                </div> */}
-                {/* <div>
-                  <a href="tel:+79233816060" className="hover:text-primary transition-colors text-sm sm:text-base">
-                    +7 (923) 381-60-60
-                  </a>
-                  <span className="ml-2 text-sm text-gray-300">(Детская)</span>
-                </div> */}
               </div>
               <div className="flex items-center text-gray-200 group">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/20 rounded-full flex items-center justify-center mr-3 sm:mr-4 group-hover:bg-primary/30 transition-colors flex-shrink-0">
@@ -223,10 +176,10 @@ export default function Footer() {
                   </svg>
                 </div>
                 <a
-                  href="mailto:clinicaldan@mail.ru"
+                  href={getMailLink()}
                   className="hover:text-primary transition-colors text-sm sm:text-base"
                 >
-                  clinicaldan@mail.ru
+                  {CLINIC_CONFIG.email}
                 </a>
               </div>
               <div className="flex items-center text-gray-200 group">
@@ -248,10 +201,10 @@ export default function Footer() {
                 </div>
                 <div>
                   <div className="text-sm sm:text-base">
-                    Время работы: Пн-Пт 08:00 - 22:00
+                    Время работы: Пн-Пт {CLINIC_CONFIG.workingHours.weekdays}
                   </div>
                   <div className="text-xs sm:text-sm text-gray-300">
-                    Сб-Вс: 09:00 - 18:00
+                    Сб: {CLINIC_CONFIG.workingHours.saturday}, Вс: {CLINIC_CONFIG.workingHours.sunday}
                   </div>
                 </div>
               </div>
@@ -280,8 +233,7 @@ export default function Footer() {
                   <path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z" />
                 </svg>
                 <span className="text-xs sm:text-sm">
-                  667000, Республика Тыва, город Кызыл, ул. Ленина, д. 60, офис
-                  1
+                  {CLINIC_CONFIG.address.full}
                 </span>
               </a>
             </p>
@@ -289,7 +241,7 @@ export default function Footer() {
               ИМЕЮТСЯ ПРОТИВОПОКАЗАНИЯ, НЕОБХОДИМА КОНСУЛЬТАЦИЯ СПЕЦИАЛИСТА
             </p>
             <p className="text-gray-200 text-xs sm:text-sm">
-              © 2026 КЛИНИКА АЛДАН. ВСЕ ПРАВА ЗАЩИЩЕНЫ.
+              © 2026 {CLINIC_CONFIG.siteName.toUpperCase()}. ВСЕ ПРАВА ЗАЩИЩЕНЫ.
             </p>
             <p className="text-gray-200 text-xs sm:text-sm">
               <a className="text-gray-200" href="https://lana-soft.ru/">

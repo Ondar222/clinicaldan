@@ -12,6 +12,8 @@ import AppointmentModal from "./AppointmentModal";
 import prodoctorovData from "../data/prodoctorov.json";
 import { mockBranches } from "../data/mockDoctors";
 import { getDoctorExperience } from "../utils/doctorExperience";
+import { SeoHead } from "./SeoHead";
+import { CLINIC_CONFIG } from "../data/clinicConfig";
 
 // Создаем мапу фото из prodoctorov.json
 const doctorPhotoMap = new Map<string, string>();
@@ -274,8 +276,18 @@ export default function DoctorsPage() {
     );
   }
 
+  // SEO данные для страницы
+  const seoData = {
+    title: 'Врачи клиники Алдан — высококвалифицированные специалисты в Кызыле',
+    description: 'Наши врачи — высококвалифицированные специалисты с многолетним опытом работы. Запись на прием к терапевту, кардиологу, неврологу, хирургу и другим специалистам.',
+    canonical: '/doctors',
+    ogType: 'website' as const
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-6 sm:py-8 md:py-12">
+    <>
+      <SeoHead pageData={seoData} />
+      <div className="min-h-screen bg-gray-50 py-6 sm:py-8 md:py-12">
       <div className="container mx-auto px-3 sm:px-4">
         <div className="text-center mb-8 sm:mb-10 md:mb-12">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dark mb-3 sm:mb-4">
@@ -666,6 +678,7 @@ export default function DoctorsPage() {
           onSuccess={handleAppointmentSuccess}
         />
       </div>
-    </div>
+      </div>
+    </>
   );
 }

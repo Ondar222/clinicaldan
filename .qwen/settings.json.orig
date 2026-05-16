@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(find *)",
+      "Bash(curl *)",
+      "Bash(cat *)",
+      "Bash(ls *)",
+      "Bash(bun *)",
+      "Bash(true)",
+      "Bash(npx *)"
     ]
-  }
+  },
+  "$version": 3
 }

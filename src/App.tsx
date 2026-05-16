@@ -41,6 +41,8 @@ import FloatingBooking from "./components/FloatingBooking";
 import ToolDetailsPage from "./components/ToolDetailsPage";
 import RouteErrorBoundary from "./components/RouteErrorBoundary";
 import VkPostDetailPage from "./components/VkPostDetailPage";
+import CosmetologyPage from "./components/CosmetologyPage";
+import CosmetologyServicePage from "./components/CosmetologyServicePage";
 // Временно скрыто - личный кабинет и платежи
 // import PatientCabinetPage from "./components/PatientCabinetPage";
 // import PaymentSuccessPage from "./components/PaymentSuccessPage";
@@ -121,6 +123,9 @@ function App() {
             */}
             <Route path="/prices" element={<PriceListPage />} />
             <Route path="/services/:slug" element={<ServicePage />} />
+            <Route path="/services/cosmetology" element={<CosmetologyPage />} />
+            <Route path="/services/cosmetology/:category" element={<CosmetologyPage />} />
+            <Route path="/services/cosmetology/:category/:serviceSlug" element={<CosmetologyServicePage />} />
             <Route path="/tools/:id" element={<ToolDetailsPage />} />
             <Route path="/vk-post/:id" element={<VkPostDetailPage />} />
             <Route path="/staff" element={<StaffDashboard />} />

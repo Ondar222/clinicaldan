@@ -5,6 +5,7 @@ import archimedService from "../services/archimed";
 import ErrorComponent from "./ErrorComponent";
 import AppointmentModal from "./AppointmentModal";
 import SchemaOrg from "./SchemaOrg";
+import { SeoHead } from "./SeoHead";
 
 export default function PriceListPage() {
   const [serviceGroups, setServiceGroups] = useState<ServiceGroup[]>([]);
@@ -550,6 +551,16 @@ export default function PriceListPage() {
 
   return (
     <>
+      {/* SEO мета-теги */}
+      <SeoHead 
+        pageData={{
+          title: 'Прайс-лист на медицинские услуги клиники Алдан',
+          description: 'Актуальные цены на все медицинские услуги клиники Алдан. Лабораторные исследования, УЗИ, консультации специалистов, диагностика и лечение. Прозрачное ценообразование.',
+          canonical: '/prices',
+          ogType: 'website'
+        }}
+      />
+      
       {/* Schema.org structured data for SEO */}
       <SchemaOrg
         pageName="Прайс-лист клиники Алдан"

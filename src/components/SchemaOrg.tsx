@@ -1,5 +1,6 @@
 import type React from 'react';
 import { generatePageSchema, type ClinicInfo, type ServiceData, type DoctorData } from '../utils/schemaOrg';
+import { CLINIC_CONFIG, getAddressForSchema, getGeoForSchema } from '../data/clinicConfig';
 
 interface SchemaOrgProps {
   pageName: string;
@@ -12,28 +13,24 @@ interface SchemaOrgProps {
   aggregateRating?: { ratingValue: number; reviewCount: number };
 }
 
-// Clinic configuration
+// Clinic configuration - используем единый конфиг
 const CLINIC_INFO: ClinicInfo = {
-  name: 'Клиника Алдан',
-  url: 'https://clinicaldan.ru',
-  logo: 'https://clinicaldan.ru/Logo.png',
-  phone: '+7 (394-22) 3-03-03',
+  name: CLINIC_CONFIG.siteName,
+  url: CLINIC_CONFIG.siteUrl,
+  logo: CLINIC_CONFIG.defaultImage,
+  phone: CLINIC_CONFIG.phoneClean,
   address: {
-    streetAddress: 'ул. Ленина, 60',
-    addressLocality: 'Кызыл',
-    postalCode: '667000',
-    addressCountry: 'RU'
+    streetAddress: CLINIC_CONFIG.address.street,
+    addressLocality: CLINIC_CONFIG.address.city,
+    postalCode: CLINIC_CONFIG.address.postalCode,
+    addressCountry: CLINIC_CONFIG.address.country
   },
   geo: {
-    latitude: 51.715,
-    longitude: 94.455
+    latitude: CLINIC_CONFIG.coordinates.lat,
+    longitude: CLINIC_CONFIG.coordinates.lng
   },
-  openingHours: [
-    'Monday-Friday: 08:00-20:00',
-    'Saturday: 09:00-17:00',
-    'Sunday: Closed'
-  ],
-  priceRange: '$$'
+  openingHours: CLINIC_CONFIG.workingHours.array,
+  priceRange: '₽₽'
 };
 
 /**

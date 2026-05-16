@@ -2,6 +2,8 @@
 User-agent: Yandex
 Allow: /
 Disallow: /staff
+Disallow: /personal-cabinet
+Disallow: /payment*
 Disallow: /certificates/success
 Disallow: /certificates/cancel
 Disallow: /api/
@@ -11,6 +13,8 @@ Clean-Cache: true
 User-agent: Googlebot
 Allow: /
 Disallow: /staff
+Disallow: /personal-cabinet
+Disallow: /payment*
 Disallow: /certificates/success
 Disallow: /certificates/cancel
 Disallow: /api/
@@ -19,10 +23,12 @@ Disallow: /api/
 User-agent: *
 Allow: /
 Disallow: /staff
+Disallow: /personal-cabinet
+Disallow: /payment*
 Disallow: /certificates/success
 Disallow: /certificates/cancel
 Disallow: /api/
 
-Sitemap: https://clinicaldan.ru/sitemap.xml
+Sitemap: https://clinicaldan.ru/api/sitemap.xml
 
 
