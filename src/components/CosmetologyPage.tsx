@@ -28,7 +28,9 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
   const [allServices, setAllServices] = useState<ApiService[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>(categorySlug || 'all');
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchParams] = useSearchParams();
+  const ITEMS_PER_PAGE = 10;
   
   // Параметры URL
   const doctorFilter = searchParams.get('doctor');
@@ -83,6 +85,19 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
     
     return services;
   }, [allServices, selectedCategory, doctorFilter]);
+
+  // Пагинация
+  const totalPages = Math.ceil(filteredServices.length / ITEMS_PER_PAGE);
+  const paginatedServices = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredServices.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredServices, currentPage]);
+
+  // Сброс страницы при смене категории
+  const handleCategoryChange = (slug: string) => {
+    setSelectedCategory(slug);
+    setCurrentPage(1);
+  };
   
   // Получить связанного врача для услуги
   const getServiceDoctor = (service: ApiService): ArchimedDoctor | undefined => {
@@ -210,7 +225,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
             {/* Фильтры */}
             <div className="flex flex-wrap gap-2 mb-6">
               <button
-                onClick={() => setSelectedCategory('all')}
+                onClick={() => handleCategoryChange('all')}
                 className={`px-4 py-2 rounded-lg border ${
                   selectedCategory === 'all' 
                     ? 'bg-primary text-white border-primary' 
@@ -222,7 +237,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
               {COSMETOLOGY_CATEGORIES.map(cat => (
                 <button
                   key={cat.id}
-                  onClick={() => setSelectedCategory(cat.slug)}
+                  onClick={() => handleCategoryChange(cat.slug)}
                   className={`px-4 py-2 rounded-lg border flex items-center gap-2 ${
                     selectedCategory === cat.slug
                       ? 'bg-primary text-white border-primary'
@@ -236,6 +251,13 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
             </div>
             
             {/* Карточки у��лу�� */}
+            {/* Счётчик */}
+            {!isLoading && filteredServices.length > 0 && (
+              <p className="text-sm text-gray-500 mb-4">
+                Показано {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredServices.length)} из {filteredServices.length} услуг
+              </p>
+            )}
+
             {isLoading ? (
               <div className="grid gap-4">
                 {[1,2,3,4,5,6].map(i => (
@@ -252,7 +274,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
               </div>
             ) : (
               <div className="grid gap-4">
-                {filteredServices.map(service => {
+                {paginatedServices.map(service => {
                   const serviceDoctor = getServiceDoctor(service);
                   return (
                     <div 
@@ -298,6 +320,58 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                     </div>
                   );
                 })}
+              </div>
+            )}
+
+            {/* Пагинация */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-6">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                >
+                  ← Назад
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(page => {
+                    if (totalPages <= 7) return true;
+                    if (page === 1 || page === totalPages) return true;
+                    if (Math.abs(page - currentPage) <= 1) return true;
+                    return false;
+                  })
+                  .reduce<(number | string)[]>((acc, page, idx, arr) => {
+                    if (idx > 0) {
+                      const prev = arr[idx - 1];
+                      if (page - prev > 1) acc.push('...');
+                    }
+                    acc.push(page);
+                    return acc;
+                  }, [])
+                  .map((item, idx) =>
+                    item === '...' ? (
+                      <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">...</span>
+                    ) : (
+                      <button
+                        key={item}
+                        onClick={() => setCurrentPage(item as number)}
+                        className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
+                          currentPage === item
+                            ? 'bg-primary text-white'
+                            : 'border border-gray-300 hover:bg-gray-100'
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    )
+                  )}
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                >
+                  Вперёд →
+                </button>
               </div>
             )}
           </div>
