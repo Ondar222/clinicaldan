@@ -16,7 +16,6 @@ import {
 import { CLINIC_CONFIG, getTelLink } from '../data/clinicConfig';
 import type { ArchimedDoctor, ApiService } from '../types/cms';
 import archimedService from '../services/archimed';
-import AppointmentModal from './AppointmentModal';
 
 interface CosmetologyServicePageProps {
   categorySlug?: string;
@@ -29,11 +28,6 @@ export default function CosmetologyServicePage({ categorySlug }: CosmetologyServ
   const [doctors, setDoctors] = useState<ArchimedDoctor[]>([]);
   const [allServices, setAllServices] = useState<ApiService[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [appointmentModal, setAppointmentModal] = useState<{
-    isOpen: boolean;
-    service?: ApiService;
-    doctor?: ArchimedDoctor;
-  }>({ isOpen: false });
   
   useEffect(() => {
     const loadData = async () => {
@@ -243,12 +237,6 @@ export default function CosmetologyServicePage({ categorySlug }: CosmetologyServ
             </h1>
             
             <div className="flex flex-wrap gap-4 mb-6">
-              <button
-                onClick={() => setAppointmentModal({ isOpen: true, service: service || undefined })}
-                className="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primaryDark transition-colors"
-              >
-                Записаться на процедуру
-              </button>
               <Link
                 to="/prices"
                 className="px-6 py-3 border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors"
@@ -437,12 +425,6 @@ export default function CosmetologyServicePage({ categorySlug }: CosmetologyServ
                     >
                       Подробнее о враче
                     </Link>
-                    <button
-                      onClick={() => setAppointmentModal({ isOpen: true, doctor: serviceDoctor })}
-                      className="px-4 py-2 bg-primary text-white rounded hover:bg-primaryDark transition-colors text-sm"
-                    >
-                      Записаться к врачу
-                    </button>
                   </div>
                 </div>
               </div>
@@ -501,12 +483,6 @@ export default function CosmetologyServicePage({ categorySlug }: CosmetologyServ
               Запишитесь на консультацию к нашим специалистам. Мы подберем оптимальную программу процедур для вас.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <button
-                onClick={() => setAppointmentModal({ isOpen: true, service: service || undefined })}
-                className="px-8 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                Записаться онлайн
-              </button>
               <a
                 href={getTelLink()}
                 className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-primary transition-colors"
@@ -517,14 +493,7 @@ export default function CosmetologyServicePage({ categorySlug }: CosmetologyServ
           </div>
         </section>
         
-        {/* Модальное окно записи */}
-        <AppointmentModal
-          isOpen={appointmentModal.isOpen}
-          onClose={() => setAppointmentModal({ isOpen: false })}
-          service={appointmentModal.service}
-          doctor={appointmentModal.doctor}
-          onSuccess={() => {}}
-        />
+
       </div>
     </>
   );

@@ -17,7 +17,6 @@ import { CLINIC_CONFIG, getTelLink, getMailLink } from '../data/clinicConfig';
 import type { ArchimedDoctor, ApiService } from '../types/cms';
 import archimedService from '../services/archimed';
 import { getDoctorExperience } from '../utils/doctorExperience';
-import AppointmentModal from './AppointmentModal';
 
 interface CosmetologyPageProps {
   categorySlug?: string;
@@ -30,13 +29,6 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>(categorySlug || 'all');
   const [searchParams] = useSearchParams();
-  
-  // Модальное окно записи
-  const [appointmentModal, setAppointmentModal] = useState<{
-    isOpen: boolean;
-    service?: ApiService;
-    doctor?: ArchimedDoctor;
-  }>({ isOpen: false });
   
   // Параметры URL
   const doctorFilter = searchParams.get('doctor');
@@ -170,14 +162,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                 }
               </p>
               
-              {/* CTA кнопки */}
               <div className="flex flex-wrap gap-4">
-                <button
-                  onClick={() => setAppointmentModal({ isOpen: true })}
-                  className="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primaryDark transition-colors"
-                >
-                  Записаться на консультацию
-                </button>
                 <Link
                   to="/prices"
                   className="px-6 py-3 border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors"
@@ -307,14 +292,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                           <div className="text-xl md:text-2xl font-bold text-primary">
                             {formatPrice(service.base_cost)}
                           </div>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => setAppointmentModal({ isOpen: true, service })}
-                              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primaryDark transition-colors text-sm"
-                            >
-                              Записаться
-                            </button>
-                          </div>
+
                         </div>
                       </div>
                     </div>
@@ -357,19 +335,13 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                       {doctor.category && (
                         <p className="text-xs text-gray-500">{doctor.category}</p>
                       )}
-                      <div className="flex gap-2 mt-2">
+                      <div className="mt-2">
                         <Link
                           to={`/doctors/${doctor.id}`}
                           className="text-sm text-primary hover:underline"
                         >
                           Подробнее
                         </Link>
-                        <button
-                          onClick={() => setAppointmentModal({ isOpen: true, doctor })}
-                          className="text-sm text-primary hover:underline"
-                        >
-                          Записаться
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -474,12 +446,6 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
               с учетом особенностей вашей кожи.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <button
-                onClick={() => setAppointmentModal({ isOpen: true })}
-                className="px-8 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                Записаться онлайн
-              </button>
               <a
                 href={getTelLink()}
                 className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-primary transition-colors"
@@ -490,14 +456,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
           </div>
         </section>
         
-        {/* Модальное окно записи */}
-        <AppointmentModal
-          isOpen={appointmentModal.isOpen}
-          onClose={() => setAppointmentModal({ isOpen: false })}
-          service={appointmentModal.service}
-          doctor={appointmentModal.doctor}
-          onSuccess={() => {}}
-        />
+
       </div>
     </>
   );
