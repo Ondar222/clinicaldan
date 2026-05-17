@@ -67,6 +67,29 @@ export interface CosmetologyEquipment {
   purpose?: string[];
 }
 
+// Слова, явно указывающие на услуги других медицинских специальностей
+const NON_COSMETOLOGY_KEYWORDS = [
+  'ортопед', 'травматолог',
+  'оториноларинголог', 'лор',
+  'терапевт',
+  'кардиолог',
+  'невролог',
+  'уролог',
+  'гинеколог',
+  'педиатр',
+  'эндокринолог',
+  'гастроэнтеролог',
+  'пульмонолог',
+  'офтальмолог',
+  'стоматолог',
+  'проктолог', 'колопроктолог',
+  'онколог',
+  'нефролог',
+  'ревматолог',
+  'психиатр',
+  'хирург', 'хирургия',
+];
+
 // Категории косметологии
 export const COSMETOLOGY_CATEGORIES: CosmetologyCategory[] = [
   {
@@ -76,7 +99,7 @@ export const COSMETOLOGY_CATEGORIES: CosmetologyCategory[] = [
     description: 'Ботулинотерапия, контурная пластика, мезотерапия, плазмотерапия и другие инъекционные методики омоложения',
     shortDescription: 'Ботокс, филлеры, мезотерапия, плазмотерапия',
     icon: '💉',
-    keywords: ['ботокс', 'диспорт', 'ботулинотерапия', 'филлер', 'контурная пластика', 'мезотерапия', 'плазмотерапия', 'prp', 'биоревитализация', 'гиалуроновая кислота', 'инъекц'],
+    keywords: ['ботокс', 'диспорт', 'ботулинотерапия', 'филлер', 'контурная пластика', 'мезотерапия', 'плазмотерапия', 'prp', 'биоревитализация', 'гиалуроновая кислота'],
     order: 1,
     doctorKeywords: ['космет', 'дерматовенеролог'],
     equipmentKeywords: ['инъекц']
@@ -88,7 +111,7 @@ export const COSMETOLOGY_CATEGORIES: CosmetologyCategory[] = [
     description: 'Лазерные процедуры, RF-лифтинг, ультразвуковая терапия, фотоомоложение и другие аппаратные методики',
     shortDescription: 'Лазер, RF, фотоомоложение, SMAS-лифтинг',
     icon: '🔬',
-    keywords: ['лазер', 'rf', 'лифтинг', 'фотоомоложение', 'smas', 'узи', 'кавитац', 'криолиполиз', 'аппаратн'],
+    keywords: ['лазер', 'rf', 'аппаратн лифтинг', 'радиоволновой лифтинг', 'фотоомоложение', 'smas', 'smas-лифтинг', 'hifu', 'кавитац', 'криолиполиз', 'аппаратн'],
     order: 2,
     doctorKeywords: ['космет', 'дерматовенеролог'],
     equipmentKeywords: ['лазер', 'rf', 'фото', 'smas']
@@ -100,7 +123,7 @@ export const COSMETOLOGY_CATEGORIES: CosmetologyCategory[] = [
     description: 'Компьютерная диагностика кожи, анализ состояния, подбор процедур и домашнего ухода',
     shortDescription: 'Анализ кожи, подбор ухода, диагностика',
     icon: '🔍',
-    keywords: ['диагност', 'анализ кожи', 'подбор ухода', 'трихоскоп', 'дерматоскоп', 'косметологическ анализ'],
+    keywords: ['анализ кожи', 'подбор ухода', 'трихоскоп', 'дерматоскоп', 'дерматоскопия', 'косметологическ анализ'],
     order: 3,
     doctorKeywords: ['космет', 'дерматовенеролог'],
     equipmentKeywords: ['диагност']
@@ -124,7 +147,7 @@ export const COSMETOLOGY_CATEGORIES: CosmetologyCategory[] = [
     description: 'Ультразвуковая, механическая, комбинированная чистка лица для глубокого очищения пор',
     shortDescription: 'УЗ-чистка, механическая, комбинированная',
     icon: '✨',
-    keywords: ['чистка', 'узи чистка', 'механическ чистка', 'комбинированн чистка', 'атравматич'],
+    keywords: ['чистка лица', 'узи чистка', 'механическ чистка', 'комбинированн чистка', 'атравматич'],
     order: 5,
     doctorKeywords: ['космет', 'эстетист'],
     equipmentKeywords: ['чистка', 'узи']
@@ -136,7 +159,7 @@ export const COSMETOLOGY_CATEGORIES: CosmetologyCategory[] = [
     description: 'Маски, массаж лица, программы омоложения и увлажнения кожи',
     shortDescription: 'Маски, массаж, увлажнение, омоложение',
     icon: '🌸',
-    keywords: ['маска', 'массаж', 'уход', 'увлажнен', 'омоложен', 'лифтинг', 'анти-эйдж', 'спа-уход'],
+    keywords: ['маска', 'уход за лицом', 'уходовая процедур', 'увлажнен', 'омоложен', 'анти-эйдж', 'спа-уход', 'косметическ уход'],
     order: 6,
     doctorKeywords: ['космет', 'эстетист'],
     equipmentKeywords: ['уход']
@@ -148,7 +171,7 @@ export const COSMETOLOGY_CATEGORIES: CosmetologyCategory[] = [
     description: 'Аппаратные и инъекционные методы коррекции контуров тела, уменьшение жировых отложений',
     shortDescription: 'Липолиз, кавитация, криолиполиз, массаж',
     icon: '📏',
-    keywords: ['липолиз', 'кавитац', 'криолиполиз', 'коррекц фигуры', 'антицеллюлит', 'массаж', 'прессотерап', 'вакуум'],
+    keywords: ['липолиз', 'кавитац', 'криолиполиз', 'коррекц фигуры', 'антицеллюлит', 'прессотерап', 'вакуум', 'lpg', 'обертывание'],
     order: 7,
     doctorKeywords: ['космет', 'дерматовенеролог', 'массажист'],
     equipmentKeywords: ['липолиз', 'кавитац', 'крио']
@@ -160,7 +183,7 @@ export const COSMETOLOGY_CATEGORIES: CosmetologyCategory[] = [
     description: 'Лечение сосудистых звездочек, купероза, гемангиом лазерными методами',
     shortDescription: 'Удаление сосудов, лазерное лечение купероза',
     icon: '🩺',
-    keywords: ['сосуд', 'купероз', 'гемангиом', 'звездочк', 'лазерн сосуд', 'склеротерап'],
+    keywords: ['купероз', 'гемангиом', 'сосудистые звездочки', 'телеангиэктазии', 'лазерн удаление сосудов', 'склеротерап', 'розацеа'],
     order: 8,
     doctorKeywords: ['космет', 'дерматовенеролог', 'флеболог'],
     equipmentKeywords: ['лазер', 'сосуд']
@@ -172,13 +195,18 @@ export const COSMETOLOGY_CATEGORIES: CosmetologyCategory[] = [
  */
 export function getCosmetologyCategory(serviceName: string, groupName?: string): CosmetologyCategory | null {
   const text = `${serviceName} ${groupName || ''}`.toLowerCase();
-  
+
+  // Явно исключаем услуги других медицинских специальностей
+  if (NON_COSMETOLOGY_KEYWORDS.some(keyword => text.includes(keyword))) {
+    return null;
+  }
+
   for (const category of COSMETOLOGY_CATEGORIES) {
     if (category.keywords.some(keyword => text.includes(keyword))) {
       return category;
     }
   }
-  
+
   return null;
 }
 

@@ -66,7 +66,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
   // Фильтрация услуг по категории
   const filteredServices = useMemo(() => {
     let services = allServices;
-    
+
     // Фильтр по категории
     if (selectedCategory !== 'all') {
       const category = getCategoryBySlug(selectedCategory);
@@ -76,13 +76,16 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
           return category.keywords.some(k => text.includes(k));
         });
       }
+    } else {
+      // Для "Все услуги" показываем только услуги косметологии
+      services = services.filter(s => getCosmetologyCategory(s.name, s.group_name) !== null);
     }
-    
+
     // Фильтр по врачу
     if (doctorFilter) {
       // Здесь можно добавить фильтрацию по конкретному врачу
     }
-    
+
     return services;
   }, [allServices, selectedCategory, doctorFilter]);
 
