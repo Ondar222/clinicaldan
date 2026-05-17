@@ -3,6 +3,24 @@
  * Используется для построения структуры раздела /services/cosmetology
  */
 
+import type { ArchimedDoctor } from '../types/cms';
+
+// Врачи, которых нужно скрыть на странице косметологии (нет аккредитации или не делают процедуры)
+const EXCLUDED_COSMETOLOGY_DOCTORS = [
+  'алдынай монгуш',
+  'алина биче-оол',
+  'биче-кым',
+  'биче-кыс',
+];
+
+/**
+ * Проверяет, нужно ли скрыть врача на странице косметологии
+ */
+export function isExcludedCosmetologyDoctor(doctor: ArchimedDoctor): boolean {
+  const fullName = `${doctor.name || ''} ${doctor.name1 || ''} ${doctor.name2 || ''}`.toLowerCase();
+  return EXCLUDED_COSMETOLOGY_DOCTORS.some(pattern => fullName.includes(pattern));
+}
+
 export interface CosmetologyCategory {
   id: string;
   slug: string;

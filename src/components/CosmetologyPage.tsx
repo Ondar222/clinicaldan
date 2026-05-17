@@ -11,6 +11,7 @@ import {
   COSMETOLOGY_CATEGORIES, 
   getCosmetologyCategory, 
   getCategoryBySlug,
+  isExcludedCosmetologyDoctor,
   type CosmetologyCategory 
 } from '../data/cosmetology';
 import { CLINIC_CONFIG, getTelLink, getMailLink } from '../data/clinicConfig';
@@ -45,7 +46,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
         // Фильтруем косметологов
         const cosmetologists = (doctorsData || []).filter(d => {
           const type = (d.type || '').toLowerCase();
-          return type.includes('космет') || type.includes('дерматовенеролог');
+          return (type.includes('космет') || type.includes('дерматовенеролог')) && !isExcludedCosmetologyDoctor(d);
         });
         setDoctors(cosmetologists);
         

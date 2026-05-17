@@ -10,6 +10,7 @@ import SchemaOrg from './SchemaOrg';
 import { 
   COSMETOLOGY_CATEGORIES, 
   getCategoryBySlug,
+  isExcludedCosmetologyDoctor,
   type CosmetologyCategory,
   type FAQItem
 } from '../data/cosmetology';
@@ -40,7 +41,7 @@ export default function CosmetologyServicePage({ categorySlug }: CosmetologyServ
         
         const cosmetologists = (doctorsData || []).filter(d => {
           const type = (d.type || '').toLowerCase();
-          return type.includes('космет') || type.includes('дерматовенеролог');
+          return (type.includes('космет') || type.includes('дерматовенеролог')) && !isExcludedCosmetologyDoctor(d);
         });
         setDoctors(cosmetologists);
         setAllServices(servicesData || []);
