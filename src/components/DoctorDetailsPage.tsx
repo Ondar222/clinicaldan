@@ -5,6 +5,7 @@ import archimedService from "../services/archimed";
 import type { ArchimedDoctor } from "../types/cms";
 import AppointmentModal from "./AppointmentModal";
 import prodoctorovData from "../data/prodoctorov.json";
+import { SeoHead } from "./SeoHead";
 
 // Создаем мапу фото из prodoctorov.json
 const doctorPhotoMap = new Map<string, string>();
@@ -150,7 +151,18 @@ const DoctorDetailsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      {/* SEO мета-теги для страницы врача */}
+      <SeoHead 
+        pageData={{
+          title: `${getDoctorFullName(doctor)} — ${formatSpecialtyName(doctor.type)} в Кызыле | Клиника Алдан`,
+          description: `${getDoctorFullName(doctor)}, ${formatSpecialtyName(doctor.type)}. Запись на прием в Клинике Алдан по телефону +7 (923) 317-60-60. Высококвалифицированный специалист с многолетним опытом работы.`,
+          canonical: `/doctors/${doctor.id}`,
+          ogType: 'profile'
+        }}
+      />
+      
+      <div className="min-h-screen bg-gray-50">
       {/* Хлебные крошки */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-4">
@@ -342,15 +354,21 @@ const DoctorDetailsPage: React.FC = () => {
                   )}
                 </div>
 
-                {/* Кнопка записи */}
-                {/* <div className="mt-8">
+                  {/* Кнопка записи */}
+                <div className="mt-8">
                   <button
                     onClick={handleAppointmentClick}
-                    className="px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primaryDark transition-colors"
+                    className="w-full px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primaryDark transition-colors shadow-lg flex items-center justify-center gap-2"
                   >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
                     Записаться на прием
                   </button>
-                </div> */}
+                  <p className="text-xs text-gray-500 mt-3 text-center">
+                    Запишитесь на прием к врачу через онлайн-форму
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -390,6 +408,7 @@ const DoctorDetailsPage: React.FC = () => {
         onSuccess={handleAppointmentSuccess}
       />
     </div>
+    </>
   );
 };
 

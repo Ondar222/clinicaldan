@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import archimedService from "../services/archimed";
 import type { ApiService, ArchimedDoctor } from "../types/cms";
+import AppointmentModal from "./AppointmentModal";
 import { getDirectionBySlug, keywordMatch } from "../services/directions";
 import {
   SERVICE_CATEGORIES,
@@ -22,6 +23,12 @@ const ServicePage: React.FC = () => {
   const [doctors, setDoctors] = useState<ArchimedDoctor[]>([]);
   const [showAllServices, setShowAllServices] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [appointmentModal, setAppointmentModal] = useState<{
+    isOpen: boolean;
+    service?: ApiService;
+  }>({
+    isOpen: false,
+  });
 
   const direction = useMemo(
     () => (slug ? getDirectionBySlug(slug) : undefined),
@@ -300,6 +307,13 @@ const ServicePage: React.FC = () => {
 
   const getDoctorInitials = (doctor: ArchimedDoctor) => {
     return `${doctor?.name} ${doctor?.name1?.charAt(0)}. ${doctor?.name2?.charAt(0)}.`;
+  };
+
+  const handleAppointmentClick = (service: ApiService) => {
+    setAppointmentModal({
+      isOpen: true,
+      service,
+    });
   };
 
   return (
@@ -616,11 +630,20 @@ const ServicePage: React.FC = () => {
                                 {service.altname}
                               </p>
                             )}
-                          <div className="flex justify-between items-center mt-auto pt-2 sm:pt-3">
+                          <div className="flex flex-col gap-2 mt-auto pt-2 sm:pt-3">
                             <span className="text-primary font-bold text-sm sm:text-base md:text-lg">
                               {getServicePrice(service).toLocaleString("ru-RU")}{" "}
                               ₽
                             </span>
+                            <button
+                              onClick={() => handleAppointmentClick(service)}
+                              className="w-full px-3 py-1.5 bg-primary text-white text-xs sm:text-sm rounded hover:bg-primaryDark transition-colors font-medium flex items-center justify-center gap-1"
+                            >
+                              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              Запись онлайн
+                            </button>
                           </div>
                         </div>
                       ))}
@@ -835,6 +858,13 @@ const ServicePage: React.FC = () => {
           </section>
         );
       })()}
+
+      {/* Модальное окно записи на прием */}
+      <AppointmentModal
+        isOpen={appointmentModal.isOpen}
+        onClose={() => setAppointmentModal({ isOpen: false })}
+        service={appointmentModal.service}
+      />
     </div>
   );
 };

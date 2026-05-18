@@ -3,7 +3,19 @@ import React, { useEffect } from 'react';
 export default function PatientCabinetPage() {
   useEffect(() => {
     // Редирект на внешний сервис личного кабинета
-    window.location.href = 'https://user.clinicaldan.ru/login';
+    // Если external URL недоступен, пробуем относительный путь
+    const externalUrl = 'https://user.clinicaldan.ru/login';
+    const fallbackUrl = '/login';
+    
+    // Проверяем доступность внешнего URL
+    fetch(externalUrl, { method: 'HEAD', mode: 'no-cors' })
+      .then(() => {
+        window.location.href = externalUrl;
+      })
+      .catch(() => {
+        // Если внешний URL недоступен, используем fallback
+        window.location.href = fallbackUrl;
+      });
   }, []);
 
   return (
@@ -18,7 +30,7 @@ export default function PatientCabinetPage() {
           <p className="text-sm text-gray-500">
             Если переход не произошел автоматически, 
             <a 
-              href="https://user.clinicaldan.ru/login" 
+              href="/login" 
               className="text-primary hover:text-primaryDark underline ml-1"
             >
               нажмите здесь

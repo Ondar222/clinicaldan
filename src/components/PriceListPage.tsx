@@ -725,9 +725,41 @@ export default function PriceListPage() {
           </div>
         )}
 
-        {/* Search and Filter */}
+        {/* Search and Filter - перемещено выше для удобства */}
         <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 mb-6 md:mb-8">
           <div className="grid grid-cols-1 gap-6">
+            {/* Search - перемещен на первое место */}
+            <div>
+              <label
+                htmlFor="search"
+                className="block text-gray-700 mb-1 md:mb-2 font-medium text-sm md:text-base"
+              >
+                🔍 Поиск услуг
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  id="search"
+                  placeholder="Введите название услуги..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-3 md:px-4 py-2 pl-9 md:pl-10 border border-gray-300 rounded focus:outline-none focus:border-primary text-sm md:text-base"
+                />
+                <svg
+                  className="absolute left-3 top-2.5 h-4 w-4 md:h-5 md:w-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+            </div>
             {/* Main Category Filter - 10 разделов */}
             <div>
               <label className="block text-gray-700 mb-1 md:mb-2 font-medium text-sm md:text-base">
@@ -758,39 +790,6 @@ export default function PriceListPage() {
                 ))}
               </div>
             </div>
-            {/* Search */}
-            <div>
-              <label
-                htmlFor="search"
-                className="block text-gray-700 mb-1 md:mb-2 font-medium text-sm md:text-base"
-              >
-                Поиск услуг
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="search"
-                  placeholder="Введите название услуги..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-3 md:px-4 py-2 pl-9 md:pl-10 border border-gray-300 rounded focus:outline-none focus:border-primary text-sm md:text-base"
-                />
-                <svg
-                  className="absolute left-3 top-2.5 h-4 w-4 md:h-5 md:w-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-
             {/* Group Filter */}
             <div>
               <label
@@ -1030,6 +1029,12 @@ export default function PriceListPage() {
                                         Описание
                                       </button>
                                     )}
+                                    <button
+                                      onClick={() => handleAppointmentClick(undefined, undefined)}
+                                      className="px-2 py-1 text-[10px] bg-primary text-white rounded-md whitespace-nowrap"
+                                    >
+                                      Запись
+                                    </button>
                                   </div>
                                   {(service.info ||
                                     (service.altname &&
@@ -1139,7 +1144,12 @@ export default function PriceListPage() {
                                             </div>
                                           )}
                                       </div>
-                                      {/* Кнопка записи скрыта по требованию */}
+                                      <button
+                                        onClick={() => handleAppointmentClick(undefined, undefined)}
+                                        className="px-3 py-1.5 bg-primary text-white text-sm rounded hover:bg-primaryDark transition-colors font-medium"
+                                      >
+                                        Запись онлайн
+                                      </button>
                                     </div>
                                   </div>
                                 </div>
