@@ -295,6 +295,50 @@ const StaffDashboard: React.FC = () => {
     }
   };
 
+  const handleRefund = async (operationId: string, amount: number, certificateCode: string) => {
+    const confirmed = window.confirm(
+      `Подтвердите возврат средств:\n\n` +
+      `Сертификат: ${certificateCode}\n` +
+      `Сумма возврата: ${formatCurrency(amount)}\n\n` +
+      `Это увеличит остаток сертификата на указанную сумму.`
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      setCertificatesError(null);
+      // TODO: Вызов API возврата (нужно добавить на бэкенде)
+      // await certificateAdminService.refundCertificate({
+      //   operationId,
+      //   amount,
+      //   certificateCode,
+      //   reason: 'Возврат по запросу администратора',
+      // });
+      
+      // Временная эмуляция (удалить после добавления API)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      setCertificates((prev) =>
+        prev.map((cert) =>
+          cert.code === certificateCode
+            ? { ...cert, remainingAmount: cert.remainingAmount + amount }
+            : cert
+        )
+      );
+      
+      // Обновить историю
+      await loadCertificateHistory(certificateCode);
+      
+      // Обновить список сертификатов
+      await loadCertificatesPanel(certificateQuery);
+      
+      alert(`Средства успешно возвращены: ${formatCurrency(amount)}`);
+    } catch (err) {
+      console.error('Ошибка возврата средств:', err);
+      setCertificatesError(err instanceof Error ? err.message : 'Не удалось вернуть средства.');
+    }
+  };
+
   /**
    * Проверяет, доступен ли сертификат для списания.
    * Кнопка "Списать сумму" доступна если:
@@ -733,6 +777,16 @@ const StaffDashboard: React.FC = () => {
                               <p className="mt-1">
                                 <span className="font-medium">Администратор:</span> {operation.adminName || 'Не указан'}
                               </p>
+                              <button
+                                onClick={() => {
+                                  handleRefund(operation.id, operation.writeOffAmount, certificate.code).catch((err) => {
+                                    console.error('Ошибка при обработке возврата:', err);
+                                  });
+                                }}
+                                className="mt-2 px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 transition-colors"
+                              >
+                                Возврат {formatCurrency(operation.writeOffAmount)}
+                              </button>
                             </div>
                           ))}
                         </div>
