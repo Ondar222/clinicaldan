@@ -307,36 +307,29 @@ const StaffDashboard: React.FC = () => {
 
     try {
       setCertificatesError(null);
-      // TODO: Вызов API возврата (нужно добавить на бэкенде)
-      // await certificateAdminService.refundCertificate({
-      //   operationId,
-      //   amount,
-      //   certificateCode,
-      //   reason: 'Возврат по запросу администратора',
-      // });
       
-      // Временная эмуляция (удалить после добавления API)
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Вызов API возврата
+      const result = await certificateAdminService.refundCertificate({
+        operationId,
+        amount,
+        certificateCode,
+        reason: 'Возврат по запросу администратора',
+      });
       
-      // Обновляем остаток в списке сертификатов
+      // Обновляем данные из ответа API
       setCertificates((prev) =>
         prev.map((cert) =>
-          cert.code === certificateCode
-            ? { ...cert, remainingAmount: cert.remainingAmount + amount }
-            : cert
+          cert.code === certificateCode ? result.certificate : cert
         )
       );
       
-      // Также обновляем purchasedCertificates
       setPurchasedCertificates((prev) =>
         prev.map((cert) =>
-          cert.code === certificateCode
-            ? { ...cert, remainingAmount: cert.remainingAmount + amount }
-            : cert
+          cert.code === certificateCode ? result.certificate : cert
         )
       );
       
-      // Обновляем историю без полной перезагрузки
+      // Обновляем историю
       await loadCertificateHistory(certificateCode);
       
       alert(`Средства успешно возвращены: ${formatCurrency(amount)}`);

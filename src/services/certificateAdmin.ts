@@ -62,6 +62,19 @@ export interface CertificateRedeemOperation {
   createdAt: string;
 }
 
+export interface RefundCertificateRequest {
+  operationId: string;
+  amount: number;
+  certificateCode: string;
+  reason?: string;
+}
+
+export interface RefundCertificateResponse {
+  message: string;
+  certificate: AdminCertificate;
+  refundId?: string;
+}
+
 /** Строка таблицы транзакций (аналог списка в кабинете банка). */
 export interface CertificateTransactionRow {
   id: string;
@@ -598,6 +611,55 @@ class CertificateAdminService {
         adminName: typeof item.adminName === "string" ? item.adminName : undefined,
         createdAt: String(item.createdAt ?? new Date().toISOString()),
       }));
+  }
+
+  async refundCertificate(payload: RefundCertificateRequest): Promise<RefundCertificateResponse> {
+    if (this.fallbackModeEnabled) {
+      const certificates = this.getFallbackCertificates();
+      const cert = certificates.find((item) => item.code === payload.certificateCode);
+      if (!cert) throw new Error("Сертификат не найден.");
+
+      const nextRemaining = cert.remainingAmount + payload.amount;
+      const updated: AdminCertificate = {
+        ...cert,
+        remainingAmount: nextRemaining,
+        status: nextRemaining >= cert.nominalAmount ? "active" : "partially_used",
+      };
+      const nextData = certificates.map((item) => (item.code === cert.code ? updated : item));
+      this.setFallbackCertificates(nextData);
+
+      return {
+        message: "Возврат выполнен (локальный режим без авторизации)",
+        certificate: updated,
+        refundId: `refund_${Date.now()}`,
+      };
+    }
+
+    const response = await fetch(`${this.apiBase}/admin/refund`, {
+      method: "POST",
+      headers: this.getAuthHeaders(),
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        this.fallbackModeEnabled = true;
+        return this.refundCertificate(payload);
+      }
+      await this.parseApiError(response);
+    }
+
+    const json = await response.json().catch(() => ({} as Record<string, unknown>));
+    const rawCert = json.certificate && typeof json.certificate === "object"
+      ? (json.certificate as Record<string, unknown>)
+      : (json as Record<string, unknown>);
+
+    return {
+      message: String(json.message ?? "Возврат выполнен"),
+      certificate: this.normalizeCertificate(rawCert),
+      refundId: typeof json.refundId === "string" ? json.refundId : undefined,
+    };
   }
 }
 
