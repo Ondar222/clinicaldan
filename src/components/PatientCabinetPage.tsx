@@ -4,7 +4,7 @@ export default function PatientCabinetPage() {
   useEffect(() => {
     // Редирект на внешний сервис личного кабинета
     // Если external URL недоступен, пробуем относительный путь
-    const externalUrl = 'https://user.clinicaldan.ru/login';
+    const externalUrl = 'http://user.clinicaldan.ru/login';
     const fallbackUrl = '/login';
     
     // Проверяем доступность внешнего URL
