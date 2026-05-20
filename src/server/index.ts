@@ -6,6 +6,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import sitemapRouter from './sitemap.js';
+import certificateAdminRouter from './certificateAdmin.js';
 import { createSsrRouter } from './ssr.js';
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 
 // API Routes
 app.use('/api/sitemap.xml', sitemapRouter);
+app.use('/api/certificate', certificateAdminRouter);
 
 // SSR Router - должен быть в конце для обработки всех остальных запросов
 app.use(createSsrRouter());
