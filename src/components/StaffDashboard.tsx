@@ -316,8 +316,9 @@ const StaffDashboard: React.FC = () => {
       // });
       
       // Временная эмуляция (удалить после добавления API)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       
+      // Обновляем остаток в списке сертификатов
       setCertificates((prev) =>
         prev.map((cert) =>
           cert.code === certificateCode
@@ -326,11 +327,17 @@ const StaffDashboard: React.FC = () => {
         )
       );
       
-      // Обновить историю
-      await loadCertificateHistory(certificateCode);
+      // Также обновляем purchasedCertificates
+      setPurchasedCertificates((prev) =>
+        prev.map((cert) =>
+          cert.code === certificateCode
+            ? { ...cert, remainingAmount: cert.remainingAmount + amount }
+            : cert
+        )
+      );
       
-      // Обновить список сертификатов
-      await loadCertificatesPanel(certificateQuery);
+      // Обновляем историю без полной перезагрузки
+      await loadCertificateHistory(certificateCode);
       
       alert(`Средства успешно возвращены: ${formatCurrency(amount)}`);
     } catch (err) {
