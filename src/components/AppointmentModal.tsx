@@ -30,10 +30,12 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target as HTMLInputElement;
+    const target = e.target as HTMLInputElement;
+    const { name, value, type } = target;
+    
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? target.checked : value
     }));
   };
 
@@ -49,19 +51,24 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
     setSubmitStatus('idle');
 
     try {
+      // Формируем данные в формате, который ожидает бэкенд
+      const commentParts = [
+        formData.comments,
+        formData.preferredDate && `Желаемая дата: ${formData.preferredDate}`,
+        formData.preferredTime && `Желаемое время: ${formData.preferredTime}`,
+        doctor && `Врач: ${doctor.name} ${doctor.name1} ${doctor.name2}`.trim(),
+        service && `Услуга: ${service.name} (${(service.cito_cost > 0 ? service.cito_cost : service.base_cost).toLocaleString('ru-RU')} ₽)`
+      ].filter(Boolean);
+
       const appointmentData = {
-        patientName: formData.patientName,
-        patientPhone: formData.patientPhone,
-        patientEmail: formData.patientEmail || '',
-        preferredDate: formData.preferredDate || '',
-        preferredTime: formData.preferredTime || '',
-        comments: formData.comments || '',
-        serviceName: service?.name || '',
-        servicePrice: service ? (service.cito_cost > 0 ? service.cito_cost : service.base_cost) : 0,
-        doctorName: doctor ? `${doctor.name} ${doctor.name1} ${doctor.name2}`.trim() : ''
+        name: formData.patientName,
+        phone: formData.patientPhone,
+        email: formData.patientEmail || undefined,
+        service: service?.name || 'Не указана',
+        comment: commentParts.join('\n') || undefined
       };
 
-      // Отправляем заявку через наш API
+      // Отправляем заявку через API бэкенда
       const response = await fetch('/api/appointment', {
         method: 'POST',
         headers: {
@@ -243,31 +250,35 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
               </div>
 
               <div>
-                <label className={`flex items-start space-x-3 ${!formData.agreeToSiteConsent && submitStatus === 'error' ? 'text-red-600' : ''}`}>
+                <div className="flex items-start">
                   <input
                     type="checkbox"
-                    name="agreeToSiteConsent"
+                    id="agreeToSiteConsent"
                     checked={formData.agreeToSiteConsent}
-                    onChange={handleInputChange}
-                    className={`mt-1 h-4 w-4 text-primary focus:ring-primary rounded ${
+                    onChange={(e) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        agreeToSiteConsent: e.target.checked
+                      }));
+                    }}
+                    className={`mt-1 h-4 w-4 text-primary focus:ring-primary rounded cursor-pointer ${
                       !formData.agreeToSiteConsent && submitStatus === 'error'
                         ? 'border-red-300 focus:ring-red-500'
                         : 'border-gray-300'
                     }`}
-                    required
                   />
-                  <span className="text-sm text-gray-700">
+                  <label htmlFor="agreeToSiteConsent" className={`ml-3 text-sm cursor-pointer ${!formData.agreeToSiteConsent && submitStatus === 'error' ? 'text-red-600' : 'text-gray-700'}`}>
                     Я согласен с условиями обработки персональных данных на сайте согласно{' '}
                     <a
-                      href="/documents/согласие_на_персданные_на_сайт.docx"
+                      href="/documents/согласие_на_персданные_на_сайт.docx"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline"
                     >
                       согласию на обработку персональных данных
                     </a>
-                  </span>
-                </label>
+                  </label>
+                </div>
               </div>
 
               {submitStatus === 'error' && (
