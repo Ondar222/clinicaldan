@@ -224,10 +224,10 @@ npm run build
    MAIL_PASSWORD=your_email_password
    ```
 
-2. Запустите сервер после сборки:
+2. Запустите API сервер после сборки:
    ```bash
-   npm run build
-   node dist/server/index.js
+   npm run build:server
+   node api-server.js
    ```
 
 ### API endpoints
@@ -252,3 +252,35 @@ npm run build
   "doctorName": "Петрова Анна"
 }
 ```
+
+### Запуск на продакшене
+
+1. **Сборка проекта:**
+   ```bash
+   npm run build:all
+   ```
+
+2. **Запуск API сервера** (отдельный процесс):
+   ```bash
+   node api-server.js
+   ```
+   
+   Сервер запустится на порту 3001 (или укажите `API_PORT` в `.env`).
+
+3. **Настройка nginx** (опционально, для проксирования API):
+   ```nginx
+   location /api {
+       proxy_pass http://localhost:3001;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection 'upgrade';
+       proxy_set_header Host $host;
+       proxy_cache_bypass $http_upgrade;
+   }
+   ```
+
+### Важно!
+
+- API сервер должен работать постоянно (используйте `pm2`, `systemd` или `docker`)
+- Убедитесь, что порт 3001 открыт в фаерволе
+- Настройте переменные окружения для SMTP сервера

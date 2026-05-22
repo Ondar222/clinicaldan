@@ -7,6 +7,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { SeoHead } from './SeoHead';
 import SchemaOrg from './SchemaOrg';
+import AppointmentModal from './AppointmentModal';
 import { 
   COSMETOLOGY_CATEGORIES, 
   getCosmetologyCategory, 
@@ -32,6 +33,11 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchParams] = useSearchParams();
   const ITEMS_PER_PAGE = 10;
+  
+  // Состояния для модального окна записи
+  const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<ApiService | undefined>(undefined);
+  const [selectedDoctor, setSelectedDoctor] = useState<ArchimedDoctor | undefined>(undefined);
   
   // Параметры URL
   const doctorFilter = searchParams.get('doctor');
@@ -101,6 +107,13 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
   const handleCategoryChange = (slug: string) => {
     setSelectedCategory(slug);
     setCurrentPage(1);
+  };
+  
+  // Открытие модального окна записи
+  const handleOpenAppointment = (service?: ApiService, doctor?: ArchimedDoctor) => {
+    setSelectedService(service);
+    setSelectedDoctor(doctor);
+    setIsAppointmentModalOpen(true);
   };
   
   // Получить связанного врача для услуги
@@ -418,12 +431,12 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                           <div className="text-2xl font-bold text-primary">
                             {formatPrice(service.base_cost)}
                           </div>
-                          <Link
-                            to="/appointment"
+                          <button
+                            onClick={() => handleOpenAppointment(service, serviceDoctor)}
                             className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-medium rounded-lg transition-all shadow-md hover:shadow-lg"
                           >
                             Записаться
-                          </Link>
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -698,17 +711,24 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                 >
                   {CLINIC_CONFIG.phoneFormatted}
                 </a>
-                <Link
-                  to="/appointment"
+                <button
+                  onClick={() => handleOpenAppointment()}
                   className="px-10 py-4 border-2 border-white/40 text-white font-semibold rounded-xl hover:bg-white/10 transition-all text-lg"
                 >
                   Записаться онлайн
-                </Link>
+                </button>
               </div>
             </div>
           </div>
         </section>
 
+        {/* Модальное окно записи */}
+        <AppointmentModal
+          isOpen={isAppointmentModalOpen}
+          onClose={() => setIsAppointmentModalOpen(false)}
+          service={selectedService}
+          doctor={selectedDoctor}
+        />
 
       </div>
     </>
