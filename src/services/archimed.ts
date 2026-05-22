@@ -105,6 +105,15 @@ class ArchimedService {
           console.log('Cleared old services cache key:', key);
         } catch {}
       });
+      
+      // FORCE CLEAR services cache from IndexedDB (DEBUG - remove after testing)
+      if (this.indexedDBAvailable) {
+        indexedDBCache.remove(SERVICES_CACHE_KEY).then(() => {
+          console.log('Cleared IndexedDB services cache:', SERVICES_CACHE_KEY);
+        }).catch(err => {
+          console.log('IndexedDB remove error:', err);
+        });
+      }
     } catch (error) {
       console.log('Cache cleanup error:', error);
     }

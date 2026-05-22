@@ -56,6 +56,11 @@ VITE_SERVICES_API_URL=https://your-api-endpoint.com/services
 VITE_PAYMENT_API_URL=https://your-payment-api.com
 VITE_PAYMENT_API_KEY=your_payment_api_key_here
 
+# Email Configuration (for appointment & contact forms)
+MAIL_URL=mail.hosting.reg.ru
+MAIL_USERNAME=noreply@yurta.site
+MAIL_PASSWORD=your_email_password
+
 # App Configuration
 VITE_SITE_NAME=Клиника Алдан
 VITE_SITE_DESCRIPTION=Современная медицинская клиника с высококвалифицированными специалистами
@@ -68,6 +73,17 @@ npm run dev
 ```
 
 Сайт будет доступен по адресу: http://localhost:5173
+
+### Запуск сервера API
+
+Для работы форм записи и контактов необходимо запустить сервер:
+
+```bash
+# Если у вас есть Node.js на сервере
+node dist/server/index.js
+```
+
+Сервер будет доступен на порту 3000 (или другом, указанном в PORT).
 
 ### Сборка для продакшена
 
@@ -190,3 +206,49 @@ npm run build
 ## Лицензия
 
 © 2024 Клиника Алдан. Все права защищены.
+
+## Настройка форм записи и контактов
+
+### Email уведомления
+
+Заявки с форм записи на прием и контактной формы отправляются на email:
+
+**Получатель:** `clinicaldan@mail.ru`
+
+### Настройка email
+
+1. Убедитесь, что в `.env` указаны правильные данные:
+   ```env
+   MAIL_URL=mail.hosting.reg.ru
+   MAIL_USERNAME=noreply@yurta.site
+   MAIL_PASSWORD=your_email_password
+   ```
+
+2. Запустите сервер после сборки:
+   ```bash
+   npm run build
+   node dist/server/index.js
+   ```
+
+### API endpoints
+
+- **POST /api/appointment** - Запись на прием
+- **POST /api/contact** - Контактная форма
+- **GET /api/appointment/ping** - Проверка доступности
+- **GET /api/contact/ping** - Проверка доступности
+
+### Пример заявки на запись
+
+```json
+{
+  "patientName": "Иванов Иван",
+  "patientPhone": "+7 (999) 123-45-67",
+  "patientEmail": "ivanov@example.com",
+  "preferredDate": "2024-12-01",
+  "preferredTime": "14:00",
+  "comments": "Первичный прием",
+  "serviceName": "Консультация косметолога",
+  "servicePrice": 2500,
+  "doctorName": "Петрова Анна"
+}
+```

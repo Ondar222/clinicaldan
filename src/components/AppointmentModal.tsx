@@ -1,7 +1,6 @@
 import type React from 'react';
 import { useState } from 'react';
-import type { ApiService, ArchimedDoctor, AppointmentData } from '../types/cms';
-import archimedService from '../services/archimed';
+import type { ApiService, ArchimedDoctor } from '../types/cms';
 
 interface AppointmentModalProps {
   isOpen: boolean;
@@ -50,18 +49,32 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
     setSubmitStatus('idle');
 
     try {
-      const appointmentData: AppointmentData = {
+      const appointmentData = {
         patientName: formData.patientName,
         patientPhone: formData.patientPhone,
-        patientEmail: formData.patientEmail || undefined,
-        preferredDate: formData.preferredDate || undefined,
-        preferredTime: formData.preferredTime || undefined,
-        comments: formData.comments || undefined,
-        serviceId: service?.id,
-        doctorId: doctor?.id
+        patientEmail: formData.patientEmail || '',
+        preferredDate: formData.preferredDate || '',
+        preferredTime: formData.preferredTime || '',
+        comments: formData.comments || '',
+        serviceName: service?.name || '',
+        servicePrice: service ? (service.cito_cost > 0 ? service.cito_cost : service.base_cost) : 0,
+        doctorName: doctor ? `${doctor.name} ${doctor.name1} ${doctor.name2}`.trim() : ''
       };
 
-      await archimedService.createAppointment(appointmentData);
+      // Отправляем заявку через наш API
+      const response = await fetch('/api/appointment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(appointmentData)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Ошибка отправки');
+      }
       
       setSubmitStatus('success');
       setTimeout(() => {

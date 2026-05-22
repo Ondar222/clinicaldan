@@ -143,13 +143,13 @@ export default defineConfig({
 			},
 			// Certificate API - все маршруты с /api префиксом
 			'/api': {
-				target: 'http://localhost:5002',
+				target: 'http://localhost:3001',
 				changeOrigin: true,
 				secure: false,
 			},
 			// VK API
 			'/api/vk': {
-				target: 'http://localhost:5002',
+				target: 'http://localhost:5000',
 				changeOrigin: true,
 				secure: false,
 			},
@@ -164,12 +164,12 @@ export default defineConfig({
 				rewrite: (path) => path.replace(/^\/api\/directus/, ''),
 			},
 			'/api': {
-				target: 'http://localhost:5002',
+				target: 'http://localhost:3001',
 				changeOrigin: true,
 				secure: false,
 			},
 			'/api/vk': {
-				target: 'http://localhost:5002',
+				target: 'http://localhost:5000',
 				changeOrigin: true,
 				secure: false,
 			},

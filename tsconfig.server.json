@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "outDir": "dist-server",
+    "rootDir": ".",
+    "noEmit": false,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "auto"
+  },
+  "include": [
+    "server-appointment.ts",
+    "server-contact.ts"
+  ],
+  "exclude": [
+    "src/**/*"
+  ]
+}
