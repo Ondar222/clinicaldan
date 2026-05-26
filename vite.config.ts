@@ -141,15 +141,32 @@ export default defineConfig({
 				secure: false,
 				rewrite: (path) => path.replace(/^\/api\/directus/, ''),
 			},
-			// Certificate API - все маршруты с /api префиксом
-			'/api': {
-				target: 'http://localhost:3001',
-				changeOrigin: true,
-				secure: false,
-			},
 			// VK API
 			'/api/vk': {
 				target: 'http://localhost:5000',
+				changeOrigin: true,
+				secure: false,
+			},
+			// Appointment & Contact API
+			'/api/appointment': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+			},
+			'/api/contact': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+			},
+			// Archimed API proxy
+			'/api/archimed': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+			},
+			// Certificate API - все остальные маршруты с /api префиксом
+			'/api': {
+				target: 'http://localhost:3001',
 				changeOrigin: true,
 				secure: false,
 			},
@@ -163,13 +180,28 @@ export default defineConfig({
 				secure: false,
 				rewrite: (path) => path.replace(/^\/api\/directus/, ''),
 			},
-			'/api': {
-				target: 'http://localhost:3001',
+			'/api/vk': {
+				target: 'http://localhost:5000',
 				changeOrigin: true,
 				secure: false,
 			},
-			'/api/vk': {
-				target: 'http://localhost:5000',
+			'/api/appointment': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+			},
+			'/api/contact': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+			},
+			'/api/archimed': {
+				target: 'http://localhost:5002',
+				changeOrigin: true,
+				secure: false,
+			},
+			'/api': {
+				target: 'http://localhost:3001',
 				changeOrigin: true,
 				secure: false,
 			},

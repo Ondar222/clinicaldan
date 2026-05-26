@@ -5,6 +5,7 @@
 
 import express from 'express';
 import dotenv from 'dotenv';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import sitemapRouter from './sitemap.js';
 import certificateAdminRouter from './certificateAdmin.js';
 import { createSsrRouter } from './ssr.js';
@@ -18,6 +19,26 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
+
+// Archimed API proxy
+const archimedApiUrl = process.env.ARCHIMED_API_URL || 'https://newapi.archimed-soft.ru/api/v5';
+const archimedApiToken = process.env.ARCHIMED_API_TOKEN || '';
+
+app.use('/api/archimed', createProxyMiddleware({
+  target: archimedApiUrl,
+  changeOrigin: true,
+  secure: false,
+  pathRewrite: { '^/api/archimed': '' },
+  on: {
+    proxyReq: (proxyReq) => {
+      if (archimedApiToken) {
+        proxyReq.setHeader('Authorization', `Bearer ${archimedApiToken}`);
+      }
+      proxyReq.setHeader('Accept', 'application/json');
+    },
+  },
+  logLevel: 'debug',
+}));
 
 // CORS для API
 app.use((req, res, next) => {

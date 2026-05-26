@@ -221,6 +221,69 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
           </div>
         </section>
         
+        {/* Блок 4: Врачи */}
+        <section className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-dark mb-4">Наши косметологи</h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Опытные специалисты с многолетней практикой
+              </p>
+            </div>
+            
+            {doctors.length === 0 ? (
+              <div className="text-center py-12">
+                <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <p className="text-gray-500">Информация о врачах загружается...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {doctors.map(doctor => (
+                  <div key={doctor.id} className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-100 hover:shadow-lg transition-all duration-300 h-full">
+                    <div className="flex flex-col items-center text-center h-full">
+                      <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden mb-3">
+                        {doctor.photo ? (
+                          <img 
+                            src={doctor.photo} 
+                            alt={doctor.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                        )}
+                      </div>
+                      <div className="flex flex-col flex-1 w-full">
+                        <h3 className="font-semibold text-dark text-sm mb-0.5 leading-tight">
+                          {doctor.name} {doctor.name1?.charAt(0)}. {doctor.name2?.charAt(0)}.
+                        </h3>
+                        <p className="text-xs text-primary font-medium mb-1.5 min-h-[16px]">{doctor.type}</p>
+                        <p className="text-[11px] text-gray-500 mb-2 leading-snug min-h-[28px]">
+                          {doctor.category || '\u00A0'}
+                        </p>
+                        <div className="mt-auto pt-1">
+                          <Link
+                            to={`/doctors/${doctor.id}`}
+                            className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                          >
+                            <span>Подробнее</span>
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
         {/* Блок 2: Какие задачи мы решаем */}
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
@@ -320,7 +383,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
             </div>
           </div>
         </section>
-        
+
         {/* Блок 3: Каталог услуг */}
         <section className="py-8 md:py-12">
           <div className="container mx-auto px-4">
@@ -499,69 +562,6 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
           </div>
         </section>
         
-        {/* Блок 4: Врачи */}
-        <section className="py-16 md:py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-dark mb-4">Наши косметологи</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Опытные специалисты с многолетней практикой
-              </p>
-            </div>
-            
-            {doctors.length === 0 ? (
-              <div className="text-center py-12">
-                <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <p className="text-gray-500">Информация о врачах загружается...</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {doctors.map(doctor => (
-                  <div key={doctor.id} className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all duration-300">
-                    <div className="flex gap-4">
-                      <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden">
-                        {doctor.photo ? (
-                          <img 
-                            src={doctor.photo} 
-                            alt={doctor.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <svg className="w-12 h-12 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-dark text-lg mb-1">
-                          {doctor.name} {doctor.name1?.charAt(0)}. {doctor.name2?.charAt(0)}.
-                        </h3>
-                        <p className="text-sm text-primary font-medium mb-2">{doctor.type}</p>
-                        {doctor.category && (
-                          <p className="text-xs text-gray-500 mb-3">{doctor.category}</p>
-                        )}
-                        <div>
-                          <Link
-                            to={`/doctors/${doctor.id}`}
-                            className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium"
-                          >
-                            <span>Подробнее</span>
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-        
         {/* Блок 5: Оборудование */}
         <section className="py-16 md:py-20 bg-gray-50">
           <div className="container mx-auto px-4">
@@ -585,38 +585,6 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                   </div>
                   <h3 className="font-semibold text-dark text-lg mb-2">{item.name}</h3>
                   <p className="text-sm text-gray-500">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-        
-        {/* Блок 6: Как проходит прием */}
-        <section className="py-16 md:py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-dark mb-4">Как проходит прием</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Простой и комфортный процесс записи на процедуры
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                { step: '1', title: 'Консультация', desc: 'Врач проводит осмотр, диагностику кожи, собирает анамнез' },
-                { step: '2', title: 'Диагностика', desc: 'При необходимости — аппаратная диагностика состояния кожи' },
-                { step: '3', title: 'Подбор процедур', desc: 'Врач рекомендует процедуры с учетом показаний' },
-                { step: '4', title: 'Процедура', desc: 'Выполнение процедуры в комфортных условиях' },
-                { step: '5', title: 'Рекомендации', desc: 'Врач дает рекомендации по уходу после процедуры' },
-                { step: '6', title: 'Наблюдение', desc: 'При необходимости — повторный визит для контроля' }
-              ].map(item => (
-                <div key={item.step} className="flex gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 text-white rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-lg shadow-lg">
-                    {item.step}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-dark text-lg mb-1">{item.title}</h3>
-                    <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
-                  </div>
                 </div>
               ))}
             </div>
