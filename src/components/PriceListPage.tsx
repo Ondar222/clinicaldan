@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { ApiService, ServiceGroup, ArchimedDoctor } from "../types/cms";
 import archimedService from "../services/archimed";
 import ErrorComponent from "./ErrorComponent";
@@ -20,6 +20,7 @@ export default function PriceListPage() {
     | "therapeutic"
     | "gynecology"
     | "cosmetology"
+    | "cosmetics"
     | "medexams"
     | "checkups"
     | "certificates"
@@ -49,12 +50,26 @@ export default function PriceListPage() {
   const [expandedService, setExpandedService] = useState<{
     [serviceId: number]: boolean;
   }>({});
-  // Полный список лабораторных услуг (группа 1002)
+  // Полны список лабораторных услуг (группа 1002)
   const [laboratoryGroupData, setLaboratoryGroupData] = useState<{
     services: ApiService[];
     total: number;
     page: number;
   } | null>(null);
+  const pricesSectionRef = useRef<HTMLDivElement>(null);
+
+  // Автоскролл к ценам при выборе основной категории
+  useEffect(() => {
+    if (selectedMain !== "all") {
+      const timer = setTimeout(() => {
+        pricesSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedMain]);
 
   useEffect(() => {
     const loadServices = async () => {
@@ -316,7 +331,13 @@ export default function PriceListPage() {
             "контурная пласт",
             "пилинг",
             "лазер",
-          ]) && !has(["гинек"])
+          ]) && !has(["гинек", "крем", "масло", "сыворотк", "гель", "лосьон", "маск", "товар"])
+        );
+      case "cosmetics":
+        // Косметика — товары (кремы, маски, сыворотки и т.д.)
+        return (
+          has(["крем", "масло", "сыворотк", "гель", "лосьон", "маск", "косметика", "товар"]) ||
+          (has(["космет"]) && has(["крем", "масло", "сыворотк", "гель", "лосьон", "маск"]))
         );
       case "medexams":
         return has([
@@ -775,6 +796,7 @@ export default function PriceListPage() {
                   { key: "therapeutic", label: "Терапевтические направления" },
                   { key: "gynecology", label: "Гинекология" },
                   { key: "cosmetology", label: "Косметология" },
+                  { key: "cosmetics", label: "Косметика" },
                   { key: "medexams", label: "Медицинские осмотры" },
                   { key: "checkups", label: "Чекапы" },
                   { key: "certificates", label: "Сертификаты" },
@@ -856,7 +878,7 @@ export default function PriceListPage() {
         )}
 
         {/* Services List */}
-        <div className="space-y-8">
+        <div ref={pricesSectionRef} className="space-y-8">
           {filteredGroups.length === 0 ? (
             <div className="bg-white rounded-lg shadow-lg p-8 text-center">
               <svg
