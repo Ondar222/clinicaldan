@@ -33,7 +33,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchParams] = useSearchParams();
   const ITEMS_PER_PAGE = 10;
-  const [problemModal, setProblemModal] = useState<{ isOpen: boolean; problem?: typeof PROBLEMS[number] }>({ isOpen: false });
+  const [problemModal, setProblemModal] = useState<{ isOpen: boolean; problem?: { title: string; desc: string; fullDesc: string; categorySlug: string; icon: React.ReactNode } }>({ isOpen: false });
   
   // Состояния для модального окна записи
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
@@ -114,7 +114,6 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
   const scrollToServices = (categorySlug: string) => {
     setSelectedCategory(categorySlug);
     setCurrentPage(1);
-    setExpandedProblem(null);
     const el = document.getElementById('cosmetology-services');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
