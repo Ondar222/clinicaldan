@@ -216,25 +216,25 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
               </p>
               
               <div className="flex flex-wrap gap-4">
-                <Link
-                  to="/prices"
+                <button
+                  onClick={() => document.getElementById('cosmetology-services')?.scrollIntoView({ behavior: 'smooth' })}
                   className="px-8 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
                 >
                   Смотреть цены
-                </Link>
-                <Link
-                  to="/doctors"
+                </button>
+                <button
+                  onClick={() => document.getElementById('cosmetology-doctors')?.scrollIntoView({ behavior: 'smooth' })}
                   className="px-8 py-3 border-2 border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all"
                 >
                   Наши специалисты
-                </Link>
+                </button>
               </div>
             </div>
           </div>
         </section>
-        
+
         {/* Блок 4: Врачи */}
-        <section className="py-16 md:py-20 bg-white">
+        <section id="cosmetology-doctors" className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-bold text-dark mb-4">Наши косметологи</h2>
