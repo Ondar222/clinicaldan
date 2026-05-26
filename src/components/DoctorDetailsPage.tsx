@@ -180,11 +180,11 @@ const DoctorDetailsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Back to doctors list */}
+      {/* Back button */}
       <div className="container mx-auto px-4 py-3">
-        <Link
-          to="/doctors"
-          className="inline-flex items-center text-primary hover:text-primaryDark text-sm"
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center text-primary hover:text-primaryDark text-sm bg-transparent border-none cursor-pointer p-0"
         >
           <svg
             className="w-4 h-4 mr-2"
@@ -199,8 +199,8 @@ const DoctorDetailsPage: React.FC = () => {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Назад к врачам
-        </Link>
+          Назад
+        </button>
       </div>
 
       {/* Основная информация о враче */}

@@ -122,10 +122,10 @@ function App() {
             
             */}
             <Route path="/prices" element={<PriceListPage />} />
-            <Route path="/services/:slug" element={<ServicePage />} />
             <Route path="/services/cosmetology" element={<CosmetologyPage />} />
             <Route path="/services/cosmetology/:category" element={<CosmetologyPage />} />
             <Route path="/services/cosmetology/:category/:serviceSlug" element={<CosmetologyServicePage />} />
+            <Route path="/services/:slug" element={<ServicePage />} />
             <Route path="/tools/:id" element={<ToolDetailsPage />} />
             <Route path="/vk-post/:id" element={<VkPostDetailPage />} />
             <Route path="/staff" element={<StaffDashboard />} />

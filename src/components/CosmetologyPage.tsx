@@ -33,6 +33,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchParams] = useSearchParams();
   const ITEMS_PER_PAGE = 10;
+  const [problemModal, setProblemModal] = useState<{ isOpen: boolean; problem?: typeof PROBLEMS[number] }>({ isOpen: false });
   
   // Состояния для модального окна записи
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
@@ -107,6 +108,17 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
   const handleCategoryChange = (slug: string) => {
     setSelectedCategory(slug);
     setCurrentPage(1);
+  };
+  
+  // Скролл к услугам с выбором категории
+  const scrollToServices = (categorySlug: string) => {
+    setSelectedCategory(categorySlug);
+    setCurrentPage(1);
+    setExpandedProblem(null);
+    const el = document.getElementById('cosmetology-services');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
   
   // Открытие модального окна записи
@@ -293,11 +305,13 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                 Комплексный подход к решению эстетических проблем кожи лица и тела
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { 
                   title: 'Возрастные изменения', 
                   desc: 'Морщины, потеря упругости',
+                  fullDesc: 'Боремся с мимическими и возрастными морщинами, дряблостью кожи, опущением овала лица. Применяем ботулинотерапию, контурную пластику филлерами, мезотерапию, биоревитализацию, а также аппаратные методы: RF-лифтинг, SMAS-лифтинг и лазерное омоложение.',
+                  categorySlug: 'injection',
                   icon: (
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -307,6 +321,8 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                 { 
                   title: 'Тусклый цвет лица', 
                   desc: 'Неровный тон, пигментация',
+                  fullDesc: 'Устраняем пигментные пятна, поствоспалительную гиперпигментацию, серый цвет лица. Подбираем химические пилинги различной глубины, фотоомоложение, лазерную шлифовку и уходовые программы с витамином C.',
+                  categorySlug: 'peelings',
                   icon: (
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
@@ -316,6 +332,8 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                 { 
                   title: 'Акне и постакне', 
                   desc: 'Высыпания, рубцы',
+                  fullDesc: 'Лечим акне любой стадии, угревую сыпь, расширенные поры, рубцы и пятна после прыщей. Проводим профессиональную чистку лица (механическую, УЗ, комбинированную), пилинги, постакне-терапию и подбираем домашний уход.',
+                  categorySlug: 'cleaning',
                   icon: (
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -325,6 +343,8 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                 { 
                   title: 'Сосудистые сетки', 
                   desc: 'Купероз, звездочки',
+                  fullDesc: 'Удаляем сосудистые звёздочки, телеангиэктазии, купероз и покраснения. Используем лазерную терапию, IPL-технологии и специальные уходовые программы для укрепления стенок сосудов.',
+                  categorySlug: 'vascular',
                   icon: (
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -334,6 +354,8 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                 { 
                   title: 'Сухость кожи', 
                   desc: 'Обезвоживание, шелушение',
+                  fullDesc: 'Восстанавливаем водный баланс, устраняем шелушение и чувство стянутости. Назначаем глубокоувлажняющие уходы, мезотерапию с гиалуроновой кислотой, биоревитализацию и подбираем домашнюю косметику.',
+                  categorySlug: 'care',
                   icon: (
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
@@ -343,6 +365,8 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                 { 
                   title: 'Жировые отложения', 
                   desc: 'Второй подбородок, щеки',
+                  fullDesc: 'Корректируем локальные жировые отложения на лице и теле. Применяем липолитические инъекции, криолиполиз, кавитацию, RF-липолиз и лимфодренажный массаж для моделирования контуров.',
+                  categorySlug: 'body',
                   icon: (
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -352,6 +376,8 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                 { 
                   title: 'Коррекция фигуры', 
                   desc: 'Целлюлит, контуры',
+                  fullDesc: 'Боремся с целлюлитом, дряблостью кожи, лишним объёмом. Комплекс аппаратных процедур: вакуумный массаж, кавитация, RF-лифтинг тела, прессотерапия и обёртывания для подтяжки и уменьшения объёмов.',
+                  categorySlug: 'body',
                   icon: (
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -361,6 +387,8 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                 { 
                   title: 'Подбор ухода', 
                   desc: 'Индивидуальная программа',
+                  fullDesc: 'Проводим компьютерную диагностику кожи, определяем тип и состояние. На основе результатов составляем персональную программу процедур и подбираем профессиональную косметику для домашнего ухода.',
+                  categorySlug: 'skin-diagnostics',
                   icon: (
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -368,24 +396,78 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                   )
                 }
               ].map((item, idx) => (
-                <Link
+                <button
                   key={idx}
-                  to={`/services/cosmetology?problem=${idx}`}
-                  className="group relative bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+                  onClick={() => setProblemModal({ isOpen: true, problem: item })}
+                  className="group relative bg-gradient-to-br from-gray-50 to-white p-5 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg transition-all duration-300 text-left w-full"
                 >
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-3 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                     {item.icon}
                   </div>
-                  <h3 className="font-semibold text-dark mb-2 text-lg">{item.title}</h3>
+                  <h3 className="font-semibold text-dark mb-1 text-base">{item.title}</h3>
                   <p className="text-sm text-gray-500">{item.desc}</p>
-                </Link>
+                  <div className="flex items-center gap-1 mt-2 text-primary text-xs font-medium">
+                    <span>Подробнее</span>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </button>
               ))}
             </div>
           </div>
         </section>
 
+        {/* Модальное окно задачи */}
+        {problemModal.isOpen && problemModal.problem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setProblemModal({ isOpen: false })} />
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-auto overflow-hidden animate-[fadeIn_0.2s_ease-out]">
+              <div className="p-6">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary flex-shrink-0">
+                    {problemModal.problem.icon}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-dark">{problemModal.problem.title}</h3>
+                    <p className="text-sm text-gray-500">{problemModal.problem.desc}</p>
+                  </div>
+                  <button
+                    onClick={() => setProblemModal({ isOpen: false })}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <p className="text-gray-600 leading-relaxed mb-6">
+                  {problemModal.problem.fullDesc}
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      scrollToServices(problemModal.problem!.categorySlug);
+                      setProblemModal({ isOpen: false });
+                    }}
+                    className="flex-1 px-4 py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-xl transition-all shadow-md hover:shadow-lg"
+                  >
+                    Смотреть услуги
+                  </button>
+                  <button
+                    onClick={() => setProblemModal({ isOpen: false })}
+                    className="px-4 py-3 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+                  >
+                    Закрыть
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Блок 3: Каталог услуг */}
-        <section className="py-8 md:py-12">
+        <section id="cosmetology-services" className="py-8 md:py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold text-dark mb-6">Услуги косметологии</h2>
             
@@ -561,7 +643,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
             )}
           </div>
         </section>
-        
+
         {/* Блок 5: Оборудование */}
         <section className="py-16 md:py-20 bg-gray-50">
           <div className="container mx-auto px-4">
