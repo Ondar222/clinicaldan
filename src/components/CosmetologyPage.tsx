@@ -127,11 +127,9 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
     setIsAppointmentModalOpen(true);
   };
   
-  // Получить связанного врача для услуги
-  const getServiceDoctor = (service: ApiService): ArchimedDoctor | undefined => {
-    // Ищем врача по ключевым словам в названии услуги
-    const serviceText = `${service.name} ${service.group_name}`.toLowerCase();
-    return doctors.find(d => {
+  // Получить всех косметологов для услуги
+  const getServiceDoctors = (): ArchimedDoctor[] => {
+    return doctors.filter(d => {
       const docText = `${d.type} ${d.name}`.toLowerCase();
       return docText.includes('космет') || docText.includes('дерматовенеролог');
     });
@@ -522,7 +520,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
             ) : (
               <div className="grid gap-4">
                 {paginatedServices.map(service => {
-                  const serviceDoctor = getServiceDoctor(service);
+                  const serviceDoctors = getServiceDoctors();
                   return (
                     <div 
                       key={service.id} 
@@ -539,7 +537,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                           {service.info && (
                             <p className="text-gray-600 mb-4 pl-8">{service.info}</p>
                           )}
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 pl-8">
+                          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 pl-8">
                             {service.duration > 0 && (
                               <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-full">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -548,26 +546,34 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                                 {service.duration} мин
                               </span>
                             )}
-                            {serviceDoctor && (
-                              <Link 
-                                to={`/doctors/${serviceDoctor.id}`}
-                                className="flex items-center gap-1.5 text-primary hover:underline bg-primary/5 px-3 py-1.5 rounded-full"
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                {serviceDoctor.name} {serviceDoctor.name1?.charAt(0)}. {serviceDoctor.name2?.charAt(0)}.
-                              </Link>
+                            {serviceDoctors.length > 0 && (
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="flex items-center gap-1 text-gray-400">
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                  </svg>
+                                  Врачи:
+                                </span>
+                                {serviceDoctors.map(doc => (
+                                  <Link
+                                    key={doc.id}
+                                    to={`/doctors/${doc.id}`}
+                                    className="flex items-center gap-1 text-primary hover:underline bg-primary/5 px-2.5 py-1 rounded-full"
+                                  >
+                                    {doc.name} {doc.name1?.charAt(0)}. {doc.name2?.charAt(0)}.
+                                  </Link>
+                                ))}
+                              </div>
                             )}
                           </div>
                         </div>
                         
-                        <div className="flex flex-col items-start md:items-end gap-3 pl-8">
+                        <div className="flex flex-col items-start md:items-end gap-3 pl-8 md:pl-0">
                           <div className="text-2xl font-bold text-primary">
                             {formatPrice(service.base_cost)}
                           </div>
                           <button
-                            onClick={() => handleOpenAppointment(service, serviceDoctor)}
+                            onClick={() => handleOpenAppointment(service, undefined)}
                             className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-medium rounded-lg transition-all shadow-md hover:shadow-lg"
                           >
                             Записаться

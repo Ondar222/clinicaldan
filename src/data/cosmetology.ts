@@ -106,6 +106,8 @@ const NON_COSMETOLOGY_KEYWORDS = [
   'ревматолог',
   'психиатр',
   'хирург', 'хирургия',
+  'интимн',
+  'лазерная гинекол',
 ];
 
 // Категории косметологии
@@ -213,9 +215,22 @@ export const COSMETOLOGY_CATEGORIES: CosmetologyCategory[] = [
  */
 export function getCosmetologyCategory(serviceName: string, groupName?: string): CosmetologyCategory | null {
   const text = `${serviceName} ${groupName || ''}`.toLowerCase();
+  const group = (groupName || '').toLowerCase();
 
   // Явно исключаем услуги других медицинских специальностей
   if (NON_COSMETOLOGY_KEYWORDS.some(keyword => text.includes(keyword))) {
+    return null;
+  }
+
+  // Строгая проверка group_name — исключаем группы других специальностей
+  const nonCosmetologyGroups = [
+    'гинеколог', 'уролог', 'стоматолог', 'ортопед', 'травматолог',
+    'лор', 'оториноларинголог', 'терапевт', 'кардиолог', 'невролог',
+    'педиатр', 'эндокринолог', 'гастроэнтеролог', 'пульмонолог',
+    'офтальмолог', 'проктолог', 'онколог', 'нефролог', 'ревматолог',
+    'психиатр', 'хирург', 'физиотерап', 'лаборатор',
+  ];
+  if (nonCosmetologyGroups.some(g => group.includes(g))) {
     return null;
   }
 
