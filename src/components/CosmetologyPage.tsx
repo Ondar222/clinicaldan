@@ -446,19 +446,10 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
                 </p>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => {
-                      scrollToServices(problemModal.problem!.categorySlug);
-                      setProblemModal({ isOpen: false });
-                    }}
+                    onClick={() => setProblemModal({ isOpen: false })}
                     className="flex-1 px-4 py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-xl transition-all shadow-md hover:shadow-lg"
                   >
-                    Смотреть услуги
-                  </button>
-                  <button
-                    onClick={() => setProblemModal({ isOpen: false })}
-                    className="px-4 py-3 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
-                  >
-                    Закрыть
+                    Понятно
                   </button>
                 </div>
               </div>
