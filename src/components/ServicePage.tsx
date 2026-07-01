@@ -541,6 +541,282 @@ const ServicePage: React.FC = () => {
                 </div>
               )}
               
+              {/* Специальный контент для функциональной диагностики */}
+              {direction.slug === 'functional-diagnostics' && (
+                <>
+                  <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                      __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "MedicalWebPage",
+                        "name": "Функциональная диагностика в Кызыле — Клиника Алдан",
+                        "description": "ЭКГ, суточное мониторирование по Холтеру и СМАД в Кызыле. Исследование работы сердца и давления. Клиника Алдан, будни до 22:00.",
+                        "url": "https://clinicaldan.ru/services/functional-diagnostics",
+                        "about": {
+                          "@type": "MedicalCondition",
+                          "name": "Функциональная диагностика сердца и сосудов"
+                        },
+                        "specialty": "Cardiology",
+                        "provider": {
+                          "@type": "MedicalClinic",
+                          "name": "Клиника Алдан",
+                          "url": "https://clinicaldan.ru",
+                          "telephone": "+79233176060",
+                          "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "ул. Ленина, 60, офис 1",
+                            "addressLocality": "Кызыл",
+                            "addressRegion": "Республика Тыва",
+                            "postalCode": "667000",
+                            "addressCountry": "RU"
+                          }
+                        }
+                      })
+                    }}
+                  />
+                  <div className="space-y-6 sm:space-y-8">
+                    <div className="bg-white rounded-xl p-6 sm:p-8 border border-gray-100">
+                      <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+                        <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed">
+                          Обычный анализ крови или снимок показывают состояние органа в один конкретный момент. Функциональная диагностика работает иначе — она следит за тем, как сердце или сосуды ведут себя в течение дня, во время нагрузки, сна, стресса. Именно так удаётся поймать нарушения, которые на плановом осмотре просто не видны.
+                        </p>
+                        <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed mt-4">
+                          В Клинике Алдан в Кызыле доступны три основных вида функциональной диагностики: ЭКГ, суточное мониторирование ЭКГ по Холтеру и суточное мониторирование артериального давления (СМАД). Принять результаты и объяснить их может кардиолог или терапевт прямо в клинике.
+                        </p>
+                        
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Виды исследований</h2>
+                        
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mt-6 mb-3">ЭКГ — электрокардиограмма</h3>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          ЭКГ записывает электрическую активность сердца за несколько минут. Процедура безболезненная: пациент ложится, врач прикрепляет электроды на грудь, запястья и голени, прибор снимает показания.
+                        </p>
+                        <p className="text-gray-700 text-sm sm:text-base mt-2">
+                          ЭКГ назначают при болях в груди, одышке, нарушениях ритма, повышенном давлении. Также её нередко требуют перед операцией, при оформлении водительских прав или перед началом серьёзных физических нагрузок. Расшифровку врач даёт в тот же день.
+                        </p>
+
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mt-6 mb-3">Холтер — суточное мониторирование ЭКГ</h3>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Холтер отличается от обычной ЭКГ тем, что запись идёт не пять минут, а сутки. Пациент получает небольшой портативный прибор, который крепится на тело и незаметно фиксирует работу сердца. Всё это время человек живёт в обычном ритме: работает, гуляет, спит.
+                        </p>
+                        <p className="text-gray-700 text-sm sm:text-base mt-2">
+                          На следующий день прибор сдают обратно, врач анализирует запись и находит нарушения, которые случаются нерегулярно. Например, аритмию, которая появляется только ночью или при подъёме по лестнице. На плановой ЭКГ такое просто не попадает в кадр.
+                        </p>
+                        <p className="text-gray-700 text-sm sm:text-base mt-2">
+                          Холтер назначают при жалобах на перебои в сердце, учащённое сердцебиение, головокружения и обмороки, а также для контроля эффективности лечения аритмии.
+                        </p>
+
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mt-6 mb-3">СМАД — суточное мониторирование артериального давления</h3>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          При гипертонии давление меняется в течение дня. Утром после подъёма оно одно, после обеда другое, ночью третье. Разовое измерение у врача не даёт полной картины, особенно если пациент нервничает на приёме.
+                        </p>
+                        <p className="text-gray-700 text-sm sm:text-base mt-2">
+                          СМАД решает эту проблему: пациент носит манжету на руке весь день, прибор автоматически измеряет давление каждые 15-30 минут и сохраняет данные. Врач получает точный суточный профиль давления и видит, когда именно оно поднимается и насколько.
+                        </p>
+                        <p className="text-gray-700 text-sm sm:text-base mt-2">
+                          Исследование помогает подобрать правильное лекарство и дозировку, а также проверить насколько хорошо работает текущее лечение.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Кому назначают функциональную диагностику</h2>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>боли или дискомфорт в области сердца</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>учащённое, редкое или нерегулярное сердцебиение</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>повышенное артериальное давление</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>головокружения, обмороки, потемнение в глазах</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>одышка при небольшой нагрузке</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>плановый контроль при ишемической болезни сердца или гипертонии</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>подбор или смена лечения</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>подготовка к операции</span></li>
+                        </ul>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Как записаться</h2>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Клиника Алдан находится в Кызыле, ул. Ленина, 60, офис 1. Работаем ежедневно — в будни с 8:00 до 22:00, в выходные с 9:00 до 18:00. Запись по телефону +7 923 317-60-60 и +7 923 381-60-60.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* FAQ */}
+                    <div className="bg-amber-50 rounded-xl p-6 sm:p-8 border border-amber-100">
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                      <div className="space-y-4 sm:space-y-6">
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Что такое холтер и зачем он нужен?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Холтер — это портативный прибор который записывает кардиограмму в течение суток, пока пациент занимается обычными делами. Он нужен чтобы поймать нарушения ритма сердца, которые случаются нерегулярно и не видны на обычной ЭКГ за пять минут.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Больно ли делать ЭКГ?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Нет, ЭКГ совершенно безболезненна. К коже прикрепляют электроды, которые считывают сигналы. Никаких уколов или воздействий — только запись. Процедура занимает 5-10 минут.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Нужна ли подготовка перед ЭКГ или холтером?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Специальной подготовки нет. Перед ЭКГ лучше несколько минут посидеть спокойно, не курить за час до исследования и не наносить крем на кожу груди. Перед холтером стоит надеть свободную одежду, под которую удобно крепить электроды.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Можно ли жить в обычном режиме во время холтера?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Да, это и есть цель исследования. Единственное ограничение — нельзя принимать душ или ванну пока прибор на теле, чтобы не намочить электроды. В остальном пациент ведёт привычный образ жизни.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Сколько стоит ЭКГ в Кызыле?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Стоимость ЭКГ в Клинике Алдан уточняйте по телефону +7 923 317-60-60. Цены на холтер и СМАД — там же.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+              
+              {/* Специальный контент для диагностики */}
+              {direction.slug === 'diagnostics' && (
+                <>
+                  <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                      __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "MedicalWebPage",
+                        "name": "Диагностика в Кызыле — Клиника Алдан",
+                        "description": "УЗИ, ЭКГ, лабораторные анализы и функциональная диагностика в Кызыле. Результаты в день обращения. Клиника Алдан, ул. Ленина 60.",
+                        "url": "https://clinicaldan.ru/services/diagnostics",
+                        "about": {
+                          "@type": "MedicalCondition",
+                          "name": "Медицинская диагностика"
+                        },
+                        "specialty": "Radiology",
+                        "provider": {
+                          "@type": "MedicalClinic",
+                          "name": "Клиника Алдан",
+                          "url": "https://clinicaldan.ru",
+                          "telephone": "+79233176060",
+                          "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "ул. Ленина, 60, офис 1",
+                            "addressLocality": "Кызыл",
+                            "addressRegion": "Республика Тыва",
+                            "postalCode": "667000",
+                            "addressCountry": "RU"
+                          }
+                        }
+                      })
+                    }}
+                  />
+                  <div className="space-y-6 sm:space-y-8">
+                    <div className="bg-white rounded-xl p-6 sm:p-8 border border-gray-100">
+                      <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+                        <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed">
+                          Клиника Алдан объединяет несколько видов диагностики под одной крышей. Можно пройти УЗИ, сделать ЭКГ, сдать анализы и получить результаты в тот же день — без очередей и поездок в разные места. Это особенно удобно когда врач назначает несколько исследований сразу.
+                        </p>
+                        
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Виды диагностики</h2>
+                        
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mt-6 mb-3">УЗИ (ультразвуковое исследование)</h3>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          УЗИ делают на аппарате экспертного класса. Это значит, что врач видит чёткую картину даже при небольших изменениях в тканях, а не размытое изображение как на устаревшем оборудовании. В клинике доступны:
+                        </p>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mt-3">
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>УЗИ органов брюшной полости (печень, желчный пузырь, поджелудочная, селезёнка)</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>УЗИ почек и мочевого пузыря</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>УЗИ щитовидной железы</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>УЗИ молочных желёз</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>УЗИ органов малого таза (матка, яичники)</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>УЗИ сердца (эхокардиография)</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>УЗДГ сосудов нижних конечностей</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>УЗИ мягких тканей и суставов</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>УЗИ при беременности на ранних сроках</span></li>
+                        </ul>
+                        <p className="text-gray-700 text-sm sm:text-base mt-3">
+                          Заключение выдают сразу после исследования.
+                        </p>
+
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mt-6 mb-3">ЭКГ (электрокардиограмма)</h3>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          ЭКГ записывает электрическую активность сердца и помогает выявить нарушения ритма, признаки ишемии и другие изменения. Процедура занимает несколько минут, расшифровку даёт кардиолог или терапевт на месте. ЭКГ часто нужна перед операцией, для справки или при жалобах на сердце.
+                        </p>
+
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mt-6 mb-3">Лабораторные анализы</h3>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Собственная лаборатория клиники принимает биоматериал ежедневно. Большинство результатов готово в день сдачи. Основные анализы:
+                        </p>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mt-3">
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>общий анализ крови и мочи</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>биохимия крови (сахар, холестерин, печёночные ферменты, мочевина и другие показатели)</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>коагулограмма</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>анализы на гормоны щитовидной железы</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>анализы на ИППП</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>онкомаркеры</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>анализы при беременности (ХГЧ, группа крови и другие)</span></li>
+                        </ul>
+
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mt-6 mb-3">Функциональная диагностика</h3>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Функциональная диагностика оценивает работу органов в реальном времени. В клинике доступны суточное мониторирование ЭКГ по Холтеру и суточное мониторирование артериального давления. Оба исследования используют для выявления нарушений, которые не видны на обычной ЭКГ или при разовом измерении давления.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Как устроено прохождение диагностики</h2>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Если врач назначил несколько исследований, их можно пройти в один визит. Терапевт или узкий специалист осматривает пациента, выдаёт направление, и дальше всё происходит здесь же: кровь берут в процедурном кабинете, УЗИ делают в соседнем, результаты приходят ещё до конца приёма или к следующему утру.
+                        </p>
+                        <p className="text-gray-700 text-sm sm:text-base mt-3">
+                          Если нужно просто сдать анализы или пройти УЗИ без предварительного приёма врача, можно записаться напрямую на конкретное исследование.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Запись на диагностику</h2>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Клиника Алдан находится в Кызыле по адресу ул. Ленина, 60, офис 1. Работаем ежедневно — в будни с 8:00 до 22:00, в выходные с 9:00 до 18:00. Записаться можно по телефону <a href="tel:+79233176060" className="text-primary hover:underline font-medium">+7 923 317-60-60</a> и <a href="tel:+79233816060" className="text-primary hover:underline font-medium">+7 923 381-60-60</a>.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* FAQ */}
+                    <div className="bg-gray-50 rounded-xl p-6 sm:p-8 border border-gray-100">
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                      <div className="space-y-4 sm:space-y-6">
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Когда будут готовы результаты анализов?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Большинство анализов готовы в день сдачи. Некоторые сложные исследования могут занять 1-2 дня. Точные сроки уточните при записи или у администратора клиники.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Нужно ли направление для УЗИ или анализов?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Нет, приходите без направления. Можно записаться на конкретное исследование самостоятельно. Если нужна консультация врача по результатам, его тоже можно пройти в клинике.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Как подготовиться к УЗИ брюшной полости?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Нужно прийти натощак, за 3-4 часа до исследования не есть и не пить. За 2-3 дня лучше исключить из питания продукты вызывающие газообразование: бобовые, чёрный хлеб, газированные напитки. Подготовка к другим видам УЗИ отличается, уточните при записи.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Можно ли пройти несколько исследований за один день?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Да, это одно из удобств клиники. Например, терапевт на приёме назначает анализы и УЗИ, и пациент проходит всё в тот же визит без повторных поездок.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Делают ли ЭКГ детям?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Да, ЭКГ выполняется пациентам любого возраста включая детей. Исследование безболезненно и безопасно.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+              
               {/* Специальный контент для педиатрии */}
               {direction.slug === 'pediatrics' && (
                 <div className="space-y-6 sm:space-y-8">
@@ -1521,6 +1797,303 @@ const ServicePage: React.FC = () => {
                 </div>
               )}
               
+              {/* Специальный контент для гастроэнтерологии */}
+              {direction.slug === 'gastroenterology' && (
+                <>
+                  <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                      __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "MedicalWebPage",
+                        "name": "Гастроэнтеролог в Кызыле — Клиника Алдан",
+                        "description": "Лечение гастрита, язвы, панкреатита, колита, ГЭРБ в Кызыле. ФГДС и УЗИ брюшной полости в клинике. Приём в будни до 22:00.",
+                        "url": "https://clinicaldan.ru/services/gastroenterology",
+                        "about": {
+                          "@type": "MedicalCondition",
+                          "name": "Заболевания желудочно-кишечного тракта"
+                        },
+                        "specialty": "Gastroenterology",
+                        "provider": {
+                          "@type": "MedicalClinic",
+                          "name": "Клиника Алдан",
+                          "url": "https://clinicaldan.ru",
+                          "telephone": "+79233176060",
+                          "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "ул. Ленина, 60, офис 1",
+                            "addressLocality": "Кызыл",
+                            "addressRegion": "Республика Тыва",
+                            "postalCode": "667000",
+                            "addressCountry": "RU"
+                          }
+                        }
+                      })
+                    }}
+                  />
+                  <div className="space-y-6 sm:space-y-8">
+                    <div className="bg-white rounded-xl p-6 sm:p-8 border border-gray-100">
+                      <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+                        <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed">
+                          Боли в животе, изжога, вздутие, тошнота — с этим обычно идут к терапевту, и он же направляет дальше к гастроэнтерологу. В Клинике Алдан можно попасть сразу к нужному специалисту, без лишнего шага. А если потребуется гастроскопия или колоноскопия, её можно сделать здесь же, в тот же визит или на следующий день.
+                        </p>
+                        
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">С какими симптомами обращаются</h2>
+                        <p className="text-gray-700 text-sm sm:text-base mb-3">Гастроэнтеролог занимается желудком, кишечником, печенью, поджелудочной железой и желчным пузырём. К нему стоит прийти, если беспокоит:</p>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>боль или дискомфорт в животе, особенно после еды</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>постоянная изжога или кислый привкус во рту</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>тошнота, рвота, потеря аппетита</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>вздутие и повышенное газообразование</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>нарушения стула — запор, диарея или их чередование</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>кровь или слизь в стуле</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>горечь во рту, отрыжка</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>резкое снижение веса без видимой причины</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>желтушность кожи или белков глаз</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>боль в правом или левом подреберье</span></li>
+                        </ul>
+                        <p className="text-gray-700 text-sm sm:text-base mt-4">
+                          Многие идут к гастроэнтерологу только когда боль становится сильной. Между тем гастрит и начальные изменения в кишечнике хорошо поддаются лечению на ранней стадии, а запущенные случаи требуют долгого курса.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Что лечит гастроэнтеролог</h2>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>Гастрит и язвенная болезнь желудка и двенадцатиперстной кишки</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>ГЭРБ (гастроэзофагеальная рефлюксная болезнь), изжога</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>Синдром раздражённого кишечника (СРК)</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>Панкреатит — острый и хронический</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>Холецистит и желчнокаменная болезнь</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>Гепатиты, жировой гепатоз печени</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>Колит и воспалительные заболевания кишечника</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>Запоры и диарея как хронические состояния</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>Инфекция Helicobacter pylori</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>Целиакия, пищевая непереносимость</span></li>
+                        </ul>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Диагностика в клинике</h2>
+                        <p className="text-gray-700 text-sm sm:text-base mb-3">После осмотра и расспроса врач назначит нужные исследования. Большинство из них доступны прямо в Клинике Алдан:</p>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span><strong>ФГДС (гастроскопия)</strong> — осмотр пищевода, желудка и начала двенадцатиперстной кишки</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span><strong>Колоноскопия</strong> — осмотр толстого кишечника</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span><strong>УЗИ органов брюшной полости</strong> — печень, желчный, поджелудочная, селезёнка</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span><strong>Анализы крови и кала</strong> — общий, биохимия, кал на скрытую кровь, анализ на хеликобактер</span></li>
+                        </ul>
+                        <p className="text-gray-700 text-sm sm:text-base mt-4">
+                          Если нужна ФГДС, её можно пройти в тот же день или записаться сразу на удобную дату. Долго ждать не придётся.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Как подготовиться к приёму</h2>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Перед визитом к гастроэнтерологу лучше не есть за 2-3 часа. Если есть результаты предыдущих анализов, УЗИ или гастроскопии — возьмите их с собой. Врач сравнит данные в динамике и это ускорит постановку диагноза.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Запись на приём</h2>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Клиника Алдан находится в Кызыле, ул. Ленина, 60, офис 1. Работаем ежедневно — в будни с 8:00 до 22:00, в выходные с 9:00 до 18:00. Записаться можно по телефону <a href="tel:+79233176060" className="text-primary hover:underline font-medium">+7 923 317-60-60</a> и <a href="tel:+79233816060" className="text-primary hover:underline font-medium">+7 923 381-60-60</a>.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* FAQ */}
+                    <div className="bg-gray-50 rounded-xl p-6 sm:p-8 border border-gray-100">
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                      <div className="space-y-4 sm:space-y-6">
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Чем отличается гастроэнтеролог от гастроскопии?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Гастроэнтеролог — это врач, специалист по заболеваниям пищеварительной системы. Гастроскопия (ФГДС) — это процедура, которую он может назначить для осмотра желудка изнутри. Сначала идут на приём к врачу, потом при необходимости на гастроскопию.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Нужно ли направление от терапевта чтобы попасть к гастроэнтерологу?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Нет. В Клинике Алдан можно записаться к гастроэнтерологу напрямую, без направления. Достаточно позвонить по номеру +7 923 317-60-60.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Как подготовиться к гастроскопии (ФГДС)?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Нужно прийти строго натощак — последний приём пищи не позже чем за 8 часов до процедуры. Не пить воду за 4 часа до исследования. Если принимаете лекарства, уточните у врача какие из них можно принять утром в день процедуры.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Больно ли делать гастроскопию?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Процедура неприятная, но не болезненная. Врач использует местную анестезию — орошает горло обезболивающим спреем. Большинство пациентов переносят хорошо, сама процедура занимает 5-10 минут.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Гастрит можно вылечить полностью?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Это зависит от типа гастрита. Если причина — бактерия Helicobacter pylori, после её уничтожения слизистая восстанавливается. Атрофический гастрит требует длительного наблюдения. Точный прогноз скажет врач после осмотра и обследования.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+              
+              {/* Специальный контент для эндоскопии */}
+              {direction.slug === 'endoscopy' && (
+                <>
+                  <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                      __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "MedicalWebPage",
+                        "name": "Эндоскопия в Кызыле — ФГДС и колоноскопия в Клинике Алдан",
+                        "description": "ФГДС и колоноскопия в Кызыле. Осмотр желудка и кишечника, биопсия, тест на хеликобактер. Клиника Алдан, будни до 22:00.",
+                        "url": "https://clinicaldan.ru/services/endoscopy",
+                        "about": {
+                          "@type": "MedicalCondition",
+                          "name": "Заболевания желудочно-кишечного тракта"
+                        },
+                        "specialty": "Gastroenterology",
+                        "provider": {
+                          "@type": "MedicalClinic",
+                          "name": "Клиника Алдан",
+                          "url": "https://clinicaldan.ru",
+                          "telephone": "+79233176060",
+                          "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "ул. Ленина, 60, офис 1",
+                            "addressLocality": "Кызыл",
+                            "addressRegion": "Республика Тыва",
+                            "postalCode": "667000",
+                            "addressCountry": "RU"
+                          }
+                        }
+                      })
+                    }}
+                  />
+                  <div className="space-y-6 sm:space-y-8">
+                    <div className="bg-white rounded-xl p-6 sm:p-8 border border-gray-100">
+                      <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+                        <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed">
+                          Многие годами живут с болью в желудке, изжогой или нарушениями стула и не идут на эндоскопию — боятся дискомфорта или просто не знают куда обратиться. В Клинике Алдан ФГДС и колоноскопию делают опытные специалисты, которые объясняют каждый шаг заранее. Процедура занимает 10-15 минут, после неё можно уйти домой.
+                        </p>
+                        
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Что такое эндоскопия</h2>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Эндоскопия — это осмотр внутренних органов с помощью тонкого гибкого зонда с миниатюрной камерой на конце. Врач видит состояние слизистой оболочки на экране монитора в реальном времени. Это единственный способ точно увидеть что происходит внутри желудка или кишечника — ни УЗИ, ни анализы крови такой картины не дают.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Виды эндоскопии в клинике</h2>
+                        
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mt-6 mb-3">ФГДС — гастроскопия</h3>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          ФГДС (фиброгастродуоденоскопия) — осмотр пищевода, желудка и начальных отделов двенадцатиперстной кишки. Зонд вводят через рот. Перед процедурой врач обрабатывает горло анестетиком, чтобы снизить рвотный рефлекс.
+                        </p>
+                        <p className="text-gray-700 text-sm sm:text-base mt-2">
+                          Исследование занимает 10-15 минут. После него возможен лёгкий дискомфорт в горле, который проходит в течение часа.
+                        </p>
+                        <p className="text-gray-700 text-sm sm:text-base mt-3 font-medium">ФГДС назначают при:</p>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mt-2">
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>болях в животе и желудке</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>постоянной изжоге</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>тошноте и рвоте</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>подозрении на гастрит, язву или эрозию</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>контроле лечения после курса терапии</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>подозрении на хеликобактер пилори</span></li>
+                        </ul>
+
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mt-6 mb-3">Колоноскопия</h3>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Колоноскопия — осмотр толстого кишечника. Зонд вводят через прямую кишку. Перед процедурой нужна подготовка — очищение кишечника с помощью специального слабительного препарата накануне.
+                        </p>
+                        <p className="text-gray-700 text-sm sm:text-base mt-2">
+                          Процедура занимает 20-40 минут. Врач заранее расскажет как она проходит и что вы почувствуете. При необходимости — например при обнаружении полипа — врач может сразу его удалить, не назначая повторный визит.
+                        </p>
+                        <p className="text-gray-700 text-sm sm:text-base mt-3 font-medium">Колоноскопию назначают при:</p>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mt-2">
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>нарушениях стула — запорах, диарее, их чередовании</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>крови или слизи в стуле</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>болях в нижней части живота</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>подозрении на колит, полипы или новообразования</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>плановом скрининге после 45 лет</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>наследственной предрасположенности к раку кишечника</span></li>
+                        </ul>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Что ещё можно сделать во время эндоскопии</h2>
+                        <p className="text-gray-700 text-sm sm:text-base mb-3">Эндоскопия — это не только осмотр. Во время той же процедуры врач при необходимости может:</p>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>взять биопсию — небольшой фрагмент ткани для лабораторного анализа</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>провести тест на хеликобактер пилори</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>удалить небольшой полип</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>остановить кровотечение</span></li>
+                        </ul>
+                        <p className="text-gray-700 text-sm sm:text-base mt-4">
+                          Это избавляет от повторного визита и ускоряет постановку диагноза.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Как подготовиться</h2>
+                        
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mt-4 mb-2">К ФГДС</h3>
+                        <ul className="space-y-2 text-gray-700 text-sm sm:text-base mb-4">
+                          <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span><span>прийти строго натощак — последний приём пищи не позже чем за 8 часов</span></li>
+                          <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span><span>не пить воду за 4 часа до процедуры</span></li>
+                          <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span><span>если принимаете лекарства — уточните у врача, какие можно взять утром</span></li>
+                        </ul>
+
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mt-4 mb-2">К колоноскопии</h3>
+                        <ul className="space-y-2 text-gray-700 text-sm sm:text-base mb-4">
+                          <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span><span>за 2-3 дня соблюдать бесшлаковую диету — исключить клетчатку, овощи, хлеб, молоко</span></li>
+                          <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span><span>накануне вечером провести очищение кишечника препаратом, который назначит врач</span></li>
+                          <li className="flex items-start gap-2"><span className="text-primary mt-1">•</span><span>в день процедуры не есть и пить только прозрачные жидкости до определённого времени</span></li>
+                        </ul>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Точные инструкции по подготовке вы получите при записи. Если что-то непонятно — позвоните и администратор объяснит.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Запись на процедуру</h2>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Клиника Алдан находится в Кызыле, ул. Ленина, 60, офис 1. Работаем ежедневно — в будни с 8:00 до 22:00, в выходные с 9:00 до 18:00. Записаться можно по телефону <a href="tel:+79233176060" className="text-primary hover:underline font-medium">+7 923 317-60-60</a> и <a href="tel:+79233816060" className="text-primary hover:underline font-medium">+7 923 381-60-60</a>.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* FAQ */}
+                    <div className="bg-gray-50 rounded-xl p-6 sm:p-8 border border-gray-100">
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                      <div className="space-y-4 sm:space-y-6">
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Больно ли делать ФГДС?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Процедура неприятная, но не болезненная. Врач перед началом обрабатывает горло анестетиком. Большинство пациентов переносят хорошо. Некоторый дискомфорт — чувство давления или позыв на рвоту — проходит через несколько минут после окончания.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Можно ли сделать ФГДС и колоноскопию в один день?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Да, технически обе процедуры можно пройти в один день. Это удобно и избавляет от двойной подготовки. Уточните эту возможность при записи — врач решит исходя из вашей ситуации.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Что такое биопсия при гастроскопии и больно ли это?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Биопсия — это взятие крошечного кусочка слизистой для анализа под микроскопом. Делается прямо во время ФГДС, дополнительного прокола или разреза нет. Пациент этого практически не чувствует.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Как долго нельзя есть после гастроскопии?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            После ФГДС с местной анестезией горла лучше не есть и не пить в течение 30-60 минут — пока не пройдёт онемение, чтобы не поперхнуться. После этого можно есть в обычном режиме.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Нужно ли направление для записи на ФГДС?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Нет, записаться можно самостоятельно без направления от врача. Позвоните по номеру +7 923 317-60-60 и администратор подберёт удобное время и объяснит как подготовиться.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+              
               {/* Специальный контент для УЗИ */}
               {direction.slug === 'ultrasound' && (
                 <div className="space-y-6 sm:space-y-8">
@@ -1804,6 +2377,136 @@ const ServicePage: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              )}
+              
+              {/* Специальный контент для терапии */}
+              {direction.slug === 'therapy' && (
+                <>
+                  <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                      __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "MedicalWebPage",
+                        "name": "Терапевт в Кызыле — Клиника Алдан",
+                        "description": "Приём терапевта в Кызыле в день обращения, без прикрепления к участку. Осмотр, анализы, направления к узким специалистам.",
+                        "url": "https://clinicaldan.ru/services/therapy",
+                        "about": {
+                          "@type": "MedicalCondition",
+                          "name": "Общие терапевтические заболевания"
+                        },
+                        "specialty": "GeneralPractice",
+                        "provider": {
+                          "@type": "MedicalClinic",
+                          "name": "Клиника Алдан",
+                          "url": "https://clinicaldan.ru",
+                          "telephone": "+79233176060",
+                          "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "ул. Ленина, 60, офис 1",
+                            "addressLocality": "Кызыл",
+                            "addressRegion": "Республика Тыва",
+                            "postalCode": "667000",
+                            "addressCountry": "RU"
+                          }
+                        }
+                      })
+                    }}
+                  />
+                  <div className="space-y-6 sm:space-y-8">
+                    <div className="bg-white rounded-xl p-6 sm:p-8 border border-gray-100">
+                      <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+                        <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed">
+                          Терапевт обычно первый врач, к которому идут с любым недомоганием. В государственной поликлинике для этого нужно прикрепление к участку и часто талон на несколько дней вперёд. В Клинике Алдан можно прийти к терапевту в день обращения, без прикрепления и без направления от другого врача.
+                        </p>
+                        
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Когда идти к терапевту</h2>
+                        <p className="text-gray-700 text-sm sm:text-base mb-3">Терапевт помогает разобраться с большинством жалоб на самочувствие. Вот частые причины обращения:</p>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>температура, кашель, насморк, боль в горле</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>слабость, быстрая утомляемость без видимой причины</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>боль в животе, груди или спине</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>повышенное давление</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>плохой сон, головные боли</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>нужна справка для работы, учёбы или поездки</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>нужно расшифровать результаты анализов</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>плановый осмотр или диспансеризация</span></li>
+                        </ul>
+                        <p className="text-gray-700 text-sm sm:text-base mt-4">
+                          Если жалоба окажется узкоспециализированной, терапевт направит к нужному врачу прямо в клинике. Записываться к двум специалистам отдельно не придётся.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Что входит в приём</h2>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Врач выслушает жалобы, измерит давление и температуру, прослушает дыхание и сердце. По итогам осмотра терапевт поставит диагноз сразу или назначит обследование.
+                        </p>
+                        <p className="text-gray-700 text-sm sm:text-base mt-3">
+                          Если нужны анализы крови, мочи или УЗИ, всё это можно сделать в тот же день в клинике. Результаты лаборатории готовы обычно в течение дня.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Какие болезни лечит терапевт</h2>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>ОРВИ, грипп, бронхит</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>гипертония, повышенное давление</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>гастрит и проблемы с желудком</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>анемия, низкий гемоглобин</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>общая слабость, упадок сил</span></li>
+                          <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base"><span className="text-primary mt-1">•</span><span>хронические заболевания, требующие наблюдения</span></li>
+                        </ul>
+                        <p className="text-gray-700 text-sm sm:text-base mt-4">
+                          При более сложных случаях терапевт ведёт пациента совместно с узким специалистом и следит за ходом лечения.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Справки и документы</h2>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Терапевт в Клинике Алдан выдаёт справки для работы, учёбы, бассейна, водительских прав и другие медицинские заключения. Часто справку можно получить в день визита, без повторного приезда.
+                        </p>
+
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-4">Запись на приём</h2>
+                        <p className="text-gray-700 text-sm sm:text-base">
+                          Клиника Алдан находится в Кызыле по адресу ул. Ленина, 60, офис 1. Будни с 8:00 до 22:00, выходные с 9:00 до 18:00. Записаться можно по телефону <a href="tel:+79233176060" className="text-primary hover:underline font-medium">+7 923 317-60-60</a> и <a href="tel:+79233816060" className="text-primary hover:underline font-medium">+7 923 381-60-60</a>.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* FAQ */}
+                    <div className="bg-gray-50 rounded-xl p-6 sm:p-8 border border-gray-100">
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                      <div className="space-y-4 sm:space-y-6">
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Нужно ли прикрепление к участку чтобы попасть к терапевту?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Нет. В Клинике Алдан терапевт принимает любого пациента без прикрепления к участку и без полиса. Достаточно записаться по телефону.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Можно ли попасть к терапевту в тот же день?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Да, в Клинике Алдан часто есть свободное время на этот же день. Позвоните по номеру +7 923 317-60-60 и уточните ближайший слот.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Выдаёт ли терапевт справки в частной клинике?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Да, терапевт оформляет справки для работы, учёбы, бассейна, водительских прав и другие медицинские заключения прямо на приёме.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Что делает терапевт если болезнь не его профиля?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Терапевт направит к нужному узкому специалисту прямо в клинике. Отдельно записываться и искать другого врача не нужно.
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Сколько длится приём терапевта?</h4>
+                          <p className="text-gray-700 text-xs sm:text-sm">
+                            Обычно от 15 до 30 минут, в зависимости от сложности жалобы и нужно ли назначать дополнительное обследование.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
               
               {/* Список услуг */}
@@ -2239,6 +2942,30 @@ const ServicePage: React.FC = () => {
                 { question: 'Нужно ли направление от терапевта?', answer: 'Нет, вы можете записаться к сосудистому хирургу самостоятельно, без направления.' },
                 { question: 'Делают ли в клинике УЗИ вен?', answer: 'Да, дуплексное сканирование вен нижних конечностей выполняется в Клинике Алдан.' },
                 { question: 'Как записаться к флебологу в Кызыле?', answer: 'Позвоните по номеру +7 (923) 317-60-60 или воспользуйтесь формой онлайн-записи на сайте.' }
+              ]
+            : direction.slug === 'therapy'
+            ? [
+                { question: 'Нужно ли прикрепление к участку чтобы попасть к терапевту?', answer: 'Нет. В Клинике Алдан терапевт принимает любого пациента без прикрепления к участку и без полиса. Достаточно записаться по телефону.' },
+                { question: 'Можно ли попасть к терапевту в тот же день?', answer: 'Да, в Клинике Алдан часто есть свободное время на этот же день. Позвоните по номеру +7 923 317-60-60 и уточните ближайший слот.' },
+                { question: 'Выдаёт ли терапевт справки в частной клинике?', answer: 'Да, терапевт оформляет справки для работы, учёбы, бассейна, водительских прав и другие медицинские заключения прямо на приёме.' },
+                { question: 'Что делает терапевт если болезнь не его профиля?', answer: 'Терапевт направит к нужному узкому специалисту прямо в клинике. Отдельно записываться и искать другого врача не нужно.' },
+                { question: 'Сколько длится приём терапевта?', answer: 'Обычно от 15 до 30 минут, в зависимости от сложности жалобы и нужно ли назначать дополнительное обследование.' }
+              ]
+            : direction.slug === 'gastroenterology'
+            ? [
+                { question: 'Чем отличается гастроэнтеролог от гастроскопии?', answer: 'Гастроэнтеролог — это врач, специалист по заболеваниям пищеварительной системы. Гастроскопия (ФГДС) — это процедура, которую он может назначить для осмотра желудка изнутри. Сначала идут на приём к врачу, потом при необходимости на гастроскопию.' },
+                { question: 'Нужно ли направление от терапевта чтобы попасть к гастроэнтерологу?', answer: 'Нет. В Клинике Алдан можно записаться к гастроэнтерологу напрямую, без направления. Достаточно позвонить по номеру +7 923 317-60-60.' },
+                { question: 'Как подготовиться к гастроскопии (ФГДС)?', answer: 'Нужно прийти строго натощак — последний приём пищи не позже чем за 8 часов до процедуры. Не пить воду за 4 часа до исследования.' },
+                { question: 'Больно ли делать гастроскопию?', answer: 'Процедура неприятная, но не болезненная. Врач использует местную анестезию — орошает горло обезболивающим спреем. Большинство пациентов переносят хорошо, сама процедура занимает 5-10 минут.' },
+                { question: 'Гастрит можно вылечить полностью?', answer: 'Это зависит от типа гастрита. Если причина — бактерия Helicobacter pylori, после её уничтожения слизистая восстанавливается. Атрофический гастрит требует длительного наблюдения.' }
+              ]
+            : direction.slug === 'endoscopy'
+            ? [
+                { question: 'Больно ли делать ФГДС?', answer: 'Процедура неприятная, но не болезненная. Врач перед началом обрабатывает горло анестетиком. Большинство пациентов переносят хорошо.' },
+                { question: 'Можно ли сделать ФГДС и колоноскопию в один день?', answer: 'Да, технически обе процедуры можно пройти в один день. Это удобно и избавляет от двойной подготовки. Уточните эту возможность при записи.' },
+                { question: 'Что такое биопсия при гастроскопии и больно ли это?', answer: 'Биопсия — это взятие крошечного кусочка слизистой для анализа под микроскопом. Делается прямо во время ФГДС, без прокола или разреза. Пациент этого практически не чувствует.' },
+                { question: 'Как долго нельзя есть после гастроскопии?', answer: 'После ФГДС с местной анестезией лучше не есть и не пить 30-60 минут — пока не пройдёт онемение. После этого можно есть в обычном режиме.' },
+                { question: 'Нужно ли направление для записи на ФГДС?', answer: 'Нет, записаться можно самостоятельно без направления. Позвоните +7 923 317-60-60 и администратор подберёт время.' }
               ]
             : undefined
         }
