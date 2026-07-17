@@ -2243,6 +2243,963 @@ const ServicePage: React.FC = () => {
                   </div>
                 </div>
               )}
+              
+              {/* Специальный контент для гематологии */}
+              {direction.slug === 'hematology' && (
+                <div className="space-y-6 sm:space-y-8">
+                  {/* Когда нужен гематолог */}
+                  <div className="bg-blue-50 rounded-xl p-6 sm:p-8 border border-blue-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Когда нужен гематолог</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">Часто к гематологу направляет терапевт после расшифровки общего анализа крови. Но есть симптомы, при которых стоит записаться самостоятельно:</p>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>постоянная слабость и усталость, которая не проходит даже после отдыха</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>низкий гемоглобин, который не растёт после приёма железа</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>частые синяки от незначительных ударов</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>долго не останавливающиеся кровотечения при порезах</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>увеличенные лимфатические узлы на шее, в подмышках или паху</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>повышенная температура без признаков инфекции</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>бледность кожи и слизистых</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>ночная потливость без причины</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>снижение веса без изменений в питании</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      Многие из этих симптомов люди долго списывают на усталость или нехватку витаминов. Между тем анализ крови занимает несколько минут и сразу даёт ответ — есть ли повод для беспокойства.
+                    </p>
+                  </div>
+
+                  {/* Что лечит гематолог */}
+                  <div className="bg-green-50 rounded-xl p-6 sm:p-8 border border-green-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Что лечит гематолог</h3>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Железодефицитная анемия и другие виды анемии</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>В12-дефицитная и фолиеводефицитная анемия</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Нарушения свёртываемости крови</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Тромбоцитопения — сниженное количество тромбоцитов</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Тромбоцитоз — повышенное количество тромбоцитов</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Лейкоцитоз и лейкопения</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Хронические лейкозы — наблюдение и ведение</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Лимфомы — первичная диагностика и направление</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Геморрагические диатезы</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      При выявлении серьёзного заболевания гематолог не только ставит диагноз, но и объясняет дальнейшие шаги — какое обследование пройти, к каким специалистам обратиться и как выстроить лечение.
+                    </p>
+                  </div>
+
+                  {/* Анализы крови в клинике */}
+                  <div className="bg-purple-50 rounded-xl p-6 sm:p-8 border border-purple-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Анализы крови в клинике</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      Большинство гематологических вопросов начинается с анализов крови. В Клинике Алдан работает собственная лаборатория — кровь можно сдать сразу после консультации или записаться отдельно. Основные анализы которые назначает гематолог:
+                    </p>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>общий анализ крови с лейкоцитарной формулой</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>уровень железа, ферритина и трансферрина</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>витамин В12 и фолиевая кислота</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>коагулограмма — свёртываемость крови</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>ретикулоциты</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      Результаты большинства анализов готовы в день сдачи. Это позволяет гематологу сразу видеть полную картину и не откладывать назначение лечения.
+                    </p>
+                  </div>
+
+                  {/* Гематолог для детей */}
+                  <div className="bg-indigo-50 rounded-xl p-6 sm:p-8 border border-indigo-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Гематолог для детей</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      Анемия у детей — одна из самых частых причин обращения к педиатру и гематологу. Ребёнок бледный, вялый, плохо ест или часто болеет — это поводы сдать общий анализ крови.
+                    </p>
+                    <p className="text-gray-700 text-sm sm:text-base">
+                      В Клинике Алдан гематолог принимает детей, что избавляет от необходимости ехать в республиканскую больницу.
+                    </p>
+                  </div>
+
+                  {/* FAQ для гематологии */}
+                  <div className="bg-amber-50 rounded-xl p-6 sm:p-8 border border-amber-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                    <div className="space-y-4 sm:space-y-6">
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">К какому врачу идти если низкий гемоглобин?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Начните с терапевта или педиатра, если речь о ребёнке. Если гемоглобин не растёт после назначенного лечения или причина неясна, терапевт направит к гематологу. Можно записаться к гематологу и самостоятельно.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Что делает гематолог на первом приёме?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Врач расспросит о жалобах, изучит историю болезни и предыдущие анализы. После осмотра назначит анализы крови — их можно сдать в нашей лаборатории сразу. На повторном приёме врач разбирает результаты и назначает лечение.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Можно ли сдать общий анализ крови без записи к врачу?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Да, в лабораторию Клиники Алдан можно прийти без записи к врачу и сдать анализы. Если по результатам потребуется консультация гематолога, можно записаться прямо в клинике.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Синяки без причины — это опасно?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Не всегда, но проверить стоит. Частые синяки от лёгких прикосновений могут указывать на нарушение свёртываемости крови. Достаточно сдать коагулограмму, чтобы понять есть ли проблема.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Принимает ли гематолог детей в частной клинике в Кызыле?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Да, в Клинике Алдан гематолог принимает детей. Запись по телефону <a href="tel:+79233176060" className="text-primary hover:underline font-medium">+7 (923) 317-60-60</a>. Уточните при записи возраст ребёнка, чтобы администратор назначил нужного специалиста.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Специальный контент для онкологии */}
+              {direction.slug === 'oncology' && (
+                <div className="space-y-6 sm:space-y-8">
+                  {/* Зачем нужна консультация онколога */}
+                  <div className="bg-blue-50 rounded-xl p-6 sm:p-8 border border-blue-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Зачем нужна консультация онколога</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">К онкологу обращаются не только с подтверждённым диагнозом. Поводом для визита часто служат тревожные симптомы или находки на УЗИ, которые требуют профессиональной оценки. Записаться стоит если:</p>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>на УЗИ или другом исследовании обнаружили узел, кисту или образование неясной природы</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>хирург направил для оценки подозрительного новообразования на коже</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>онкомаркеры повышены по результатам анализа</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>длительная необъяснимая потеря веса</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>увеличенные лимфоузлы без признаков инфекции</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>длительная субфебрильная температура без видимой причины</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>кровь в моче, кале или мокроте</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>нужно второе мнение по уже поставленному диагнозу</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      Важно понимать: большинство подобных находок оказываются доброкачественными. Консультация онколога нужна не чтобы подтвердить страхи, а чтобы их развеять или вовремя начать действовать.
+                    </p>
+                  </div>
+
+                  {/* Ранняя диагностика */}
+                  <div className="bg-green-50 rounded-xl p-6 sm:p-8 border border-green-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Ранняя диагностика</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      Многие виды рака при выявлении на ранней стадии хорошо поддаются лечению. Именно поэтому онкологи рекомендуют не ждать симптомов, а проходить профилактические обследования — особенно людям старше 40 лет и тем, у кого есть наследственная предрасположенность.
+                    </p>
+                    <p className="text-gray-700 text-sm sm:text-base">
+                      В клинике можно пройти базовый онкоскрининг: анализы на онкомаркеры и УЗИ органов брюшной полости, малого таза, щитовидной железы и молочных желёз. Всё в один визит, результаты в тот же день.
+                    </p>
+                  </div>
+
+                  {/* Что доступно в клинике */}
+                  <div className="bg-purple-50 rounded-xl p-6 sm:p-8 border border-purple-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Что доступно в клинике</h3>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span><strong>Консультация онколога</strong> — осмотр, оценка жалоб и результатов обследований</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span><strong>Анализы на онкомаркеры</strong> — ПСА, СА-125, СА-19-9, АФП, РЭА и другие</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span><strong>УЗИ органов</strong> — для оценки образований в брюшной полости, малом тазу, щитовидной железе, молочных железах</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span><strong>Биопсия при необходимости</strong> — забор ткани для гистологического анализа</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span><strong>Направление</strong> в онкологический диспансер или профильный центр при выявлении патологии</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Наблюдение после лечения */}
+                  <div className="bg-indigo-50 rounded-xl p-6 sm:p-8 border border-indigo-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Наблюдение после лечения</h3>
+                    <p className="text-gray-700 text-sm sm:text-base">
+                      Пациенты, прошедшие лечение онкологического заболевания, нуждаются в регулярном наблюдении. В Клинике Алдан можно сдавать контрольные анализы и проходить УЗИ без длинных очередей — это удобно для тех, кто уже лечился и наблюдается у профильного онколога.
+                    </p>
+                  </div>
+
+                  {/* FAQ для онкологии */}
+                  <div className="bg-amber-50 rounded-xl p-6 sm:p-8 border border-amber-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                    <div className="space-y-4 sm:space-y-6">
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Нужно ли направление чтобы попасть к онкологу?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Нет, в Клинике Алдан можно записаться к онкологу самостоятельно, без направления от терапевта. Если у вас есть результаты УЗИ, анализов или других обследований, возьмите их с собой.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Что такое онкомаркеры и насколько им можно доверять?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Онкомаркеры — это вещества, уровень которых в крови может повышаться при некоторых видах рака. Они используются как дополнительный инструмент диагностики, но не являются окончательным диагнозом. Повышенный онкомаркер требует дообследования, а нормальный не исключает онкологию полностью. Результаты всегда оценивает врач в совокупности с другими данными.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">На УЗИ нашли образование — что делать?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Не паниковать и обратиться к онкологу или к врачу, который делал УЗИ. Большинство образований на УЗИ оказываются доброкачественными. Врач оценит характер находки и при необходимости назначит дополнительное обследование — биопсию или МРТ.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Как часто нужно сдавать анализы на онкомаркеры?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Людям без факторов риска плановый онкоскрининг рекомендуется раз в год после 40 лет. При наследственной предрасположенности или хронических заболеваниях — по рекомендации врача, возможно чаще. Конкретную программу профилактики лучше обсудить на консультации.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Лечат ли рак в Клинике Алдан?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Клиника Алдан занимается первичной диагностикой, консультированием и наблюдением. При выявлении злокачественного заболевания врач направит в Республиканский онкологический диспансер или профильный федеральный центр, где проводится специализированное лечение.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Специальный контент для пульмонологии */}
+              {direction.slug === 'pulmonology' && (
+                <div className="space-y-6 sm:space-y-8">
+                  {/* С какими симптомами обращаются */}
+                  <div className="bg-blue-50 rounded-xl p-6 sm:p-8 border border-blue-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">С какими симптомами обращаются</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">Пульмонолог занимается болезнями дыхательной системы: лёгких, бронхов, трахеи и плевры. Поводов для визита больше чем кажется:</p>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>кашель, который не проходит больше трёх недель</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>одышка при обычной нагрузке или в покое</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>свистящее или затруднённое дыхание</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>частые бронхиты, два-три раза в год и чаще</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>приступы удушья, особенно ночью</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>мокрота с кровью или необычного цвета</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>боль в груди при дыхании или кашле</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>длительная субфебрильная температура 37-37,5°С</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>потеря веса на фоне проблем с дыханием</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      Если терапевт уже назначал лечение, но симптомы возвращаются — это прямой повод к пульмонологу. Специалист разберётся с причиной, а не будет лечить симптомы повторно.
+                    </p>
+                  </div>
+
+                  {/* Что лечит пульмонолог */}
+                  <div className="bg-green-50 rounded-xl p-6 sm:p-8 border border-green-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Что лечит пульмонолог</h3>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Бронхит — острый и хронический</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Бронхиальная астма, подбор и коррекция терапии</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>ХОБЛ — хроническая обструктивная болезнь лёгких</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Пневмония и её последствия</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Плеврит</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Саркоидоз лёгких</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Бронхоэктатическая болезнь</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Частые респираторные инфекции</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Аллергические заболевания дыхательных путей</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Диагностика в клинике */}
+                  <div className="bg-purple-50 rounded-xl p-6 sm:p-8 border border-purple-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Диагностика в клинике</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      На приёме врач прослушает лёгкие, оценит дыхание и при необходимости назначит дополнительное обследование. В Клинике Алдан доступны:
+                    </p>
+                    <ul className="space-y-2 text-gray-700 text-sm sm:text-base">
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <span><strong>Спирография</strong> — оценка объёма и скорости дыхания, главное исследование при астме и ХОБЛ</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <span><strong>Рентгенография</strong> органов грудной клетки</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <span><strong>Анализы крови и мокроты</strong></span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <span><strong>ЭКГ</strong>, если есть симптомы со стороны сердца</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      Спирографию делают прямо в клинике — не нужно ехать в другое место. Результат врач интерпретирует на месте.
+                    </p>
+                  </div>
+
+                  {/* Астма под контролем */}
+                  <div className="bg-indigo-50 rounded-xl p-6 sm:p-8 border border-indigo-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Астма под контролем</h3>
+                    <p className="text-gray-700 text-sm sm:text-base">
+                      Бронхиальная астма — хроническое заболевание, которое требует постоянного наблюдения. Пульмонолог подбирает базисную терапию, объясняет как правильно пользоваться ингаляторами и корректирует лечение при изменении состояния. Хорошо подобранная терапия позволяет жить без приступов и ограничений.
+                    </p>
+                  </div>
+
+                  {/* FAQ для пульмонологии */}
+                  <div className="bg-amber-50 rounded-xl p-6 sm:p-8 border border-amber-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                    <div className="space-y-4 sm:space-y-6">
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Когда идти к пульмонологу, а не к терапевту?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Если кашель не проходит больше трёх недель, бронхиты повторяются несколько раз в год, есть одышка или свистящее дыхание — это к пульмонологу. Терапевт лечит острые инфекции, пульмонолог разбирается с хроническими и сложными случаями.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Что такое спирография и зачем она нужна?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Спирография — это исследование функции лёгких. Пациент дышит в специальный прибор, который измеряет объём и скорость воздуха. По результатам врач видит есть ли обструкция бронхов, насколько серьёзная и как она реагирует на лечение. Это основной тест при подозрении на астму или ХОБЛ.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Можно ли вылечить бронхиальную астму?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Полностью вылечить астму нельзя, но при правильном лечении она не мешает жить. Пациент подбирает вместе с врачом базисную терапию, которая предотвращает приступы. Многие люди с астмой ведут активный образ жизни без ограничений.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Нужно ли направление для записи к пульмонологу?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Нет, записаться можно самостоятельно. В Клинике Алдан принимают без направления от терапевта. Позвоните по номеру <a href="tel:+79233176060" className="text-primary hover:underline font-medium">+7 (923) 317-60-60</a>.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Сколько длится приём пульмонолога?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Первичный приём обычно занимает 30-40 минут. Врач подробно расспрашивает о симптомах, их длительности, о прежнем лечении. Если нужна спирография, её делают в тот же день.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Специальный контент для травматологии и ортопедии */}
+              {direction.slug === 'traumatology-orthopedics' && (
+                <div className="space-y-6 sm:space-y-8">
+                  {/* С чем обращаются */}
+                  <div className="bg-blue-50 rounded-xl p-6 sm:p-8 border border-blue-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">С чем обращаются</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">Травматолог-ортопед занимается двумя большими группами проблем: травмами и заболеваниями опорно-двигательного аппарата. Записаться стоит при:</p>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>переломах, трещинах костей, ушибах</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>растяжениях и разрывах связок</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>вывихах суставов</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>болях в коленях, тазобедренных или плечевых суставах</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>боли в спине, шее, пояснице</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>плоскостопии и деформациях стопы</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>пяточной шпоре</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>вальгусной деформации большого пальца стопы (косточка)</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>артрозе и артрите суставов</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>остеопорозе</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>сколиозе и нарушениях осанки</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>спортивных травмах</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      Многие живут с болью в суставах годами, считая что «само пройдёт» или «это возраст». Между тем артроз на ранней стадии хорошо поддаётся лечению, а запущенный случай нередко заканчивается операцией.
+                    </p>
+                  </div>
+
+                  {/* Диагностика в клинике */}
+                  <div className="bg-purple-50 rounded-xl p-6 sm:p-8 border border-purple-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Диагностика в клинике</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      Перед назначением лечения врач проводит осмотр и при необходимости направляет на обследование. В Клинике Алдан доступны:
+                    </p>
+                    <ul className="space-y-2 text-gray-700 text-sm sm:text-base">
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <span><strong>рентгенография</strong> суставов, позвоночника, конечностей</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <span><strong>УЗИ суставов</strong> и мягких тканей</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <span><strong>анализы крови</strong> (маркеры воспаления, ревматоидный фактор, мочевая кислота)</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      Всё это можно пройти в день обращения, без поездок в другие учреждения.
+                    </p>
+                  </div>
+
+                  {/* Лечение без операции */}
+                  <div className="bg-green-50 rounded-xl p-6 sm:p-8 border border-green-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Лечение без операции</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      Большинство проблем с суставами и позвоночником решаются без хирургического вмешательства. Врач подбирает схему из нескольких направлений в зависимости от диагноза:
+                    </p>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span><strong>медикаментозное лечение</strong> — противовоспалительные, хондропротекторы</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span><strong>внутрисуставные инъекции</strong> — уколы прямо в сустав для снятия воспаления и боли</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span><strong>фиксация</strong> при переломах и растяжениях — гипс, ортезы, бандажи</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span><strong>рекомендации</strong> по нагрузке, обуви и образу жизни</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      Если случай требует операции, врач даст направление и объяснит что именно нужно делать и куда обратиться.
+                    </p>
+                  </div>
+
+                  {/* Пяточная шпора и плоскостопие */}
+                  <div className="bg-indigo-50 rounded-xl p-6 sm:p-8 border border-indigo-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Пяточная шпора и плоскостопие</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      Пяточная шпора — одна из самых частых причин обращения к ортопеду в Кызыле. Утренняя боль в пятке при первых шагах, которая немного проходит в течение дня — типичный симптом. Лечится консервативно: индивидуальные стельки, инъекции, физиотерапия. Операция нужна редко.
+                    </p>
+                    <p className="text-gray-700 text-sm sm:text-base">
+                      При плоскостопии ортопед оценит степень деформации и подберёт ортопедические стельки или порекомендует лечебную гимнастику. Чем раньше заняться проблемой, тем меньше последствий для коленей и позвоночника в будущем.
+                    </p>
+                  </div>
+
+                  {/* FAQ для травматологии */}
+                  <div className="bg-amber-50 rounded-xl p-6 sm:p-8 border border-amber-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                    <div className="space-y-4 sm:space-y-6">
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Чем отличается травматолог от ортопеда?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Травматолог занимается последствиями травм — переломами, вывихами, растяжениями. Ортопед — хроническими заболеваниями суставов, костей и позвоночника. На практике эти специальности часто совмещены, и один врач ведёт оба направления.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Что делать сразу после травмы?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          При подозрении на перелом или вывих — зафиксируйте повреждённую конечность и приезжайте в клинику. Не пытайтесь вправить вывих самостоятельно. Если сильная боль и нет возможности двигаться, вызывайте скорую. При ушибах и растяжениях — приложите холод, поднимите конечность выше уровня сердца и запишитесь к травматологу.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Нужно ли направление для записи к травматологу?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Нет, в Клинике Алдан можно записаться самостоятельно, без направления от терапевта. Достаточно позвонить по номеру <a href="tel:+79233176060" className="text-primary hover:underline font-medium">+7 (923) 317-60-60</a>.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Можно ли сделать рентген в клинике Алдан?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Да, рентгенография доступна в клинике. После снимка врач сразу его интерпретирует — не нужно никуда ехать с плёнкой. Уточните наличие нужной проекции при записи.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Болит колено — к какому врачу идти?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          К травматологу-ортопеду. Он определит причину боли — травма, артроз, воспаление или другая проблема — и назначит лечение. Если нужно, направит на УЗИ сустава прямо в клинике.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Специальный контент для проктологии */}
+              {direction.slug === 'proctology' && (
+                <div className="space-y-6 sm:space-y-8">
+                  {/* С чем обращаются к проктологу */}
+                  <div className="bg-blue-50 rounded-xl p-6 sm:p-8 border border-blue-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">С чем обращаются к проктологу</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">Поводы для визита к проктологу чаще всего такие:</p>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>боль, жжение или зуд в области заднего прохода</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>кровь в стуле или на туалетной бумаге</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>ощущение неполного опорожнения кишечника</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>выпадение геморроидальных узлов</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>хронические запоры или поносы</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>ощущение инородного тела в прямой кишке</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>слизистые выделения</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>боль при сидении</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>трещины или язвочки в перианальной области</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      Кровь в стуле — симптом который нельзя игнорировать. Причина может быть совсем не страшной (геморрой или трещина), но проверить нужно обязательно.
+                    </p>
+                  </div>
+
+                  {/* Что лечит проктолог */}
+                  <div className="bg-green-50 rounded-xl p-6 sm:p-8 border border-green-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Что лечит проктолог</h3>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Геморрой — внутренний и наружный, на любой стадии</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Анальные трещины</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Параректальный свищ</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Полипы прямой кишки</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Парапроктит — воспаление клетчатки вокруг прямой кишки</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Выпадение прямой кишки</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Хронические запоры</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Кондиломы и папилломы перианальной области</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Как проходит осмотр */}
+                  <div className="bg-purple-50 rounded-xl p-6 sm:p-8 border border-purple-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Как проходит осмотр</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      Осмотр проктолога занимает около 20 минут. Врач проведёт наружный осмотр, при необходимости — пальцевое исследование и аноскопию. Аноскопия — это осмотр нижнего отдела прямой кишки с помощью небольшого инструмента, процедура занимает несколько минут.
+                    </p>
+                    <p className="text-gray-700 text-sm sm:text-base">
+                      Перед осмотром нужна минимальная подготовка: очищение кишечника с помощью микроклизмы за 1-2 часа до визита. При записи администратор подробно расскажет как подготовиться.
+                    </p>
+                  </div>
+
+                  {/* Лечение геморроя */}
+                  <div className="bg-indigo-50 rounded-xl p-6 sm:p-8 border border-indigo-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Лечение геморроя</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      На начальных стадиях геморрой лечится консервативно: мази, свечи, флеботоники, коррекция питания. На более поздних стадиях применяются малоинвазивные процедуры.
+                    </p>
+                    <p className="text-gray-700 text-sm sm:text-base">
+                      Оперативное лечение назначается только в запущенных случаях когда консервативная терапия не помогает. Большинство пациентов справляются без операции.
+                    </p>
+                  </div>
+
+                  {/* FAQ для проктологии */}
+                  <div className="bg-amber-50 rounded-xl p-6 sm:p-8 border border-amber-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                    <div className="space-y-4 sm:space-y-6">
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Больно ли осматривает проктолог?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Осмотр неприятный, но не болезненный при правильной подготовке. Врач работает аккуратно и предупреждает о каждом действии. Если есть острое воспаление, врач сначала снимет его, а осмотр проведёт позже.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Кровь при дефекации — это всегда геморрой?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Не всегда. Кровь в стуле может быть признаком геморроя, анальной трещины или более серьёзных состояний. Именно поэтому любое кровотечение из прямой кишки требует осмотра проктолога — самостоятельно определить причину невозможно.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Как подготовиться к приёму проктолога?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          За 1-2 часа до визита нужно сделать очистительную микроклизму (продаётся в аптеке, например «Микролакс»). Накануне ограничьте приём пищи, вызывающей газообразование. Нательное бельё лучше взять сменное. Подробную инструкцию дадут при записи.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Можно ли вылечить геморрой без операции?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          На начальных стадиях да — консервативное лечение даёт хороший результат. На поздних стадиях эффективны малоинвазивные процедуры. Операция нужна редко, только в запущенных случаях. Какой метод подойдёт именно вам, скажет врач после осмотра.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Принимает ли проктолог женщин?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Да, проктолог принимает пациентов любого пола. Заболевания прямой кишки и геморрой одинаково часто встречаются у мужчин и женщин, в том числе у беременных и после родов.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Специальный контент для эндокринологии */}
+              {direction.slug === 'endocrinology' && (
+                <div className="space-y-6 sm:space-y-8">
+                  {/* Когда нужен эндокринолог */}
+                  <div className="bg-blue-50 rounded-xl p-6 sm:p-8 border border-blue-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Когда нужен эндокринолог</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">Эндокринолог занимается гормональными нарушениями и заболеваниями желёз внутренней секреции. Записаться стоит при:</p>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>постоянной усталости и слабости без видимой причины</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>резком наборе или потере веса</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>выпадении волос, сухости кожи</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>учащённом сердцебиении или, наоборот, замедленном пульсе</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>ощущении кома в горле, увеличении шеи</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>повышенной потливости или постоянном ощущении холода</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>нарушениях менструального цикла у женщин</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>повышенном сахаре в анализе крови</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>постоянной жажде и частом мочеиспускании</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">•</span>
+                        <span>перепадах настроения, раздражительности, тревожности</span>
+                      </li>
+                    </ul>
+                    <p className="text-gray-600 text-xs sm:text-sm mt-4 italic">
+                      Эндокринолог также нужен людям с уже установленным диагнозом — сахарным диабетом, гипотиреозом, узлами щитовидной железы — для регулярного наблюдения и коррекции лечения.
+                    </p>
+                  </div>
+
+                  {/* Что лечит эндокринолог */}
+                  <div className="bg-green-50 rounded-xl p-6 sm:p-8 border border-green-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Что лечит эндокринолог</h3>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Гипотиреоз и гипертиреоз — сниженная или повышенная функция щитовидной железы</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Узлы и кисты щитовидной железы</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Аутоиммунный тиреоидит (болезнь Хашимото)</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Диффузный токсический зоб (болезнь Грейвса)</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Сахарный диабет 1 и 2 типа — наблюдение и подбор терапии</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Предиабет и нарушение толерантности к глюкозе</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Ожирение и метаболический синдром</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Нарушения функции надпочечников</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Гиперпролактинемия</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-700 text-sm sm:text-base">
+                        <span className="text-primary mt-1">✓</span>
+                        <span>Нарушения работы паращитовидных желёз</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Щитовидная железа */}
+                  <div className="bg-purple-50 rounded-xl p-6 sm:p-8 border border-purple-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Щитовидная железа — самая частая причина обращений</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      Заболевания щитовидной железы встречаются очень часто, особенно у женщин. Проблема в том, что симптомы — усталость, раздражительность, изменение веса — легко перепутать с другими состояниями.
+                    </p>
+                    <p className="text-gray-700 text-sm sm:text-base">
+                      На приёме врач осмотрит и пропальпирует щитовидную железу. Если нужно, назначит УЗИ и анализы на гормоны ТТГ, Т3, Т4, антитела. Всё это доступно в Клинике Алдан в тот же день. По результатам врач определит есть ли патология и нужно ли лечение.
+                    </p>
+                  </div>
+
+                  {/* Сахарный диабет */}
+                  <div className="bg-indigo-50 rounded-xl p-6 sm:p-8 border border-indigo-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Сахарный диабет — наблюдение и контроль</h3>
+                    <p className="text-gray-700 text-sm sm:text-base mb-4">
+                      Пациентам с сахарным диабетом нужен регулярный осмотр эндокринолога: контроль сахара, коррекция дозы инсулина или таблеток, оценка осложнений. В Клинике Алдан можно сдать гликированный гемоглобин и другие контрольные анализы без очереди — удобно для тех, кто приходит на регулярные визиты.
+                    </p>
+                    <p className="text-gray-700 text-sm sm:text-base">
+                      Если сахар в анализе впервые оказался выше нормы — это повод записаться к эндокринологу, а не ждать. Предиабет хорошо поддаётся коррекции на ранней стадии.
+                    </p>
+                  </div>
+
+                  {/* FAQ для эндокринологии */}
+                  <div className="bg-amber-50 rounded-xl p-6 sm:p-8 border border-amber-100">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Частые вопросы</h3>
+                    <div className="space-y-4 sm:space-y-6">
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">К кому идти если выпадают волосы и постоянная усталость?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Эти симптомы часто связаны с нарушением работы щитовидной железы. Начните с эндокринолога или терапевта, которые назначат анализы на гормоны ТТГ, Т3 и Т4. По результатам станет ясно в чём причина.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Что такое ТТГ и зачем его сдавать?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          ТТГ — тиреотропный гормон, который регулирует работу щитовидной железы. Это первый и самый информативный анализ при подозрении на проблемы с щитовидкой. Повышенный ТТГ указывает на гипотиреоз, сниженный — на гипертиреоз. Сдать его можно в лаборатории Клиники Алдан.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Нашли узел на щитовидной железе — это опасно?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Большинство узлов щитовидной железы доброкачественные и не требуют лечения. Но оценить характер узла должен эндокринолог — после УЗИ и при необходимости анализов. Самостоятельно судить об опасности узла невозможно.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Как часто нужно наблюдаться при сахарном диабете?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          При сахарном диабете 2 типа — обычно раз в 3-6 месяцев, в зависимости от стабильности показателей. При диабете 1 типа — чаще. Точный график наблюдения определяет лечащий эндокринолог.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base mb-2">Можно ли записаться к эндокринологу без направления?</h4>
+                        <p className="text-gray-700 text-xs sm:text-sm">
+                          Да, в Клинике Алдан приём ведётся без направления. Если есть результаты предыдущих анализов или УЗИ — возьмите их с собой. Записаться по телефону <a href="tel:+79233176060" className="text-primary hover:underline font-medium">+7 (923) 317-60-60</a>.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               {direction.slug === 'vascular-surgery-phlebology' && (
                 <div className="space-y-6 sm:space-y-8">
                   {/* Когда нужно обратиться к флебологу */}
@@ -2935,6 +3892,54 @@ const ServicePage: React.FC = () => {
                 { question: 'Можно ли сделать УЗИ ребёнку?', answer: 'Да, УЗИ проводится детям любого возраста. Ультразвук безопасен и не имеет ограничений по возрасту.' },
                 { question: 'Больно ли делать УЗИ?', answer: 'Нет, УЗИ безболезненно. Врач наносит гель и водит датчиком по телу. Минимальный дискомфорт возможен только при трансвагинальном УЗИ.' },
                 { question: 'Что взять с собой на УЗИ?', answer: 'Возьмите направление и результаты предыдущих исследований. Для некоторых видов нужна пелёнка или полотенце — уточните при записи.' }
+              ]
+            : direction.slug === 'hematology'
+            ? [
+                { question: 'К какому врачу идти если низкий гемоглобин?', answer: 'Начните с терапевта или педиатра. Если гемоглобин не растёт после лечения или причина неясна — к гематологу. Можно записаться самостоятельно.' },
+                { question: 'Что делает гематолог на первом приёме?', answer: 'Врач расспросит о жалобах, изучит историю болезни и анализы. Назначит анализы крови — сдать можно в нашей лаборатории сразу. На повторном приёме разбирает результаты и назначает лечение.' },
+                { question: 'Можно ли сдать общий анализ крови без записи к врачу?', answer: 'Да, в лабораторию Клиники Алдан можно прийти без записи. Если по результатам потребуется гематолог — запишитесь прямо в клинике.' },
+                { question: 'Синяки без причины — это опасно?', answer: 'Не всегда, но проверить стоит. Частые синяки от лёгких прикосновений могут указывать на нарушение свёртываемости. Сдайте коагулограмму, чтобы понять есть ли проблема.' },
+                { question: 'Принимает ли гематолог детей в частной клинике в Кызыле?', answer: 'Да, в Клинике Алдан гематолог принимает детей. Запись по телефону +7 (923) 317-60-60. Уточните возраст ребёнка при записи.' }
+              ]
+            : direction.slug === 'oncology'
+            ? [
+                { question: 'Нужно ли направление чтобы попасть к онкологу?', answer: 'Нет, записаться можно самостоятельно. Возьмите с собой результаты УЗИ, анализов и других обследований, если они есть.' },
+                { question: 'Что такое онкомаркеры и насколько им можно доверять?', answer: 'Онкомаркеры — вещества, уровень которых может повышаться при раке. Это дополнительный инструмент, но не окончательный диагноз. Результаты оценивает врач в совокупности с другими данными.' },
+                { question: 'На УЗИ нашли образование — что делать?', answer: 'Не паниковать и обратиться к онкологу. Большинство образований доброкачественные. Врач оценит находку и при необходимости назначит биопсию или МРТ.' },
+                { question: 'Как часто нужно сдавать анализы на онкомаркеры?', answer: 'Плановый онкоскрининг раз в год после 40 лет. При наследственной предрасположенности — по рекомендации врача, возможно чаще.' },
+                { question: 'Лечат ли рак в Клинике Алдан?', answer: 'Клиника занимается первичной диагностикой, консультированием и наблюдением. При выявлении злокачественного заболевания врач направит в онкологический диспансер или профильный центр.' }
+              ]
+            : direction.slug === 'pulmonology'
+            ? [
+                { question: 'Когда идти к пульмонологу, а не к терапевту?', answer: 'Если кашель не проходит больше трёх недель, бронхиты повторяются, есть одышка или свистящее дыхание — к пульмонологу. Терапевт лечит острые инфекции, пульмонолог — хронические случаи.' },
+                { question: 'Что такое спирография и зачем она нужна?', answer: 'Спирография — исследование функции лёгких. Пациент дышит в прибор, измеряющий объём и скорость воздуха. Основной тест при подозрении на астму или ХОБЛ.' },
+                { question: 'Можно ли вылечить бронхиальную астму?', answer: 'Полностью вылечить нельзя, но при правильном лечении астма не мешает жить. Базисная терапия предотвращает приступы. Многие ведут активный образ жизни без ограничений.' },
+                { question: 'Нужно ли направление для записи к пульмонологу?', answer: 'Нет, записаться можно самостоятельно. В Клинике Алдан принимают без направления. Позвоните по телефону +7 (923) 317-60-60.' },
+                { question: 'Сколько длится приём пульмонолога?', answer: 'Первичный приём обычно 30-40 минут. Врач расспрашивает о симптомах, длительности, прежнем лечении. Спирографию делают в тот же день.' }
+              ]
+            : direction.slug === 'traumatology-orthopedics'
+            ? [
+                { question: 'Чем отличается травматолог от ортопеда?', answer: 'Травматолог занимается травмами — переломами, вывихами, растяжениями. Ортопед — хроническими заболеваниями суставов и позвоночника. Часто специальности совмещены.' },
+                { question: 'Что делать сразу после травмы?', answer: 'Зафиксируйте конечность и приезжайте в клинику. Не вправляйте вывих сами. При ушибах — холод и запись к травматологу. При сильной боли — вызывайте скорую.' },
+                { question: 'Нужно ли направление для записи к травматологу?', answer: 'Нет, записаться можно самостоятельно. Позвоните по телефону +7 (923) 317-60-60.' },
+                { question: 'Можно ли сделать рентген в клинике Алдан?', answer: 'Да, рентгенография доступна. Врач сразу интерпретирует снимок. Уточните нужную проекцию при записи.' },
+                { question: 'Болит колено — к какому врачу идти?', answer: 'К травматологу-ортопеду. Он определит причину — травма, артроз, воспаление — и назначит лечение. УЗИ сустава можно сделать в клинике.' }
+              ]
+            : direction.slug === 'proctology'
+            ? [
+                { question: 'Больно ли осматривает проктолог?', answer: 'Осмотр неприятный, но не болезненный при правильной подготовке. Врач работает аккуратно. При остром воспалении осмотр проведут позже.' },
+                { question: 'Кровь при дефекации — это всегда геморрой?', answer: 'Не всегда. Кровь может быть признаком геморроя, трещины или более серьёзных состояний. Любое кровотечение требует осмотра проктолога.' },
+                { question: 'Как подготовиться к приёму проктолога?', answer: 'За 1-2 часа до визита сделайте микроклизму (Микролакс). Накануне исключите продукты, вызывающие газообразование. Инструкцию дадут при записи.' },
+                { question: 'Можно ли вылечить геморрой без операции?', answer: 'На начальных стадиях — да, консервативно. На поздних эффективны малоинвазивные процедуры. Операция нужна редко, в запущенных случаях.' },
+                { question: 'Принимает ли проктолог женщин?', answer: 'Да, проктолог принимает пациентов любого пола. Геморрой одинаково часто встречается у мужчин и женщин, в т.ч. у беременных и после родов.' }
+              ]
+            : direction.slug === 'endocrinology'
+            ? [
+                { question: 'К кому идти если выпадают волосы и постоянная усталость?', answer: 'Эти симптомы часто связаны с щитовидной железой. Начните с эндокринолога — назначит анализы на ТТГ, Т3, Т4. По результатам станет ясно в чём причина.' },
+                { question: 'Что такое ТТГ и зачем его сдавать?', answer: 'ТТГ — тиреотропный гормон, регулирующий работу щитовидной железы. Самый информативный анализ при подозрении на проблемы с щитовидкой. Повышенный — гипотиреоз, снижённый — гипертиреоз.' },
+                { question: 'Нашли узел на щитовидной железе — это опасно?', answer: 'Большинство узлов доброкачественные и не требуют лечения. Но оценить характер должен эндокринолог после УЗИ и анализов. Самостоятельно судить нельзя.' },
+                { question: 'Как часто нужно наблюдаться при сахарном диабете?', answer: 'При диабете 2 типа — раз в 3-6 месяцев. При диабете 1 типа — чаще. Точный график определяет лечащий эндокринолог.' },
+                { question: 'Можно ли записаться к эндокринологу без направления?', answer: 'Да, в Клинике Алдан приём без направления. Возьмите предыдущие анализы и УЗИ. Запись по телефону +7 (923) 317-60-60.' }
               ]
             : direction.slug === 'vascular-surgery-phlebology'
             ? [
