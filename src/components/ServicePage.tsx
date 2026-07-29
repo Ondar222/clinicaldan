@@ -290,6 +290,13 @@ const ServicePage: React.FC = () => {
       const nameBlob = `${d?.name || ""} ${d?.name1 || ""} ${d?.name2 || ""} ${d?.info || ""} ${d?.type || ""}`.toLowerCase();
       if (/(администратор|archimed|арбаев)/i.test(nameBlob)) return false;
       
+      // Hide doctors that should not be attached to any direction
+      const fullName = `${d?.name || ""} ${d?.name1 || ""} ${d?.name2 || ""}`.toLowerCase();
+      const DIRECTION_BLACKLIST = new Set<string>([
+        'доюндуп чойгана хереловна',
+      ]);
+      if (DIRECTION_BLACKLIST.has(fullName)) return false;
+      
       const types = (d?.types || []).map((t) => t.name).join(" ");
       return (
         keywordMatch(d.type, direction.doctorKeywords) ||
