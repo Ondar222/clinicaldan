@@ -42,7 +42,6 @@ export default function PriceListPage() {
     {}
   );
   const [itemsPerPage, setItemsPerPage] = useState(7);
-  const [popularServices, setPopularServices] = useState<ApiService[]>([]);
   const [isMobile, setIsMobile] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<{
     [groupId: number]: boolean;
@@ -204,7 +203,7 @@ export default function PriceListPage() {
           .filter((service) => service.base_cost > 0)
           .sort((a, b) => a.base_cost - b.base_cost)
           .slice(0, 6);
-        setPopularServices(popular);
+        void popular; // unused now
       } catch (err) {
         console.error("Ошибка загрузки услуг:", err);
         setError("Не удалось загрузить прайс-лист. Попробуйте позже.");
@@ -591,7 +590,7 @@ export default function PriceListPage() {
           { name: 'Главная', url: 'https://clinicaldan.ru/' },
           { name: 'Прайс-лист', url: 'https://clinicaldan.ru/prices' }
         ]}
-        services={popularServices.slice(0, 5).map(s => ({
+        services={serviceGroups.flatMap(g => g.services).slice(0, 5).map(s => ({
           name: s.name,
           description: s.info || undefined,
           price: s.base_cost > 0 ? s.base_cost : undefined,
@@ -617,136 +616,7 @@ export default function PriceListPage() {
           </p>
         </div>
 
-        {/* Popular Services Section */}
-        {popularServices.length > 0 && (
-          <div className="mb-8 md:mb-12">
-            <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-dark mb-3 md:mb-4">
-                Популярные услуги
-              </h2>
-              <p className="text-sm sm:text-base text-gray-600">
-                Самые востребованные услуги по доступным ценам
-              </p>
-            </div>
-            <div
-              className={
-                isMobile
-                  ? "grid grid-cols-1 gap-2"
-                  : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-              }
-            >
-              {popularServices.map((service) =>
-                isMobile ? (
-                  <div
-                    key={service.id}
-                    className="border border-gray-200 rounded-lg p-3 hover:shadow-sm bg-white"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm md:text-base font-semibold text-dark leading-tight pr-1 line-clamp-2">
-                            {service.name}
-                          </h3>
-                          {service.cito_cost > 0 &&
-                            service.cito_cost !== service.base_cost && (
-                              <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium flex-shrink-0">
-                                Срочно
-                              </span>
-                            )}
-                        </div>
-                      </div>
-                      <div className="text-primary font-bold text-base md:text-lg flex-shrink-0">
-                        {formatPrice(getServicePrice(service))}
-                      </div>
-                      {(service.info ||
-                        (service.altname &&
-                          service.altname !== service.name)) && (
-                        <button
-                          onClick={() => toggleServiceDesc(service.id)}
-                          className="px-3 py-1.5 text-xs text-primary border border-primary rounded-md whitespace-nowrap"
-                        >
-                          Описание
-                        </button>
-                      )}
-                    </div>
-                    {(service.info ||
-                      (service.altname && service.altname !== service.name)) &&
-                      expandedService[service.id] && (
-                        <div className="mt-2 text-sm text-gray-600">
-                          {service.altname &&
-                            service.altname !== service.name && (
-                              <p className="italic mb-1">{service.altname}</p>
-                            )}
-                          {service.info && (
-                            <p className="leading-relaxed">{service.info}</p>
-                          )}
-                        </div>
-                      )}
-                  </div>
-                ) : (
-                  <div
-                    key={service.id}
-                    className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-5 md:p-6"
-                  >
-                    <div className="flex justify-between items-start mb-4 md:mb-4">
-                      <h3 className="text-lg md:text-xl font-semibold text-dark line-clamp-2">
-                        {service.name}
-                      </h3>
-                      <div className="text-right ml-4">
-                        <div className="text-2xl md:text-3xl font-bold text-primary">
-                          {formatPrice(getServicePrice(service))}
-                        </div>
-                        {service.cito_cost > 0 &&
-                          service.cito_cost !== service.base_cost && (
-                            <div className="text-sm md:text-base text-gray-500">
-                              Срочно: {service.cito_cost.toLocaleString()} ₽
-                            </div>
-                          )}
-                      </div>
-                    </div>
-                    <div className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
-                      <div className="flex items-center mb-2">
-                        <svg
-                          className="w-4 h-4 mr-2 text-primary"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        {service.duration} мин
-                      </div>
-                      <div className="flex items-center">
-                        <svg
-                          className="w-4 h-4 mr-2 text-primary"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                          />
-                        </svg>
-                        {service.group_name}
-                      </div>
-                    </div>
-                    {/* Кнопка записи скрыта по требованию */}
-                  </div>
-                )
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Search and Filter - перемещено выше для удобства */}
+        {/* Search and Filter */}
         <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 mb-6 md:mb-8">
           <div className="grid grid-cols-1 gap-6">
             {/* Search - перемещен на первое место */}

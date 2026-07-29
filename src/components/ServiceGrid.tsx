@@ -225,7 +225,7 @@ export default function ServiceGrid() {
     ),
     color: 'bg-primary',
     hoverColor: 'hover:bg-primaryDark',
-    link: '/prices',
+    link: '/checkups',
   };
 
   const priorityTitles = [

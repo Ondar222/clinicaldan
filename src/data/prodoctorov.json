@@ -66,12 +66,12 @@
   },
   {
     "fullName": "Доюндуп Чойгана Хереловна",
-    "specialty": "Врач акушер-гинеколог",
+    "specialty": "Акушер-гинеколог",
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/1037177/1936886-1037177-doyundup_square_small.jpg"
   },
   {
     "fullName": "Дундуй Аяна Васильевна",
-    "specialty": "Врач гинеколог",
+    "specialty": "Гинеколог",
     "category": "Высшая категория",
     "experienceStartYear": 2002,
     "photo": "https://prodoctorov.ru/static/_v1/pd/icons/ui-kit/photo/no-avatar.svg"
@@ -89,7 +89,7 @@
   },
   {
     "fullName": "Идам-сюрюн Азимаа Момбужаевна",
-    "specialty": "Врач гинеколог",
+    "specialty": "Гинеколог",
     "category": "Высшая категория",
     "experienceStartYear": 2001,
     "photo": "https://prodoctorov.ru/media/photo/kyzyl/doctorimage/431924/840504-431924-idam-syuryun_square_small.jpg"
@@ -191,7 +191,7 @@
   },
   {
     "fullName": "Маскыр Мария Опей-ооловна",
-    "specialty": "Врач акушер-гинеколог",
+    "specialty": "Акушер-гинеколог",
     "category": "Высшая категория",
     "experienceStartYear": 2011,
     "extraSpecialties": [
@@ -219,7 +219,7 @@
   },
   {
     "fullName": "Норбу Ай-Суу Леонидовна",
-    "specialty": "Врач акушер-гинеколог",
+    "specialty": "Акушер-гинеколог",
     "category": "Вторая категория",
     "experienceStartYear": 2017,
     "extraSpecialties": [
@@ -318,7 +318,7 @@
   },
   {
     "fullName": "Салчак Урана Седеновна",
-    "specialty": "Врач акушер-гинеколог",
+    "specialty": "Акушер-гинеколог",
     "category": "Высшая категория",
     "experienceStartYear": 1999,
     "extraSpecialties": [
