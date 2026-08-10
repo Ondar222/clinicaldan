@@ -48,6 +48,7 @@ export default function News({ limit = 5, showPagination = true }: NewsProps) {
           setPosts([]);
           setTotalPosts(0);
         } else {
+          console.log('VK posts loaded:', { postsCount: response.posts.length, total: response.total });
           setPosts(response.posts || []);
           setTotalPosts(response.total || 0);
         }

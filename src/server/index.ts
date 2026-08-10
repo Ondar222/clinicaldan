@@ -64,7 +64,15 @@ app.use('/api/vk', (req, res, next) => {
   
   fetch(vkUrl)
     .then(response => response.json())
-    .then(data => res.json(data))
+    .then(vkData => {
+      // VK API возвращает { response: { items: [...], count: N } }
+      // Фронтенд ожидает { items: [...], count: N }
+      const vkResponse = vkData.response || {};
+      res.json({
+        items: vkResponse.items || [],
+        count: vkResponse.count || 0
+      });
+    })
     .catch(err => {
       console.error('VK API error:', err);
       res.status(500).json({ error: 'Failed to fetch VK posts', items: [], count: 0 });

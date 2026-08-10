@@ -38,9 +38,18 @@ class VKService {
       const rawItems = data.items ?? data.data?.items ?? [];
       const totalCount = data.count ?? data.data?.count ?? 0;
 
+      console.log('VK API response:', { itemsCount: rawItems.length, total: totalCount });
+
       // Map backend response to frontend format
       const posts = (rawItems)
-        .filter((item: any) => !item.marked_as_ads && item.date)
+        .filter((item: any) => {
+          const hasNoAds = !item.marked_as_ads;
+          const hasDate = !!item.date;
+          if (!hasNoAds || !hasDate) {
+            console.log('Filtered out post:', { id: item.id, marked_as_ads: item.marked_as_ads, date: item.date });
+          }
+          return hasNoAds && hasDate;
+        })
         .map((item: any) => {
           // Extract image/thumbnail: photo, video preview, or link image
           let imageUrl: string | undefined;
