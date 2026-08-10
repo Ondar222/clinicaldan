@@ -23,7 +23,6 @@ export default function PriceListPage() {
     | "cosmetics"
     | "medexams"
     | "checkups"
-    | "certificates"
   >("all");
   const [gynFilter, setGynFilter] = useState<
     "all" | "consult" | "analysis" | "ultrasound" | "laser" | "other"
@@ -350,9 +349,6 @@ export default function PriceListPage() {
         ]);
       case "checkups":
         return has(["чекап", "check-up", "чек ап", "чек-ап"]);
-      case "certificates":
-        // В прайсе отдельного списка услуг нет, показываем CTA
-        return false;
       default:
         return true;
     }
@@ -669,7 +665,6 @@ export default function PriceListPage() {
                   { key: "cosmetics", label: "Косметика" },
                   { key: "medexams", label: "Медицинские осмотры" },
                   { key: "checkups", label: "Чекапы" },
-                  { key: "certificates", label: "Сертификаты" },
                 ].map((opt) => (
                   <button
                     key={opt.key}
@@ -708,25 +703,6 @@ export default function PriceListPage() {
         </div>
 
         {/* Спец-разделы без списка услуг */}
-        {selectedMain === "certificates" && (
-          <div className="mb-8">
-            <div className="bg-white rounded-lg shadow-lg p-6 md:p-8 text-center">
-              <h2 className="text-xl md:text-2xl font-semibold text-dark mb-3 md:mb-4">
-                Подарочные сертификаты
-              </h2>
-              <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base">
-                Оформите электронный сертификат на услуги клиники на любую
-                сумму.
-              </p>
-              <a
-                href="/certificates"
-                className="inline-block px-6 py-2 bg-primary text-white rounded-lg hover:bg-primaryDark transition-colors text-sm md:text-base"
-              >
-                Перейти к оформлению
-              </a>
-            </div>
-          </div>
-        )}
         {selectedMain === "checkups" && (
           <div className="mb-8">
             <div className="bg-white rounded-lg shadow-lg p-6 md:p-8 text-center">

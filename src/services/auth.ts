@@ -2,7 +2,7 @@ import type { User, LoginData, RegisterData, AuthResponse } from '../types/cms';
 
 // Backend API configuration
 // В production используем HTTPS по умолчанию, если переменная окружения не задана
-const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL || (import.meta.env.PROD ? 'https://clinicaldan.ru/api' : 'http://localhost:3001/api');
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL || (import.meta.env.PROD ? 'https://clinicaldan.ru/api' : 'http://localhost:5002/api');
 const AUTH_TOKEN_KEY = 'auth_token';
 const USER_DATA_KEY = 'user_data';
 
