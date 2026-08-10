@@ -8,9 +8,9 @@ echo "🚀 Автоматический деплой clinicaldan.ru..."
 echo ""
 
 # НАСТРОЙКИ СЕРВЕРА
-SERVER_USER="arslan"  # Твой юзер на сервере
+SERVER_USER="root"  # Твой юзер на сервере
 SERVER_HOST="10.10.10.2"  # IP сервера
-SERVER_PATH="/home/arslan/clinicaldan"  # Путь на сервере
+SERVER_PATH="/var/www/aldan-site"  # Путь на сервере
 
 # Шаг 1: Сборка
 echo "📦 Сборка проекта..."
