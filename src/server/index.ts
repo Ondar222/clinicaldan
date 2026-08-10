@@ -20,6 +20,17 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 
+// CORS для API - ДО всех маршрутов
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 // Archimed API proxy
 const archimedApiUrl = process.env.ARCHIMED_API_URL || 'https://newapi.archimed-soft.ru/api/v5';
 const archimedApiToken = process.env.ARCHIMED_API_TOKEN || '';
@@ -37,18 +48,27 @@ app.use('/api/archimed', createProxyMiddleware({
       proxyReq.setHeader('Accept', 'application/json');
     },
   },
-  logLevel: 'debug',
 }));
 
-// CORS для API
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  next();
+// VK API proxy - проксирует запросы к VK API для новостей
+const vkApiToken = process.env.VK_API_TOKEN || '';
+const vkOwnerId = process.env.VK_OWNER_ID || '';
+
+app.use('/api/vk', (req, res, next) => {
+  // Превращаем /api/vk/posts?count=10&offset=0 в вызов VK API
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const count = url.searchParams.get('count') || '20';
+  const offset = url.searchParams.get('offset') || '0';
+  
+  const vkUrl = `https://api.vk.com/method/wall.get?owner_id=${vkOwnerId}&count=${count}&offset=${offset}&extended=1&access_token=${vkApiToken}&v=5.131`;
+  
+  fetch(vkUrl)
+    .then(response => response.json())
+    .then(data => res.json(data))
+    .catch(err => {
+      console.error('VK API error:', err);
+      res.status(500).json({ error: 'Failed to fetch VK posts', items: [], count: 0 });
+    });
 });
 
 // API Routes
