@@ -3,7 +3,7 @@
  * API для управления сертификатами администраторами
  */
 
-import { Router } from 'express';
+import express, { Router } from 'express';
 
 const router = Router();
 

@@ -3,9 +3,9 @@
  * Собирает все URL из базы данных и направлений
  */
 import express from 'express';
-import { CLINIC_CONFIG } from './clinicConfig';
-import { DIRECTIONS } from './directions';
-import { COSMETOLOGY_CATEGORIES } from './cosmetology';
+import { CLINIC_CONFIG } from '../data/clinicConfig.js';
+import { DIRECTIONS } from '../services/directions.js';
+import { COSMETOLOGY_CATEGORIES } from '../data/cosmetology.js';
 const router = express.Router();
 // Базовые страницы сайта
 const STATIC_PAGES = [

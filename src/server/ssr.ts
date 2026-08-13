@@ -4,10 +4,8 @@
  */
 
 import express from 'express';
-import { renderToString } from 'react-dom/server';
-import React from 'react';
-import { StaticRouter } from 'react-router-dom/server';
-import { JSDOM } from 'jsdom';
+import fs from 'fs';
+import path from 'path';
 import { CLINIC_CONFIG } from '../data/clinicConfig.js';
 import { DIRECTIONS } from '../services/directions.js';
 
@@ -187,10 +185,6 @@ export function generateSeoHtml(pathname: string, template: string): string {
  */
 export function createSsrRouter() {
   const router = express.Router();
-  
-  // Читаем сгенерированный HTML шаблон
-  const fs = require('fs');
-  const path = require('path');
   
   router.use(async (req, res, next) => {
     // Пропускаем API запросы

@@ -3,8 +3,10 @@
  * Использует React для рендеринга страниц на сервере
  */
 import express from 'express';
-import { CLINIC_CONFIG } from './clinicConfig';
-import { DIRECTIONS } from './directions';
+import fs from 'fs';
+import path from 'path';
+import { CLINIC_CONFIG } from '../data/clinicConfig.js';
+import { DIRECTIONS } from '../services/directions.js';
 // Import your App component - это нужно для SSR
 // В реальном приложении нужно экспортировать App отдельно
 // SEO мета-данные для разных страниц
@@ -167,9 +169,6 @@ export function generateSeoHtml(pathname, template) {
  */
 export function createSsrRouter() {
     const router = express.Router();
-    // Читаем сгенерированный HTML шаблон
-    const fs = require('fs');
-    const path = require('path');
     router.use(async (req, res, next) => {
         // Пропускаем API запросы
         if (req.path.startsWith('/api/') || req.path.startsWith('/src/')) {

@@ -12,9 +12,10 @@
   },
   "include": [
     "server-appointment.ts",
-    "server-contact.ts"
+    "server-contact.ts",
+    "src/server"
   ],
   "exclude": [
-    "src/**/*"
+    "node_modules"
   ]
 }
