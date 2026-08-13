@@ -35,10 +35,14 @@ class VKService {
       if (data.error) {
         return { posts: [], total: 0, error: data.error };
       }
-      const rawItems = data.items ?? data.data?.items ?? [];
-      const totalCount = data.count ?? data.data?.count ?? 0;
+      const rawItems = data.items ?? data.posts ?? data.data?.items ?? [];
+      const totalCount = data.count ?? data.data?.count ?? data.total ?? 0;
 
-      console.log('VK API response:', { itemsCount: rawItems.length, total: totalCount });
+      console.log('VK API response:', { 
+        rawItemsCount: rawItems.length, 
+        total: totalCount,
+        dataType: data.items ? 'items' : data.posts ? 'posts' : 'unknown'
+      });
 
       // Map backend response to frontend format
       const posts = (rawItems)

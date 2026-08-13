@@ -4,9 +4,9 @@
  */
 
 import express from 'express';
-import { CLINIC_CONFIG } from './clinicConfig';
-import { DIRECTIONS } from './directions';
-import { COSMETOLOGY_CATEGORIES } from './cosmetology';
+import { CLINIC_CONFIG } from '../data/clinicConfig';
+import { DIRECTIONS } from '../services/directions';
+import { COSMETOLOGY_CATEGORIES } from '../data/cosmetology';
 
 const router = express.Router();
 
@@ -246,3 +246,4 @@ router.get('/sitemap.xml', async (req, res) => {
 });
 
 export default router;
+
