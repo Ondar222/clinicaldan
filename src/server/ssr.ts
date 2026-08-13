@@ -8,8 +8,8 @@ import { renderToString } from 'react-dom/server';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom/server';
 import { JSDOM } from 'jsdom';
-import { CLINIC_CONFIG } from './clinicConfig';
-import { DIRECTIONS } from './directions';
+import { CLINIC_CONFIG } from '../data/clinicConfig.js';
+import { DIRECTIONS } from '../services/directions.js';
 
 // Import your App component - это нужно для SSR
 // В реальном приложении нужно экспортировать App отдельно

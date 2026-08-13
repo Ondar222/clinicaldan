@@ -4,9 +4,9 @@
  */
 
 import express from 'express';
-import { CLINIC_CONFIG } from '../data/clinicConfig';
-import { DIRECTIONS } from '../services/directions';
-import { COSMETOLOGY_CATEGORIES } from '../data/cosmetology';
+import { CLINIC_CONFIG } from '../data/clinicConfig.js';
+import { DIRECTIONS } from '../services/directions.js';
+import { COSMETOLOGY_CATEGORIES } from '../data/cosmetology.js';
 
 const router = express.Router();
 
