@@ -54,25 +54,25 @@ export default function PaymentDiagnosticPage() {
       addLog(`Ответ сервера: ${JSON.stringify(result, null, 2)}`);
 
       if (result.error) {
-        addLog(`❌ ОШИБКА СОЗДАНИЯ ПЛАТЕЖА:`);
+        addLog(`[ERROR] ОШИБКА СОЗДАНИЯ ПЛАТЕЖА:`);
         addLog(`- Код ошибки: ${result.errorCode}`);
         addLog(`- Сообщение: ${result.errorMessage || result.message}`);
         addLog(`- Детали: ${result.details || "Нет дополнительных деталей"}`);
 
         // Анализ ошибки
         if (result.errorCode === "INVALID_AMOUNT") {
-          addLog(`🔍 АНАЛИЗ: Неправильный формат суммы`);
+          addLog(`[INFO] Неправильный формат суммы`);
         } else if (result.errorCode === "INVALID_ORDER_NUMBER") {
-          addLog(`🔍 АНАЛИЗ: Проблема с номером заказа`);
+          addLog(`[INFO] Проблема с номером заказа`);
         } else if (result.errorCode === "INVALID_RETURN_URL") {
-          addLog(`🔍 АНАЛИЗ: Проблема с URL возврата`);
+          addLog(`[INFO] Проблема с URL возврата`);
         } else if (result.errorCode === "ACCESS_DENIED") {
-          addLog(`🔍 АНАЛИЗ: Проблема с аутентификацией`);
+          addLog(`[INFO] Проблема с аутентификацией`);
         }
 
         setResult({ error: true, ...result });
       } else {
-        addLog(`✅ Платеж успешно создан:`);
+        addLog(`[OK] Платеж успешно создан:`);
         addLog(`- Order ID: ${result.orderId}`);
         addLog(`- Order Number: ${result.orderNumber}`);
         addLog(`- Form URL: ${result.formUrl}`);
@@ -81,8 +81,8 @@ export default function PaymentDiagnosticPage() {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Неизвестная ошибка";
-      addLog(`❌ КРИТИЧЕСКАЯ ОШИБКА: ${errorMessage}`);
-      addLog(`🔍 АНАЛИЗ: Сетевая ошибка или проблема с сервером`);
+      addLog(`[ERROR] КРИТИЧЕСКАЯ ОШИБКА: ${errorMessage}`);
+      addLog(`[INFO] Сетевая ошибка или проблема с сервером`);
       setResult({ error: true, message: errorMessage });
     } finally {
       setIsLoading(false);
@@ -91,7 +91,7 @@ export default function PaymentDiagnosticPage() {
 
   const handleTestStatus = async () => {
     if (!result?.orderId) {
-      addLog("❌ ОШИБКА: Нет orderId для проверки статуса");
+      addLog("[ERROR] Нет orderId для проверки статуса");
       return;
     }
 
@@ -116,13 +116,13 @@ export default function PaymentDiagnosticPage() {
       );
 
       if (statusResult.error) {
-        addLog(`❌ ОШИБКА ПРОВЕРКИ СТАТУСА:`);
+        addLog(`[ERROR] ОШИБКА ПРОВЕРКИ СТАТУСА:`);
         addLog(`- Код ошибки: ${statusResult.errorCode}`);
         addLog(
           `- Сообщение: ${statusResult.errorMessage || statusResult.message}`
         );
       } else {
-        addLog(`✅ Статус заказа получен:`);
+        addLog(`[OK] Статус заказа получен:`);
         addLog(`- Order Status: ${statusResult.orderStatus}`);
         addLog(`- Order Number: ${statusResult.orderNumber}`);
         addLog(`- Amount: ${statusResult.amount} копеек`);
@@ -130,30 +130,28 @@ export default function PaymentDiagnosticPage() {
         // Анализ статуса
         switch (statusResult.orderStatus) {
           case 0:
-            addLog(`🔍 АНАЛИЗ: Заказ зарегистрирован, но не оплачен`);
+            addLog(`[INFO] Заказ зарегистрирован, но не оплачен`);
             break;
           case 1:
-            addLog(`🔍 АНАЛИЗ: Предавторизованная сумма захолдирована`);
+            addLog(`[INFO] Предавторизованная сумма захолдирована`);
             break;
           case 2:
-            addLog(`🔍 АНАЛИЗ: ✅ Платеж успешно оплачен`);
+            addLog(`[OK] Платеж успешно оплачен`);
             break;
           case 3:
-            addLog(`🔍 АНАЛИЗ: ❌ Авторизация отменена`);
+            addLog(`[ERROR] Авторизация отменена`);
             break;
           case 4:
-            addLog(`🔍 АНАЛИЗ: ❌ По транзакции был проведен возврат`);
+            addLog(`[ERROR] По транзакции был проведен возврат`);
             break;
           case 5:
-            addLog(
-              `🔍 АНАЛИЗ: Инициирована авторизация через ACS банка-эмитента`
-            );
+            addLog(`[INFO] Инициирована авторизация через ACS банка-эмитента`);
             break;
           case 6:
-            addLog(`🔍 АНАЛИЗ: ❌ Авторизация отклонена`);
+            addLog(`[ERROR] Авторизация отклонена`);
             break;
           default:
-            addLog(`🔍 АНАЛИЗ: Неизвестный статус заказа`);
+            addLog(`[INFO] Неизвестный статус заказа`);
         }
       }
 
@@ -192,7 +190,7 @@ export default function PaymentDiagnosticPage() {
       });
       addLog(`- Статус API: ${healthCheck.status}`);
     } catch (error) {
-      addLog(`- ❌ API недоступен: ${error}`);
+      addLog(`- [ERROR] API недоступен: ${error}`);
     }
 
     // Проверка CORS
@@ -202,9 +200,9 @@ export default function PaymentDiagnosticPage() {
     // Проверка SSL
     addLog(`4. Проверка SSL:`);
     if (window.location.protocol === "https:") {
-      addLog(`- ✅ HTTPS активен`);
+      addLog(`- [OK] HTTPS активен`);
     } else {
-      addLog(`- ⚠️ HTTP используется (может вызвать проблемы)`);
+      addLog(`- [WARN] HTTP используется (может вызвать проблемы)`);
     }
 
     setIsLoading(false);

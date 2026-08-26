@@ -621,7 +621,7 @@ export default function PriceListPage() {
                 htmlFor="search"
                 className="block text-gray-700 mb-1 md:mb-2 font-medium text-sm md:text-base"
               >
-                🔍 Поиск услуг
+                Поиск услуг
               </label>
               <div className="relative">
                 <input

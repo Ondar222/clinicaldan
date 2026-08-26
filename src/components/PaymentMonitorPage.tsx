@@ -113,13 +113,13 @@ export default function PaymentMonitorPage() {
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "create":
-        return "🆕";
+        return "NEW";
       case "status":
-        return "📊";
+        return "STTS";
       case "error":
-        return "❌";
+        return "ERR";
       default:
-        return "❓";
+        return "?";
     }
   };
 
