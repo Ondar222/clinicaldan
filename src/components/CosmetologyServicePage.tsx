@@ -103,11 +103,11 @@ export default function CosmetologyServicePage({ categorySlug }: CosmetologyServ
   
   // SEO данные
   const pageTitle = service 
-    ? `${service.name} в Кызыле — Клиника Алдан`
+    ? `${service.name} в Алдане — Клиника Алдан`
     : 'Услуга косметологии — Клиника Алдан';
   const pageDescription = service
     ? `${service.name} в Клинике Алдан. ${service.info || ''} Запись по телефону ${CLINIC_CONFIG.phoneFormatted}.`
-    : 'Косметологические услуги в Клинике Алдан в Кызыле.';
+    : 'Косметологические услуги в Клинике Алдан в Алдане.';
   
   const seoData = {
     title: pageTitle,

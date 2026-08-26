@@ -155,7 +155,7 @@ const DoctorDetailsPage: React.FC = () => {
       {/* SEO мета-теги для страницы врача */}
       <SeoHead 
         pageData={{
-          title: `${getDoctorFullName(doctor)} — ${formatSpecialtyName(doctor.type)} в Кызыле | Клиника Алдан`,
+          title: `${getDoctorFullName(doctor)} — ${formatSpecialtyName(doctor.type)} в Алдане | Клиника Алдан`,
           description: `${getDoctorFullName(doctor)}, ${formatSpecialtyName(doctor.type)}. Запись на прием в Клинике Алдан по телефону +7 (923) 317-60-60. Высококвалифицированный специалист с многолетним опытом работы.`,
           canonical: `/doctors/${doctor.id}`,
           ogType: 'profile'

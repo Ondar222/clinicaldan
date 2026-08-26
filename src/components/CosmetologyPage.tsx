@@ -144,8 +144,8 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
   // SEO данные
   const currentCategory = categorySlug ? getCategoryBySlug(categorySlug) : null;
   const pageTitle = currentCategory 
-    ? `${currentCategory.name} в Кызыле — Клиника Алдан`
-    : 'Косметология в Кызыле — услуги эстетической медицины | Клиника Алдан';
+    ? `${currentCategory.name} в Алдане — Клиника Алдан`
+    : 'Косметология в Алдане — услуги эстетической медицины | Клиника Алдан';
   const pageDescription = currentCategory
     ? `${currentCategory.description} Запись на прием к косметологу по телефону ${CLINIC_CONFIG.phoneFormatted}.`
     : 'Косметология в Клинике Алдан: инъекционная и аппаратная косметология, пилинги, чистки лица, уходовые процедуры. Опытные косметологи. Современное оборудование. Запись онлайн.';
@@ -208,7 +208,7 @@ export default function CosmetologyPage({ categorySlug }: CosmetologyPageProps) 
               <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed">
                 {currentCategory 
                   ? currentCategory.description 
-                  : 'Современная эстетическая медицина в Кызыле. Инъекционная и аппаратная косметология, пилинги, уходовые процедуры от сертифицированных специалистов.'
+                  : 'Современная эстетическая медицина в Алдане. Инъекционная и аппаратная косметология, пилинги, уходовые процедуры от сертифицированных специалистов.'
                 }
               </p>
               
