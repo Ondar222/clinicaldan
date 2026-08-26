@@ -47,15 +47,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a
-                  href="/documents/utverzhdeno.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/privacy-policy"
                   className="text-gray-200 hover:text-primary transition-colors flex items-center group text-sm sm:text-base"
                 >
                   <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full mr-2 sm:mr-3 group-hover:scale-125 transition-transform flex-shrink-0" />
                   Политика конфиденциальности
-                </a>
+                </Link>
               </li>
               <li>
                 <Link
@@ -106,6 +104,26 @@ export default function Footer() {
                   <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full mr-2 sm:mr-3 group-hover:scale-125 transition-transform flex-shrink-0" />
                   Отзывы
                 </Link>
+              </li>
+              <li>
+                <Link
+                  to="/privacy-policy"
+                  className="text-gray-200 hover:text-primary transition-colors flex items-center group text-sm sm:text-base"
+                >
+                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full mr-2 sm:mr-3 group-hover:scale-125 transition-transform flex-shrink-0" />
+                  Политика обработки персональных данных
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="/documents/document2.docx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-200 hover:text-primary transition-colors flex items-center group text-sm sm:text-base"
+                >
+                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full mr-2 sm:mr-3 group-hover:scale-125 transition-transform flex-shrink-0" />
+                  Договор оказания платных медицинских услуг (оферта)
+                </a>
               </li>
               <li>
                 <Link
@@ -215,6 +233,21 @@ export default function Footer() {
         {/* Copyright & legal info */}
         <div className="pt-6 sm:pt-8 border-t border-white/20 text-sm">
           <div className="bg-black/20 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/10 space-y-1.5 sm:space-y-2">
+            <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
+              <a
+                href="/privacy-policy"
+                className="text-gray-300 hover:text-primary transition-colors underline"
+              >
+                Политика обработки персональных данных
+              </a>
+              <span className="text-gray-500">|</span>
+              <a
+                href="/cookie-policy"
+                className="text-gray-300 hover:text-primary transition-colors underline"
+              >
+                Политика использования cookie
+              </a>
+            </div>
             <p className="text-gray-200 text-xs sm:text-sm">
               ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "АЛДАН" ИНН: 1701049398
               <a

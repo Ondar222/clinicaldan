@@ -34,6 +34,14 @@ const CookieNotification: React.FC<CookieNotificationProps> = ({ onAccept, onDec
             <p className="text-sm text-gray-600 leading-relaxed">
               Мы используем файлы cookie для улучшения работы сайта, анализа трафика и персонализации контента. 
               Продолжая использовать наш сайт, вы соглашаетесь с нашей политикой использования cookie-файлов.
+              {" "}
+              <a
+                href="/privacy-policy"
+                className="text-blue-600 hover:underline font-medium"
+              >
+                Политика обработки персональных данных
+              </a>
+              .
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-2 flex-shrink-0">

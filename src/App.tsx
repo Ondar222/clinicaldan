@@ -37,6 +37,7 @@ import archimedService from "./services/archimed";
 import ScrollToTop from "./components/ScrollToTop";
 import CookieNotification from "./components/CookieNotification";
 import CookiePolicyPage from "./components/CookiePolicyPage";
+import PrivacyPolicyPage from "./components/PrivacyPolicyPage";
 import FloatingBooking from "./components/FloatingBooking";
 import ToolDetailsPage from "./components/ToolDetailsPage";
 import RouteErrorBoundary from "./components/RouteErrorBoundary";
@@ -130,6 +131,7 @@ function App() {
             <Route path="/vk-post/:id" element={<VkPostDetailPage />} />
             <Route path="/staff" element={<StaffDashboard />} />
             <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="*" element={<NotFoundPage />} />
             {/* Временно скрыто - личный кабинет и платежи
             <Route path="/personal-cabinet" element={<PatientCabinetPage />} />
