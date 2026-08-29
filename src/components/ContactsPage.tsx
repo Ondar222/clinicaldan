@@ -6,7 +6,7 @@ import { CLINIC_CONFIG, getTelLink, getMailLink } from "../data/clinicConfig";
 
 export default function ContactsPage() {
   const seoData = {
-     title: 'Контакты и адрес клиники Алдан в Алдане',
+     title: 'Контакты и адрес клиники Алдан в Кызыле',
     description: `Клиника Алдан: адрес ${CLINIC_CONFIG.address.street}, ${CLINIC_CONFIG.address.city}. Телефон: ${CLINIC_CONFIG.phoneFormatted}. Режим работы: Пн-Пт ${CLINIC_CONFIG.workingHours.weekdays}, Сб ${CLINIC_CONFIG.workingHours.saturday}.`,
     canonical: '/contacts',
     ogType: 'website' as const

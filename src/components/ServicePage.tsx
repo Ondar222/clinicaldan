@@ -41,7 +41,7 @@ const ServicePage: React.FC = () => {
     if (!direction) return;
 
     // Update document title
-    const title = direction.seoTitle || `${direction.title} в Алдане | Клиника Алдан`;
+    const title = direction.seoTitle || `${direction.title} в Кызыле | Клиника Алдан`;
     document.title = title;
 
     // Update or create meta description
@@ -73,7 +73,7 @@ const ServicePage: React.FC = () => {
     // Cleanup function to restore default meta tags when component unmounts
     return () => {
       document.title = 'Клиника Алдан';
-      const defaultDescription = 'Клиника Алдан - современная медицинская клиника с высококвалифицированными специалистами. Широкий спектр медицинских услуг в Алдане.';
+      const defaultDescription = 'Клиника Алдан - современная медицинская клиника с высококвалифицированными специалистами. Широкий спектр медицинских услуг в Кызыле.';
       const desc = document.querySelector('meta[name="description"]');
       if (desc) {
         desc.setAttribute('content', defaultDescription);

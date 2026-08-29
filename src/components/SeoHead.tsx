@@ -149,7 +149,7 @@ export function generateServiceSeo(service: {
   price?: number;
 }): SeoPageData {
   return {
-    title: `${service.name} в Алдане — Клиника Алдан`,
+    title: `${service.name} в Кызыле — Клиника Алдан`,
     description: `${service.description.substring(0, 150)} ${service.price ? `Цена от ${service.price} руб.` : ''} Запись на прием по телефону ${CLINIC_CONFIG.phoneFormatted}.`,
     canonical: `/services/${service.slug}`,
     ogType: 'website'
@@ -165,7 +165,7 @@ export function generateDoctorSeo(doctor: {
   id: string | number;
 }): SeoPageData {
   return {
-    title: `${doctor.name} — ${doctor.specialty} в Алдане | Клиника Алдан`,
+    title: `${doctor.name} — ${doctor.specialty} в Кызыле | Клиника Алдан`,
     description: `${doctor.name}, ${doctor.specialty}. Запись на прием в Клинике Алдан по телефону ${CLINIC_CONFIG.phoneFormatted}. Высококвалифицированный специалист с многолетним опытом работы.`,
     canonical: `/doctors/${doctor.id}`,
     ogType: 'profile'
