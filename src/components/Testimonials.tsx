@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Testimonial {
   id: number;
@@ -29,33 +30,69 @@ const testimonials: Testimonial[] = [
 ];
 
 export default function Testimonials() {
-  const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [dragState, setDragState] = useState<{
+    startX: number;
+    currentX: number;
+    isDragging: boolean;
+  } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const goToPrevTestimonial = () => {
-    setActiveTestimonialIndex((prevIndex) =>
-      prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1,
-    );
-  };
+  const goToNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % testimonials.length);
+  }, []);
 
-  const goToNextTestimonial = () => {
-    setActiveTestimonialIndex((prevIndex) =>
-      prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1,
-    );
-  };
+  const goToPrev = useCallback(() => {
+    setActiveIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
+  }, []);
 
-  // Автосмена отзывов, ставится на паузу при наведении/касании
+  // Автосмена: интервал стабильный, состояние обновляется функционально
   useEffect(() => {
     if (isPaused || testimonials.length < 2) return;
-    const id = window.setInterval(goToNextTestimonial, 6000);
+    const id = window.setInterval(goToNext, 800);
     return () => window.clearInterval(id);
-  }, [isPaused]);
+  }, [isPaused, goToNext]);
+
+  // Свайп мышью/тачем
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    setDragState({
+      startX: e.clientX,
+      currentX: e.clientX,
+      isDragging: true,
+    });
+    setIsPaused(true);
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  }, []);
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!dragState?.isDragging) return;
+      setDragState((prev) => (prev ? { ...prev, currentX: e.clientX } : prev));
+    },
+    [dragState],
+  );
+
+  const handlePointerUp = useCallback(() => {
+    if (!dragState) return;
+    const diff = dragState.currentX - dragState.startX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goToPrev();
+      else goToNext();
+    }
+    setDragState(null);
+    setIsPaused(false);
+  }, [dragState, goToNext, goToPrev]);
+
+  const dragOffset = dragState?.isDragging
+    ? (dragState.currentX - dragState.startX) * 0.3
+    : 0;
 
   return (
     <section
       className="py-6 sm:py-8 relative"
       style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6)), url('/bg-hero.jpg')`,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6)), url('/bg_8.avif')`,
         backgroundSize: "cover",
         backgroundPosition: "center 30%",
       }}
@@ -66,13 +103,26 @@ export default function Testimonials() {
         </h2>
 
         <div
-          className="max-w-3xl mx-auto relative"
+          ref={containerRef}
+          className="max-w-3xl mx-auto relative touch-none"
           onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
+          onMouseLeave={() => {
+            setIsPaused(false);
+            setDragState(null);
+          }}
           onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
         >
-          {/* Testimonial card */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-xl p-4 sm:p-6 border border-white/20">
+          {/* Card with slide animation */}
+          <div
+            className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-xl p-4 sm:p-6 border border-white/20 transition-transform duration-300 ease-out"
+            style={{
+              transform: `translateX(${dragOffset}px)`,
+            }}
+          >
             <div className="flex justify-center mb-3 sm:mb-4">
               <svg
                 className="text-teal h-6 w-6 sm:h-8 sm:w-8"
@@ -83,24 +133,29 @@ export default function Testimonials() {
               </svg>
             </div>
 
-            <p className="text-sm sm:text-base text-center mb-3 sm:mb-4 leading-relaxed">
-              {testimonials[activeTestimonialIndex].text}
-            </p>
-
-            <div className="text-center">
-              <p className="font-bold text-dark text-sm sm:text-base">
-                {testimonials[activeTestimonialIndex].author}
+            <div
+              key={testimonials[activeIndex].id}
+              className="overflow-hidden animate-fadeIn"
+            >
+              <p className="text-sm sm:text-base text-center mb-3 sm:mb-4 leading-relaxed">
+                {testimonials[activeIndex].text}
               </p>
-              <p className="text-gray-500 text-xs sm:text-sm">
-                {testimonials[activeTestimonialIndex].date}
-              </p>
+              <div className="text-center">
+                <p className="font-bold text-dark text-sm sm:text-base">
+                  {testimonials[activeIndex].author}
+                </p>
+                <p className="text-gray-500 text-xs sm:text-sm">
+                  {testimonials[activeIndex].date}
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Navigation buttons */}
           <button
             className="absolute top-1/2 -left-1 sm:-left-2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-1.5 sm:p-2 rounded-full shadow-lg text-gray-600 hover:text-primary hover:bg-white transition-all duration-200 transform hover:scale-105"
-            onClick={goToPrevTestimonial}
+            onClick={goToPrev}
+            aria-label="Предыдущий отзыв"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +175,8 @@ export default function Testimonials() {
 
           <button
             className="absolute top-1/2 -right-1 sm:-right-2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-1.5 sm:p-2 rounded-full shadow-lg text-gray-600 hover:text-primary hover:bg-white transition-all duration-200 transform hover:scale-105"
-            onClick={goToNextTestimonial}
+            onClick={goToNext}
+            aria-label="Следующий отзыв"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -144,13 +200,14 @@ export default function Testimonials() {
               <button
                 key={`testimonial-indicator-${testimonial.id}`}
                 className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-200 ${
-                  testimonials.indexOf(testimonial) === activeTestimonialIndex
+                  testimonials.indexOf(testimonial) === activeIndex
                     ? "bg-primary scale-110"
                     : "bg-white/60 hover:bg-white/80"
                 }`}
                 onClick={() =>
-                  setActiveTestimonialIndex(testimonials.indexOf(testimonial))
+                  setActiveIndex(testimonials.indexOf(testimonial))
                 }
+                aria-label={`Отзыв ${testimonials.indexOf(testimonial) + 1}`}
               />
             ))}
           </div>

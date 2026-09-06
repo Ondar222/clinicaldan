@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const slides = [
@@ -10,7 +10,8 @@ const slides = [
       "Современная медицинская клиника с высококвалифицированными специалистами. Мы предоставляем полный спектр медицинских услуг с использованием передовых технологий и индивидуальным подходом к каждому пациенту.",
     buttonText: "ПОДРОБНЕЕ",
     buttonLink: "/about",
-    image: "/bg-hero.jpg",
+    // image: "/bg-hero.jpg",
+    image: "/bg_8.avif",
   },
   {
     id: 2,
@@ -56,46 +57,39 @@ const slides = [
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
+  const goTo = useCallback((index: number) => {
+    setCurrentSlide(((index % slides.length) + slides.length) % slides.length);
+  }, []);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, []);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  }, []);
+
+  // Автосмена слайдов, пауза при наведении
   useEffect(() => {
-    const interval = setInterval(() => {
-      handleSlideChange((currentSlide + 1) % slides.length);
-    }, 7000);
-
+    if (isPaused) return;
+    const interval = setInterval(nextSlide, 3000);
     return () => clearInterval(interval);
-  }, [currentSlide]);
-
-  const handleSlideChange = (index: number) => {
-    if (isAnimating || index === currentSlide) return;
-
-    setIsAnimating(true);
-    setCurrentSlide(index);
-
-    // Reset animation state after transition completes
-    setTimeout(() => {
-      setIsAnimating(false);
-    }, 600);
-  };
-
-  const nextSlide = () => {
-    handleSlideChange((currentSlide + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    handleSlideChange(
-      currentSlide === 0 ? slides.length - 1 : currentSlide - 1,
-    );
-  };
+  }, [isPaused, nextSlide]);
 
   return (
-    <section className="relative h-[400px] sm:h-[450px] md:h-[400px] overflow-hidden">
+    <section
+      className="relative h-[400px] sm:h-[450px] md:h-[400px] overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       {/* Slides container */}
       <div
         className="h-full relative"
         style={{
           transition: "background-image 0.6s ease-in-out",
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.3)), url(${slides[currentSlide].image})`,
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.2)), url(${slides[currentSlide].image})`,
           backgroundSize: "cover",
           backgroundPosition: "center 30%",
         }}
@@ -109,10 +103,13 @@ export default function Hero() {
                 : "opacity-0 pointer-events-none"
             }`}
           >
-            <div className="container mx-auto h-full flex items-center">
-              <div className="max-w-3xl text-white px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8 bg-black/40 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/20 shadow-2xl">
+            <div className="container mx-auto h-full flex items-center px-1.5 sm:px-4">
+              <div
+                key={`${slide.id}-${index === currentSlide ? "active" : "idle"}`}
+                className="max-w-2xl text-white px-2.5 sm:px-5 md:px-6 py-1.5 sm:py-4 md:py-5 bg-black/30 backdrop-blur-[2px] rounded-md sm:rounded-2xl border border-white/20 shadow-2xl"
+              >
                 <h2
-                  className="text-lg sm:text-xl md:text-2xl font-medium mb-1 animate-fadeInUp opacity-0"
+                  className="text-[10px] sm:text-lg md:text-xl font-medium mb-0 animate-fadeInUp opacity-0"
                   style={{
                     animationDelay: "0.1s",
                     animationFillMode: "forwards",
@@ -121,7 +118,7 @@ export default function Hero() {
                   {slide.subtitle}
                 </h2>
                 <h1
-                  className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 animate-fadeInUp opacity-0"
+                  className="text-[12px] sm:text-xl md:text-2xl font-bold mb-0.5 sm:mb-2 animate-fadeInUp opacity-0"
                   style={{
                     animationDelay: "0.3s",
                     animationFillMode: "forwards",
@@ -130,7 +127,7 @@ export default function Hero() {
                   {slide.title}
                 </h1>
                 <p
-                  className="text-xs sm:text-sm md:text-base mb-3 sm:mb-4 animate-fadeInUp opacity-0 leading-relaxed"
+                  className="text-[9px] sm:text-xs md:text-sm mb-1 sm:mb-3 animate-fadeInUp opacity-0 leading-snug line-clamp-2 sm:line-clamp-none"
                   style={{
                     animationDelay: "0.5s",
                     animationFillMode: "forwards",
@@ -140,7 +137,7 @@ export default function Hero() {
                 </p>
                 <Link
                   to={slide.buttonLink}
-                  className="bg-primary hover:bg-primaryDark transition-colors text-white py-1.5 px-4 sm:py-2 sm:px-6 inline-block font-medium rounded-md animate-fadeInUp opacity-0 shadow-lg text-xs sm:text-sm"
+                  className="bg-primary hover:bg-primaryDark transition-colors text-white py-[3px] px-2 sm:py-1.5 sm:px-5 inline-block font-medium rounded-md animate-fadeInUp opacity-0 shadow-lg text-[9px] sm:text-xs"
                   style={{
                     animationDelay: "0.7s",
                     animationFillMode: "forwards",
@@ -158,7 +155,6 @@ export default function Hero() {
       <button
         className="absolute top-1/2 left-2 sm:left-4 -translate-y-1/2 bg-white/30 hover:bg-white/50 p-1.5 sm:p-2 rounded-full text-white transition-colors z-10 backdrop-blur-sm"
         onClick={prevSlide}
-        disabled={isAnimating}
         aria-label="Previous slide"
       >
         <svg
@@ -179,7 +175,6 @@ export default function Hero() {
       <button
         className="absolute top-1/2 right-2 sm:right-4 -translate-y-1/2 bg-white/30 hover:bg-white/50 p-1.5 sm:p-2 rounded-full text-white transition-colors z-10 backdrop-blur-sm"
         onClick={nextSlide}
-        disabled={isAnimating}
         aria-label="Next slide"
       >
         <svg
@@ -208,8 +203,7 @@ export default function Hero() {
                 ? "bg-primary w-6 sm:w-8"
                 : "bg-white/60 hover:bg-white/80"
             }`}
-            onClick={() => handleSlideChange(slides.indexOf(slide))}
-            disabled={isAnimating}
+            onClick={() => goTo(slides.indexOf(slide))}
             aria-label={`Go to slide ${slides.indexOf(slide) + 1}`}
           />
         ))}
