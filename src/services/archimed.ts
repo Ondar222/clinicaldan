@@ -1,71 +1,80 @@
+import doctorsDataRaw from "../data/doctors.json";
+import { mockBranches, mockDoctors } from "../data/mockDoctors";
+import { mockServices } from "../data/mockServices";
+import prodoctorovDataRaw from "../data/prodoctorov.json";
 import type {
-  ArchimedDoctor,
-  ArchimedZone,
-  ArchimedBranch,
-  ArchimedCategory,
-  ArchimedScientificDegree,
   ApiService,
   AppointmentData,
-  ArchimedAppointment,
   AppointmentStatus,
+  ArchimedAppointment,
+  ArchimedBranch,
+  ArchimedCategory,
+  ArchimedDoctor,
+  ArchimedScientificDegree,
+  ArchimedZone,
   GroupServiceInfo,
-  GroupServicesResponse
-} from '../types/cms';
-import { mockServices } from '../data/mockServices';
-import { mockDoctors, mockBranches } from '../data/mockDoctors';
-import doctorsDataRaw from '../data/doctors.json';
-import prodoctorovDataRaw from '../data/prodoctorov.json';
-import { indexedDBCache, IndexedDBCache } from './indexedDBCache';
+  GroupServicesResponse,
+} from "../types/cms";
+import { IndexedDBCache, indexedDBCache } from "./indexedDBCache";
 
 // Archimed API: в dev и prod идём через тот же origin (Vite proxy или nginx), чтобы не было CORS
-const ARCHIMED_API_URL = import.meta.env.VITE_ARCHIMED_API_URL || '/api/archimed';
-const ARCHIMED_API_TOKEN = ''; // Token handled by backend
+const ARCHIMED_API_URL =
+  import.meta.env.VITE_ARCHIMED_API_URL || "/api/archimed";
+const ARCHIMED_API_TOKEN = ""; // Token handled by backend
 
-console.log('Environment variables:');
-console.log('VITE_ARCHIMED_API_URL:', import.meta.env.VITE_ARCHIMED_API_URL);
-console.log('VITE_ARCHIMED_API_TOKEN:', import.meta.env.VITE_ARCHIMED_API_TOKEN);
-console.log('Final ARCHIMED_API_URL:', ARCHIMED_API_URL);
-console.log('Final ARCHIMED_API_TOKEN:', ARCHIMED_API_TOKEN);
+console.log("Environment variables:");
+console.log("VITE_ARCHIMED_API_URL:", import.meta.env.VITE_ARCHIMED_API_URL);
+console.log(
+  "VITE_ARCHIMED_API_TOKEN:",
+  import.meta.env.VITE_ARCHIMED_API_TOKEN,
+);
+console.log("Final ARCHIMED_API_URL:", ARCHIMED_API_URL);
+console.log("Final ARCHIMED_API_TOKEN:", ARCHIMED_API_TOKEN);
 // Some deployments don't have categories endpoint – disable to avoid 404 requests
 const ARCHIMED_CATEGORIES_ENABLED = false;
 
 // Local cache settings
-const DOCTORS_CACHE_KEY = 'archimed_doctors_v5_no_cache';
-const SERVICES_CACHE_KEY = 'archimed_services_v2'; // v2 with IndexedDB
+const DOCTORS_CACHE_KEY = "archimed_doctors_v5_no_cache";
+const SERVICES_CACHE_KEY = "archimed_services_v2"; // v2 with IndexedDB
 const DOCTORS_CACHE_TTL_MS = 0; // Disabled - always fetch fresh data to ensure blacklist is applied
 const SERVICES_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days (increased for better caching)
 const DEFAULT_REQUEST_TIMEOUT_MS = 30000; // 30s (increased for slow connections)
 
 // Old cache keys to clean up
-const OLD_DOCTORS_CACHE_KEYS = ['archimed_doctors_v2', 'archimed_doctors_v3', 'archimed_doctors_v4', 'archimed_doctors_v5_no_cache'];
-const OLD_SERVICES_CACHE_KEYS = ['archimed_services_v1']; // Clean up old localStorage cache
+const OLD_DOCTORS_CACHE_KEYS = [
+  "archimed_doctors_v2",
+  "archimed_doctors_v3",
+  "archimed_doctors_v4",
+  "archimed_doctors_v5_no_cache",
+];
+const OLD_SERVICES_CACHE_KEYS = ["archimed_services_v1"]; // Clean up old localStorage cache
 const DEFAULT_API_PAGE_LIMIT = 500; // Increased page size to reduce number of requests
 const MAX_API_PAGES = 50; // hard cap to prevent runaway loops
 const PARALLEL_PAGES = 10; // Increased parallel batches for faster loading
 
 // Helpers for name normalization and blacklist
 const normalizeRu = (s: string) =>
-  (s || '')
+  (s || "")
     .toLowerCase()
-    .replace(/ё/g, 'е')
-    .replace(/[^a-zа-я0-9]+/g, ' ')
+    .replace(/ё/g, "е")
+    .replace(/[^a-zа-я0-9]+/g, " ")
     .trim();
 
 const makeFullName = (d: ArchimedDoctor) =>
-  normalizeRu([d?.name, d?.name1, d?.name2].filter(Boolean).join(' '));
+  normalizeRu([d?.name, d?.name1, d?.name2].filter(Boolean).join(" "));
 
 // Names to exclude from all doctors lists and details
 const NAME_BLACKLIST = new Set<string>([
-  'хорбаа анжела тарасовна',
-  'торуш ш',
-  'монгуш чаяна алексеевна',
-  'байтингер андрей владимирович',
-  'щевелева галина викторовна',
-  'бегзи сай-суу олеговна',
-  'лопсан ай-суу орлановна',
-  'сафин динара адхамович',
-  'арбаев аржан ильич',
-  'дажынай мария владимировна',
+  "хорбаа анжела тарасовна",
+  "торуш ш",
+  "монгуш чаяна алексеевна",
+  "байтингер андрей владимирович",
+  "щевелева галина викторовна",
+  "бегзи сай-суу олеговна",
+  "лопсан ай-суу орлановна",
+  "сафин динара адхамович",
+  "арбаев аржан ильич",
+  "дажынай мария владимировна",
 ]);
 
 class ArchimedService {
@@ -79,73 +88,87 @@ class ArchimedService {
   constructor() {
     this.baseUrl = ARCHIMED_API_URL;
     this.headers = {
-      'Content-Type': 'application/json',
-      ...(ARCHIMED_API_TOKEN ? { 'Authorization': `Bearer ${ARCHIMED_API_TOKEN}` } : {}),
+      "Content-Type": "application/json",
+      ...(ARCHIMED_API_TOKEN
+        ? { Authorization: `Bearer ${ARCHIMED_API_TOKEN}` }
+        : {}),
     };
 
-    console.log('ArchimedService constructor, API URL:', this.baseUrl);
-    console.log('API Token configured:', !!ARCHIMED_API_TOKEN);
+    console.log("ArchimedService constructor, API URL:", this.baseUrl);
+    console.log("API Token configured:", !!ARCHIMED_API_TOKEN);
 
     // Check IndexedDB availability
     this.indexedDBAvailable = IndexedDBCache.isAvailable();
-    console.log('IndexedDB available:', this.indexedDBAvailable);
+    console.log("IndexedDB available:", this.indexedDBAvailable);
 
     // Clean up old cache keys to force fresh data with blacklist applied
     try {
-      OLD_DOCTORS_CACHE_KEYS.forEach(key => {
+      OLD_DOCTORS_CACHE_KEYS.forEach((key) => {
         try {
           window.localStorage?.removeItem(key);
-          console.log('Cleared old cache key:', key);
+          console.log("Cleared old cache key:", key);
         } catch {}
       });
       // Clean up old services cache to migrate to IndexedDB
-      OLD_SERVICES_CACHE_KEYS.forEach(key => {
+      OLD_SERVICES_CACHE_KEYS.forEach((key) => {
         try {
           window.localStorage?.removeItem(key);
-          console.log('Cleared old services cache key:', key);
+          console.log("Cleared old services cache key:", key);
         } catch {}
       });
-      
+
       // FORCE CLEAR services cache from IndexedDB (DEBUG - remove after testing)
       if (this.indexedDBAvailable) {
-        indexedDBCache.remove(SERVICES_CACHE_KEY).then(() => {
-          console.log('Cleared IndexedDB services cache:', SERVICES_CACHE_KEY);
-        }).catch(err => {
-          console.log('IndexedDB remove error:', err);
-        });
+        indexedDBCache
+          .remove(SERVICES_CACHE_KEY)
+          .then(() => {
+            console.log(
+              "Cleared IndexedDB services cache:",
+              SERVICES_CACHE_KEY,
+            );
+          })
+          .catch((err) => {
+            console.log("IndexedDB remove error:", err);
+          });
       }
     } catch (error) {
-      console.log('Cache cleanup error:', error);
+      console.log("Cache cleanup error:", error);
     }
 
     // No longer loading from localStorage - always fetch fresh data for doctors
-    console.log('Doctors cache disabled - will always fetch fresh data');
+    console.log("Doctors cache disabled - will always fetch fresh data");
   }
 
-  private async request<T>(endpoint: string, options?: RequestInit & { timeoutMs?: number; suppressErrorLog?: boolean }): Promise<T> {
+  private async request<T>(
+    endpoint: string,
+    options?: RequestInit & { timeoutMs?: number; suppressErrorLog?: boolean },
+  ): Promise<T> {
     if (!this.baseUrl) {
-      throw new Error('ARCHIMED_API_URL not configured');
+      throw new Error("ARCHIMED_API_URL not configured");
     }
 
     const url = `${this.baseUrl}${endpoint}`;
     const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort('timeout'), options?.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS);
+    const timeout = window.setTimeout(
+      () => controller.abort("timeout"),
+      options?.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS,
+    );
 
     let response: Response;
     try {
       response = await fetch(url, {
         headers: {
           ...this.headers,
-          'Accept': 'application/json',
-          'Accept-Encoding': 'gzip, deflate', // Request compression
+          Accept: "application/json",
+          "Accept-Encoding": "gzip, deflate", // Request compression
         },
         signal: controller.signal,
         ...options,
       });
     } catch (e) {
       window.clearTimeout(timeout);
-      if ((e as Error)?.name === 'AbortError') {
-        throw new Error('Request timeout');
+      if ((e as Error)?.name === "AbortError") {
+        throw new Error("Request timeout");
       }
       throw e;
     } finally {
@@ -155,23 +178,33 @@ class ArchimedService {
     if (!response.ok) {
       const errorText = await response.text();
       if (!options?.suppressErrorLog) {
-        console.error('API error response:', errorText);
+        console.error("API error response:", errorText);
       }
-      
+
       // Check if response is HTML instead of JSON (backend not running)
-      if (errorText.trim().startsWith('<!DOCTYPE') || errorText.trim().startsWith('<html')) {
-        throw new Error('Backend server is not running. Please start the backend server.');
+      if (
+        errorText.trim().startsWith("<!DOCTYPE") ||
+        errorText.trim().startsWith("<html")
+      ) {
+        throw new Error(
+          "Backend server is not running. Please start the backend server.",
+        );
       }
-      
+
       throw new Error(`Archimed API error: ${response.status} - ${errorText}`);
     }
 
     // Check if response is JSON
-    const contentType = response.headers.get('content-type');
-    if (contentType && !contentType.includes('application/json')) {
+    const contentType = response.headers.get("content-type");
+    if (contentType && !contentType.includes("application/json")) {
       const text = await response.text();
-      if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
-        throw new Error('Backend server returned HTML instead of JSON. Is the backend running?');
+      if (
+        text.trim().startsWith("<!DOCTYPE") ||
+        text.trim().startsWith("<html")
+      ) {
+        throw new Error(
+          "Backend server returned HTML instead of JSON. Is the backend running?",
+        );
       }
     }
 
@@ -180,7 +213,7 @@ class ArchimedService {
 
   private readFromStorage<T>(key: string, ttlMs: number): T | null {
     try {
-      if (typeof window === 'undefined') return null;
+      if (typeof window === "undefined") return null;
       // If TTL is 0, skip cache entirely and always fetch fresh
       if (ttlMs === 0) return null;
       const raw = window.localStorage.getItem(key);
@@ -196,7 +229,7 @@ class ArchimedService {
 
   private writeToStorage<T>(key: string, data: T): void {
     try {
-      if (typeof window === 'undefined') return;
+      if (typeof window === "undefined") return;
       const payload = JSON.stringify({ data, timestamp: Date.now() });
       window.localStorage.setItem(key, payload);
     } catch {
@@ -206,42 +239,56 @@ class ArchimedService {
 
   // Doctors - load from local files only (no API)
   async getDoctors(): Promise<ArchimedDoctor[]> {
-    console.log('getDoctors called - loading from local files only (no API)');
+    console.log("getDoctors called - loading from local files only (no API)");
 
     try {
       // 1) Load from doctors.json (real data snapshot) - using static import
-      const raw = (doctorsDataRaw as any);
+      const raw = doctorsDataRaw as any;
       let localDoctors: ArchimedDoctor[] = Array.isArray(raw)
         ? (raw as ArchimedDoctor[])
-        : (Array.isArray(raw?.data) ? (raw.data as ArchimedDoctor[]) : []);
+        : Array.isArray(raw?.data)
+          ? (raw.data as ArchimedDoctor[])
+          : [];
 
-      console.log('Loaded from doctors.json:', localDoctors.length);
+      console.log("Loaded from doctors.json:", localDoctors.length);
 
       // 2) Enrich from ProDoctorov snapshot - using static import
       const proDocs = await this.loadProdoctorovSnapshotStatic();
       if (proDocs.length > 0) {
-        console.log('Enriching with ProDoctorov snapshot:', proDocs.length);
+        console.log("Enriching with ProDoctorov snapshot:", proDocs.length);
         localDoctors = this.mergeDoctors(localDoctors, proDocs);
-        console.log('After merge, total doctors:', localDoctors.length);
+        console.log("After merge, total doctors:", localDoctors.length);
       }
 
       // 3) Apply blacklist to remove unwanted doctors
       localDoctors = this.applyRemovals(localDoctors);
-      console.log('After applying blacklist, doctors count:', localDoctors.length);
+      console.log(
+        "After applying blacklist, doctors count:",
+        localDoctors.length,
+      );
 
       this.doctorsCache = localDoctors;
       return this.doctorsCache;
     } catch (e) {
-      console.warn('Не удалось загрузить doctors.json, используем mockDoctors. Ошибка:', e);
+      console.warn(
+        "Не удалось загрузить doctors.json, используем mockDoctors. Ошибка:",
+        e,
+      );
       // Fallback to mock data
       this.doctorsCache = mockDoctors;
       const proDocs = await this.loadProdoctorovSnapshotStatic();
       if (proDocs.length > 0) {
-        console.log('Enriching mock doctors with ProDoctorov snapshot:', proDocs.length);
+        console.log(
+          "Enriching mock doctors with ProDoctorov snapshot:",
+          proDocs.length,
+        );
         this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
       }
       this.doctorsCache = this.applyRemovals(this.doctorsCache);
-      console.log('After applying blacklist (from mock), doctors count:', this.doctorsCache.length);
+      console.log(
+        "After applying blacklist (from mock), doctors count:",
+        this.doctorsCache.length,
+      );
       return this.doctorsCache;
     }
   }
@@ -253,18 +300,22 @@ class ArchimedService {
   async getDoctor(id: number): Promise<ArchimedDoctor> {
     const doc = await this.request<ArchimedDoctor>(`/doctors/${id}`);
     if (this.isBlacklisted(doc)) {
-      throw new Error('Archimed API error: 404 - Not found');
+      throw new Error("Archimed API error: 404 - Not found");
     }
     return doc;
   }
 
   async getDoctorsByBranch(branchId: number): Promise<ArchimedDoctor[]> {
-    const data = await this.request<{ data: ArchimedDoctor[] }>(`/doctors?branch_id=${branchId}`);
+    const data = await this.request<{ data: ArchimedDoctor[] }>(
+      `/doctors?branch_id=${branchId}`,
+    );
     return data.data;
   }
 
   async getDoctorsByType(typeId: number): Promise<ArchimedDoctor[]> {
-    const data = await this.request<{ data: ArchimedDoctor[] }>(`/doctors?type_id=${typeId}`);
+    const data = await this.request<{ data: ArchimedDoctor[] }>(
+      `/doctors?type_id=${typeId}`,
+    );
     return data.data;
   }
 
@@ -278,21 +329,27 @@ class ArchimedService {
 
     // 2. Try IndexedDB (fast - ~50-100ms for 3646 services)
     if (this.indexedDBAvailable) {
-      const fromIndexedDB = await indexedDBCache.get<ApiService[]>(SERVICES_CACHE_KEY, SERVICES_CACHE_TTL_MS);
+      const fromIndexedDB = await indexedDBCache.get<ApiService[]>(
+        SERVICES_CACHE_KEY,
+        SERVICES_CACHE_TTL_MS,
+      );
       if (fromIndexedDB && fromIndexedDB.length > 0) {
         this.servicesCache = fromIndexedDB;
         this.refreshServices(); // Background refresh
-        console.log('Loaded services from IndexedDB:', fromIndexedDB.length);
+        console.log("Loaded services from IndexedDB:", fromIndexedDB.length);
         return this.servicesCache;
       }
     }
 
     // 3. Try localStorage (slower - ~200-500ms)
-    const fromStorage = this.readFromStorage<ApiService[]>(SERVICES_CACHE_KEY, SERVICES_CACHE_TTL_MS);
+    const fromStorage = this.readFromStorage<ApiService[]>(
+      SERVICES_CACHE_KEY,
+      SERVICES_CACHE_TTL_MS,
+    );
     if (fromStorage && fromStorage.length > 0) {
       this.servicesCache = fromStorage;
       this.refreshServices();
-      console.log('Loaded services from localStorage:', fromStorage.length);
+      console.log("Loaded services from localStorage:", fromStorage.length);
       return this.servicesCache;
     }
 
@@ -307,17 +364,28 @@ class ArchimedService {
         this.servicesCache = allServices;
         // Save to both IndexedDB and localStorage for compatibility
         if (this.indexedDBAvailable) {
-          indexedDBCache.set(SERVICES_CACHE_KEY, allServices, SERVICES_CACHE_TTL_MS);
+          indexedDBCache.set(
+            SERVICES_CACHE_KEY,
+            allServices,
+            SERVICES_CACHE_TTL_MS,
+          );
         }
         this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
-        console.log('Loaded services from API:', allServices.length);
+        console.log("Loaded services from API:", allServices.length);
         return this.servicesCache;
       })
       .catch((error) => {
-        console.warn('API недоступен, используем моковые данные для услуг:', error);
+        console.warn(
+          "API недоступен, используем моковые данные для услуг:",
+          error,
+        );
         this.servicesCache = mockServices;
         if (this.indexedDBAvailable) {
-          indexedDBCache.set(SERVICES_CACHE_KEY, mockServices, SERVICES_CACHE_TTL_MS);
+          indexedDBCache.set(
+            SERVICES_CACHE_KEY,
+            mockServices,
+            SERVICES_CACHE_TTL_MS,
+          );
         }
         this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
         return this.servicesCache;
@@ -329,24 +397,82 @@ class ArchimedService {
     return this.servicesFetchPromise;
   }
 
-  private async fetchAllServicesFromAPI(onProgress?: (loaded: number, total: number, partialData: ApiService[]) => void): Promise<ApiService[]> {
+  private async fetchAllServicesFromAPI(
+    onProgress?: (
+      loaded: number,
+      total: number,
+      partialData: ApiService[],
+    ) => void,
+  ): Promise<ApiService[]> {
+    // Бэкенд отдаёт прайс уже сгруппированным одним запросом (токен подставляется на сервере)
+    try {
+      const grouped = await this.request<{
+        data: Array<{
+          id: number;
+          code?: string;
+          name: string;
+          parent_id?: number | null;
+          parent_name?: string | null;
+          services: ApiService[];
+        }>;
+        total: number;
+        groups: number;
+      }>("/services", { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS });
+
+      const all: ApiService[] = [];
+      const isGroupedFormat =
+        Array.isArray(grouped?.data) &&
+        grouped.data.some(
+          (g) => g !== null && typeof g === "object" && "services" in g,
+        );
+      // Плоский ответ старого бэкенда (услуги без поля services) — уходим в fallback-пагинацию
+      if (isGroupedFormat) {
+        for (const group of grouped.data) {
+          for (const s of group.services || []) {
+            // Услуги из групп без group_name дополняем иерархией групп
+            all.push({
+              ...s,
+              group_id: s.group_id ?? group.id,
+              group_name:
+                s.group_name ||
+                [group.parent_name, group.name].filter(Boolean).join(" / "),
+            });
+          }
+        }
+        if (onProgress) onProgress(all.length, all.length, [...all]);
+        return all;
+      }
+    } catch (e) {
+      console.warn(
+        "Grouped services endpoint failed, falling back to pagination:",
+        e,
+      );
+    }
+
     const all: ApiService[] = [];
 
     // If base URL is not configured, short-circuit
     if (!this.baseUrl) {
-      console.warn('ARCHIMED_API_URL not configured, cannot fetch services');
+      console.warn("ARCHIMED_API_URL not configured, cannot fetch services");
       return all;
     }
 
     // Fetch first page to get total count
     try {
-      const first = await this.request<{ data: ApiService[]; total: number | string; page: number; limit: number }>(
-        `/services?page=1&limit=${DEFAULT_API_PAGE_LIMIT}`,
-        { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
-      );
+      const first = await this.request<{
+        data: ApiService[];
+        total: number | string;
+        page: number;
+        limit: number;
+      }>(`/services?page=1&limit=${DEFAULT_API_PAGE_LIMIT}`, {
+        timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
+      });
 
       // total может быть строкой или числом
-      const total = typeof first.total === 'string' ? Number.parseInt(first.total, 10) : (first.total ?? first.data?.length ?? 0);
+      const total =
+        typeof first.total === "string"
+          ? Number.parseInt(first.total, 10)
+          : (first.total ?? first.data?.length ?? 0);
       const limit = first.limit ?? DEFAULT_API_PAGE_LIMIT;
 
       if (Array.isArray(first?.data)) {
@@ -371,16 +497,23 @@ class ArchimedService {
           const results = await Promise.all(
             batch.map(async (page) => {
               try {
-                const response = await this.request<{ data: ApiService[]; total: number | string; page: number; limit: number }>(
-                  `/services?page=${page}&limit=${limit}`,
-                  { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
-                );
+                const response = await this.request<{
+                  data: ApiService[];
+                  total: number | string;
+                  page: number;
+                  limit: number;
+                }>(`/services?page=${page}&limit=${limit}`, {
+                  timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
+                });
                 return response?.data || [];
               } catch (pageError) {
-                console.warn(`Error fetching services page ${page}:`, pageError);
+                console.warn(
+                  `Error fetching services page ${page}:`,
+                  pageError,
+                );
                 return [];
               }
-            })
+            }),
           );
 
           // Merge results from this batch
@@ -394,14 +527,14 @@ class ArchimedService {
           if (onProgress) onProgress(all.length, total, [...all]);
 
           // Check if we got a partial page (indicates last page)
-          const lastBatchHadPartial = results.some(r => r.length < limit);
+          const lastBatchHadPartial = results.some((r) => r.length < limit);
           if (lastBatchHadPartial) {
             return all;
           }
         }
       }
     } catch (e) {
-      console.warn('Error fetching services from API:', e);
+      console.warn("Error fetching services from API:", e);
       // Не пробрасываем ошибку, возвращаем то что успели получить (может быть пустой массив)
     }
 
@@ -414,10 +547,18 @@ class ArchimedService {
 
   async getServicesByGroup(groupId: number): Promise<ApiService[]> {
     try {
-      const response = await this.request<{ data: ApiService[]; total: number; page: number; limit: number }>(`/services?group_id=${groupId}`);
+      const response = await this.request<{
+        data: ApiService[];
+        total: number;
+        page: number;
+        limit: number;
+      }>(`/services?group_id=${groupId}`);
       return response.data || [];
     } catch (error) {
-      console.warn('API недоступен для услуг группы, возвращаем пустой массив:', error);
+      console.warn(
+        "API недоступен для услуг группы, возвращаем пустой массив:",
+        error,
+      );
       return [];
     }
   }
@@ -425,10 +566,15 @@ class ArchimedService {
   // Zones
   async getZones(): Promise<ArchimedZone[]> {
     try {
-      const response = await this.request<{ data: ArchimedZone[]; total: number; page: number; limit: number }>('/zones');
+      const response = await this.request<{
+        data: ArchimedZone[];
+        total: number;
+        page: number;
+        limit: number;
+      }>("/zones");
       return response.data || [];
     } catch (error) {
-      console.warn('API недоступен для зон, возвращаем пустой массив:', error);
+      console.warn("API недоступен для зон, возвращаем пустой массив:", error);
       return [];
     }
   }
@@ -436,10 +582,18 @@ class ArchimedService {
   // Branches
   async getBranches(): Promise<ArchimedBranch[]> {
     try {
-      const response = await this.request<{ data: ArchimedBranch[]; total: number; page: number; limit: number }>('/branchs');
+      const response = await this.request<{
+        data: ArchimedBranch[];
+        total: number;
+        page: number;
+        limit: number;
+      }>("/branchs");
       return response.data || [];
     } catch (error) {
-      console.warn('API недоступен, используем моковые данные для филиалов:', error);
+      console.warn(
+        "API недоступен, используем моковые данные для филиалов:",
+        error,
+      );
       return mockBranches;
     }
   }
@@ -450,10 +604,12 @@ class ArchimedService {
       return [] as ArchimedCategory[];
     }
     try {
-      const response = await this.request<{ data: ArchimedCategory[]; total: number; page: number; limit: number }>(
-        '/categories',
-        { suppressErrorLog: true }
-      );
+      const response = await this.request<{
+        data: ArchimedCategory[];
+        total: number;
+        page: number;
+        limit: number;
+      }>("/categories", { suppressErrorLog: true });
       return response.data || [];
     } catch {
       return [] as ArchimedCategory[];
@@ -463,10 +619,18 @@ class ArchimedService {
   // Scientific Degrees
   async getScientificDegrees(): Promise<ArchimedScientificDegree[]> {
     try {
-      const response = await this.request<{ data: ArchimedScientificDegree[]; total: number; page: number; limit: number }>('/scientific_degrees');
+      const response = await this.request<{
+        data: ArchimedScientificDegree[];
+        total: number;
+        page: number;
+        limit: number;
+      }>("/scientific_degrees");
       return response.data || [];
     } catch (error) {
-      console.warn('API недоступен для научных степеней, возвращаем пустой массив:', error);
+      console.warn(
+        "API недоступен для научных степеней, возвращаем пустой массив:",
+        error,
+      );
       return [];
     }
   }
@@ -494,23 +658,32 @@ class ArchimedService {
 
     // Try to fetch a large single page first
     try {
-      const first = await this.request<{ data: ArchimedDoctor[]; total: number; page: number; limit: number }>(
-        `/doctors?page=${page}&limit=${DEFAULT_API_PAGE_LIMIT}`,
-        { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
-      );
-      const total = (first as any)?.total ?? (first?.data?.length ?? 0);
+      const first = await this.request<{
+        data: ArchimedDoctor[];
+        total: number;
+        page: number;
+        limit: number;
+      }>(`/doctors?page=${page}&limit=${DEFAULT_API_PAGE_LIMIT}`, {
+        timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
+      });
+      const total = (first as any)?.total ?? first?.data?.length ?? 0;
       const limit = (first as any)?.limit ?? DEFAULT_API_PAGE_LIMIT;
       if (Array.isArray(first?.data)) {
         all.push(...first.data);
       }
-      const totalPages = limit > 0 ? Math.ceil((total || all.length) / limit) : 1;
+      const totalPages =
+        limit > 0 ? Math.ceil((total || all.length) / limit) : 1;
 
       // Fetch remaining pages if needed
       for (page = 2; page <= Math.min(totalPages, MAX_API_PAGES); page++) {
-        const next = await this.request<{ data: ArchimedDoctor[]; total: number; page: number; limit: number }>(
-          `/doctors?page=${page}&limit=${limit}`,
-          { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
-        );
+        const next = await this.request<{
+          data: ArchimedDoctor[];
+          total: number;
+          page: number;
+          limit: number;
+        }>(`/doctors?page=${page}&limit=${limit}`, {
+          timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
+        });
         if (Array.isArray(next?.data) && next.data.length > 0) {
           all.push(...next.data);
           if (next.data.length < limit) break; // last page
@@ -519,7 +692,7 @@ class ArchimedService {
         }
       }
     } catch (e) {
-      console.warn('Error fetching all doctors from API:', e);
+      console.warn("Error fetching all doctors from API:", e);
     }
 
     return all;
@@ -528,7 +701,7 @@ class ArchimedService {
   // Load and map ProDoctorov snapshot if present - using static import for faster loading
   private async loadProdoctorovSnapshotStatic(): Promise<ArchimedDoctor[]> {
     try {
-      const raw = (prodoctorovDataRaw as any);
+      const raw = prodoctorovDataRaw as any;
       const list: Array<{
         fullName: string;
         specialty: string;
@@ -537,10 +710,11 @@ class ArchimedService {
         scientific_degree?: string;
         experienceStartYear?: number;
         extraSpecialties?: string[];
-      }>
-        = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
+      }> = Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : [];
       if (!Array.isArray(list) || list.length === 0) return [];
-      const mapped: ArchimedDoctor[] = list.map((item, idx) => this.mapProdoctorovToArchimed(item, idx));
+      const mapped: ArchimedDoctor[] = list.map((item, idx) =>
+        this.mapProdoctorovToArchimed(item, idx),
+      );
       return mapped;
     } catch {
       return [];
@@ -557,33 +731,43 @@ class ArchimedService {
       experienceStartYear?: number;
       extraSpecialties?: string[];
     },
-    index: number
+    index: number,
   ): ArchimedDoctor {
-    const [lastName = '', firstName = '', middleName = ''] = item.fullName.split(/\s+/);
-    const typeName = item.specialty || 'Врач';
+    const [lastName = "", firstName = "", middleName = ""] =
+      item.fullName.split(/\s+/);
+    const typeName = item.specialty || "Врач";
     const id = 100000 + index; // avoid id collisions
-    const defaultBranch = 'Клиника Алдан';
+    const defaultBranch = "Клиника Алдан";
     const defaultCategory = item.category || typeName;
-    const degree = item.scientific_degree || 'Без степени';
-    const extraTypes = Array.isArray(item.extraSpecialties) ? item.extraSpecialties : [];
-    const experienceInfo = item.experienceStartYear ? `Врачебный стаж с ${item.experienceStartYear} г.` : '';
-    const extraInfo = extraTypes.length > 0 ? `Смежные специальности: ${extraTypes.join(', ')}` : '';
-    const info = [experienceInfo, extraInfo].filter(Boolean).join('\n');
+    const degree = item.scientific_degree || "Без степени";
+    const extraTypes = Array.isArray(item.extraSpecialties)
+      ? item.extraSpecialties
+      : [];
+    const experienceInfo = item.experienceStartYear
+      ? `Врачебный стаж с ${item.experienceStartYear} г.`
+      : "";
+    const extraInfo =
+      extraTypes.length > 0
+        ? `Смежные специальности: ${extraTypes.join(", ")}`
+        : "";
+    const info = [experienceInfo, extraInfo].filter(Boolean).join("\n");
     // Кужугет Росси - 20 минут, остальные - 30 минут
-    const isKuzhuget = lastName.toLowerCase() === 'кужугет' && firstName.toLowerCase() === 'росси';
+    const isKuzhuget =
+      lastName.toLowerCase() === "кужугет" &&
+      firstName.toLowerCase() === "росси";
     return {
       id,
       name: lastName,
       name1: firstName,
       name2: middleName,
       type: typeName,
-      code: '',
-      max_time: isKuzhuget ? '20' : '30',
-      phone: '',
-      snils: '',
+      code: "",
+      max_time: isKuzhuget ? "20" : "30",
+      phone: "",
+      snils: "",
       info,
       zone_id: 0,
-      zone: '',
+      zone: "",
       branch_id: 0,
       branch: defaultBranch,
       category_id: 0,
@@ -592,34 +776,53 @@ class ArchimedService {
       scientific_degree: degree,
       user_id: 0,
       photo: item.photo || null,
-      address: 'г. Кызыл, ул. Ленина, 60',
-      building_name: 'Поликлиника №1',
-      building_web_name: 'Поликлиника №1',
+      address: "г. Кызыл, ул. Ленина, 60",
+      building_name: "Поликлиника №1",
+      building_web_name: "Поликлиника №1",
       primary_type_id: 0,
-      types: [{ id: 0, name: typeName }, ...extraTypes.map((n, i) => ({ id: i + 1, name: n }))],
-      experienceStartYear: item.experienceStartYear
+      types: [
+        { id: 0, name: typeName },
+        ...extraTypes.map((n, i) => ({ id: i + 1, name: n })),
+      ],
+      experienceStartYear: item.experienceStartYear,
     };
   }
 
-  private mergeDoctors(primary: ArchimedDoctor[], extra: ArchimedDoctor[]): ArchimedDoctor[] {
-    const normalize = (s: string) => (s || '').toLowerCase().replace(/ё/g, 'е').trim();
-    const makeNameKey = (d: ArchimedDoctor) => `${normalize(d.name)}|${normalize(d.name1)}|${normalize(d.name2)}`;
+  private mergeDoctors(
+    primary: ArchimedDoctor[],
+    extra: ArchimedDoctor[],
+  ): ArchimedDoctor[] {
+    const normalize = (s: string) =>
+      (s || "").toLowerCase().replace(/ё/g, "е").trim();
+    const makeNameKey = (d: ArchimedDoctor) =>
+      `${normalize(d.name)}|${normalize(d.name1)}|${normalize(d.name2)}`;
 
     const byName = new Map<string, ArchimedDoctor>();
     for (const d of primary) byName.set(makeNameKey(d), d);
 
-    const mergeOne = (base: ArchimedDoctor, add: ArchimedDoctor): ArchimedDoctor => {
-      const isEmpty = (v: unknown) => v === undefined || v === null || (typeof v === 'string' && v.trim() === '');
+    const mergeOne = (
+      base: ArchimedDoctor,
+      add: ArchimedDoctor,
+    ): ArchimedDoctor => {
+      const isEmpty = (v: unknown) =>
+        v === undefined ||
+        v === null ||
+        (typeof v === "string" && v.trim() === "");
 
       const merged: ArchimedDoctor = { ...base };
 
       // Photo
-      if ((!base.photo || base.photo === '') && add.photo) merged.photo = add.photo;
+      if ((!base.photo || base.photo === "") && add.photo)
+        merged.photo = add.photo;
 
       // Scientific degree
-      const baseDeg = normalize(base.scientific_degree || '');
-      const addDeg = normalize(add.scientific_degree || '');
-      if ((isEmpty(base.scientific_degree) || baseDeg === 'без степени') && addDeg && addDeg !== 'без степени') {
+      const baseDeg = normalize(base.scientific_degree || "");
+      const addDeg = normalize(add.scientific_degree || "");
+      if (
+        (isEmpty(base.scientific_degree) || baseDeg === "без степени") &&
+        addDeg &&
+        addDeg !== "без степени"
+      ) {
         merged.scientific_degree = add.scientific_degree;
       }
 
@@ -630,31 +833,51 @@ class ArchimedService {
 
       // Category: prefer explicit categories like "Высшая категория", "Первая категория", etc.
       const looksLikeCategory = (s: string) => /(категор)/i.test(s);
-      if ((isEmpty(base.category) || !looksLikeCategory(base.category)) && looksLikeCategory(add.category)) {
+      if (
+        (isEmpty(base.category) || !looksLikeCategory(base.category)) &&
+        looksLikeCategory(add.category)
+      ) {
         merged.category = add.category;
       }
 
       // Info: append experience and extras if missing
-      const infoText = base.info || '';
-      const addInfo = add.info || '';
-      const hasExperience = /стаж\s+с\s+\d{4}/i.test(infoText) || /врачебный\s+стаж\s+с\s+\d{4}/i.test(infoText);
-      const addHasExperience = /стаж\s+с\s+\d{4}/i.test(addInfo) || /врачебный\s+стаж\s+с\s+\d{4}/i.test(addInfo);
+      const infoText = base.info || "";
+      const addInfo = add.info || "";
+      const hasExperience =
+        /стаж\s+с\s+\d{4}/i.test(infoText) ||
+        /врачебный\s+стаж\s+с\s+\d{4}/i.test(infoText);
+      const addHasExperience =
+        /стаж\s+с\s+\d{4}/i.test(addInfo) ||
+        /врачебный\s+стаж\s+с\s+\d{4}/i.test(addInfo);
       const parts: string[] = [];
       if (infoText) parts.push(infoText);
-      if (!hasExperience && addHasExperience) parts.push(addInfo.split(/\n+/)[0]);
+      if (!hasExperience && addHasExperience)
+        parts.push(addInfo.split(/\n+/)[0]);
       // Include extra specialties line if present in add.info and not already present
-      const addExtrasLine = addInfo.split(/\n+/).find((l) => /Смежные специальности/i.test(l));
-      if (addExtrasLine && !/Смежные специальности/i.test(infoText)) parts.push(addExtrasLine);
-      merged.info = parts.filter(Boolean).join('\n');
+      const addExtrasLine = addInfo
+        .split(/\n+/)
+        .find((l) => /Смежные специальности/i.test(l));
+      if (addExtrasLine && !/Смежные специальности/i.test(infoText))
+        parts.push(addExtrasLine);
+      merged.info = parts.filter(Boolean).join("\n");
 
       // Types: merge unique type names
-      const baseTypeNames = new Set<string>([normalize(base.type), ...(base.types || []).map((t) => normalize(t.name))]);
-      const addTypeNames = new Set<string>([normalize(add.type), ...(add.types || []).map((t) => normalize(t.name))]);
+      const baseTypeNames = new Set<string>([
+        normalize(base.type),
+        ...(base.types || []).map((t) => normalize(t.name)),
+      ]);
+      const addTypeNames = new Set<string>([
+        normalize(add.type),
+        ...(add.types || []).map((t) => normalize(t.name)),
+      ]);
       const mergedTypeNames = new Set<string>([...baseTypeNames]);
-      for (const n of addTypeNames) if (n && !mergedTypeNames.has(n)) mergedTypeNames.add(n);
+      for (const n of addTypeNames)
+        if (n && !mergedTypeNames.has(n)) mergedTypeNames.add(n);
       const materialized = Array.from(mergedTypeNames)
         .filter(Boolean)
-        .map((name, idx) => ({ id: idx, name } as ArchimedDoctor['types'][number])) as ArchimedDoctor['types'];
+        .map(
+          (name, idx) => ({ id: idx, name }) as ArchimedDoctor["types"][number],
+        ) as ArchimedDoctor["types"];
       if (materialized.length > 0) {
         merged.types = materialized.map((t, i) => ({ id: i, name: t.name }));
         // Keep primary type as the first humanized type name
@@ -689,24 +912,35 @@ class ArchimedService {
 
   private applyRemovals(list: ArchimedDoctor[]): ArchimedDoctor[] {
     try {
-      return (Array.isArray(list) ? list : []).filter(d => !this.isBlacklisted(d));
+      return (Array.isArray(list) ? list : []).filter(
+        (d) => !this.isBlacklisted(d),
+      );
     } catch {
       return Array.isArray(list) ? list : [];
     }
   }
 
   // Public helpers to link services with doctors
-  async getDoctorsWithServices(): Promise<Array<ArchimedDoctor & { services?: ApiService[] }>> {
+  async getDoctorsWithServices(): Promise<
+    Array<ArchimedDoctor & { services?: ApiService[] }>
+  > {
     const [doctors, services] = await Promise.all([
       this.getDoctors(),
-      this.getServices().catch(() => [] as ApiService[])
+      this.getServices().catch(() => [] as ApiService[]),
     ]);
-    const normalized = (s: string) => (s || '').toLowerCase().replace(/ё/g, 'е');
+    const normalized = (s: string) =>
+      (s || "").toLowerCase().replace(/ё/g, "е");
     const tokenize = (s: string) => normalized(s).split(/\s+/).filter(Boolean);
-    const result = doctors.map(d => {
-      const docTokens = new Set<string>([...tokenize(d.type), ...(d.types || []).flatMap(t => tokenize(t.name))]);
-      const matched = services.filter(svc => {
-        const svcTokens = new Set<string>([...tokenize(svc.group_name), ...tokenize(svc.name)]);
+    const result = doctors.map((d) => {
+      const docTokens = new Set<string>([
+        ...tokenize(d.type),
+        ...(d.types || []).flatMap((t) => tokenize(t.name)),
+      ]);
+      const matched = services.filter((svc) => {
+        const svcTokens = new Set<string>([
+          ...tokenize(svc.group_name),
+          ...tokenize(svc.name),
+        ]);
         for (const t of docTokens) if (svcTokens.has(t)) return true;
         return false;
       });
@@ -715,17 +949,26 @@ class ArchimedService {
     return result;
   }
 
-  async getServicesWithDoctors(): Promise<Array<ApiService & { doctors?: ArchimedDoctor[] }>> {
+  async getServicesWithDoctors(): Promise<
+    Array<ApiService & { doctors?: ArchimedDoctor[] }>
+  > {
     const [doctors, services] = await Promise.all([
       this.getDoctors(),
-      this.getServices().catch(() => [] as ApiService[])
+      this.getServices().catch(() => [] as ApiService[]),
     ]);
-    const normalized = (s: string) => (s || '').toLowerCase().replace(/ё/g, 'е');
+    const normalized = (s: string) =>
+      (s || "").toLowerCase().replace(/ё/g, "е");
     const tokenize = (s: string) => normalized(s).split(/\s+/).filter(Boolean);
-    const svcWithDocs = services.map(svc => {
-      const svcTokens = new Set<string>([...tokenize(svc.group_name), ...tokenize(svc.name)]);
-      const matched = doctors.filter(d => {
-        const docTokens = new Set<string>([...tokenize(d.type), ...(d.types || []).flatMap(t => tokenize(t.name))]);
+    const svcWithDocs = services.map((svc) => {
+      const svcTokens = new Set<string>([
+        ...tokenize(svc.group_name),
+        ...tokenize(svc.name),
+      ]);
+      const matched = doctors.filter((d) => {
+        const docTokens = new Set<string>([
+          ...tokenize(d.type),
+          ...(d.types || []).flatMap((t) => tokenize(t.name)),
+        ]);
         for (const t of docTokens) if (svcTokens.has(t)) return true;
         return false;
       });
@@ -747,10 +990,12 @@ class ArchimedService {
   }
 
   // Appointments
-  async createAppointment(appointmentData: AppointmentData): Promise<ArchimedAppointment> {
+  async createAppointment(
+    appointmentData: AppointmentData,
+  ): Promise<ArchimedAppointment> {
     // Если API токен не настроен, используем моковые данные для тестирования
     if (!ARCHIMED_API_TOKEN) {
-      console.warn('API token not configured, using mock data for testing');
+      console.warn("API token not configured, using mock data for testing");
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve({
@@ -765,7 +1010,7 @@ class ArchimedService {
             doctor_id: appointmentData.doctorId,
             status_id: 1,
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           });
         }, 1000);
       });
@@ -779,12 +1024,12 @@ class ArchimedService {
       preferred_time: appointmentData.preferredTime,
       comments: appointmentData.comments,
       service_id: appointmentData.serviceId,
-      doctor_id: appointmentData.doctorId
+      doctor_id: appointmentData.doctorId,
     };
 
-    return this.request<ArchimedAppointment>('/talons', {
-      method: 'POST',
-      body: JSON.stringify(payload)
+    return this.request<ArchimedAppointment>("/talons", {
+      method: "POST",
+      body: JSON.stringify(payload),
     });
   }
 
@@ -794,22 +1039,35 @@ class ArchimedService {
     statusId?: number;
     page?: number;
     limit?: number;
-  }): Promise<{ data: ArchimedAppointment[]; total: number; page: number; limit: number }> {
+  }): Promise<{
+    data: ArchimedAppointment[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
     try {
       const params = new URLSearchParams();
 
-      if (filters?.doctorId) params.append('doctor_id', filters.doctorId.toString());
-      if (filters?.serviceId) params.append('service_id', filters.serviceId.toString());
-      if (filters?.statusId) params.append('status_id', filters.statusId.toString());
-      if (filters?.page) params.append('page', filters.page.toString());
-      if (filters?.limit) params.append('limit', filters.limit.toString());
+      if (filters?.doctorId)
+        params.append("doctor_id", filters.doctorId.toString());
+      if (filters?.serviceId)
+        params.append("service_id", filters.serviceId.toString());
+      if (filters?.statusId)
+        params.append("status_id", filters.statusId.toString());
+      if (filters?.page) params.append("page", filters.page.toString());
+      if (filters?.limit) params.append("limit", filters.limit.toString());
 
       const queryString = params.toString();
-      const endpoint = queryString ? `/talons?${queryString}` : '/talons';
+      const endpoint = queryString ? `/talons?${queryString}` : "/talons";
 
-      return await this.request<{ data: ArchimedAppointment[]; total: number; page: number; limit: number }>(endpoint);
+      return await this.request<{
+        data: ArchimedAppointment[];
+        total: number;
+        page: number;
+        limit: number;
+      }>(endpoint);
     } catch (error) {
-      console.warn('API недоступен для записей на прием:', error);
+      console.warn("API недоступен для записей на прием:", error);
       return { data: [], total: 0, page: 1, limit: 100 };
     }
   }
@@ -818,7 +1076,10 @@ class ArchimedService {
     return this.request<ArchimedAppointment>(`/talons/${id}`);
   }
 
-  async updateAppointment(id: number, appointmentData: Partial<AppointmentData>): Promise<ArchimedAppointment> {
+  async updateAppointment(
+    id: number,
+    appointmentData: Partial<AppointmentData>,
+  ): Promise<ArchimedAppointment> {
     const payload = {
       patient_name: appointmentData.patientName,
       patient_phone: appointmentData.patientPhone,
@@ -827,33 +1088,43 @@ class ArchimedService {
       preferred_time: appointmentData.preferredTime,
       comments: appointmentData.comments,
       service_id: appointmentData.serviceId,
-      doctor_id: appointmentData.doctorId
+      doctor_id: appointmentData.doctorId,
     };
 
     // Удаляем undefined значения
-    Object.keys(payload).forEach(key =>
-      payload[key as keyof typeof payload] === undefined && delete payload[key as keyof typeof payload]
+    Object.keys(payload).forEach(
+      (key) =>
+        payload[key as keyof typeof payload] === undefined &&
+        delete payload[key as keyof typeof payload],
     );
 
     return this.request<ArchimedAppointment>(`/talons/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(payload)
+      method: "PUT",
+      body: JSON.stringify(payload),
     });
   }
 
   async deleteAppointment(id: number): Promise<void> {
     await this.request<void>(`/talons/${id}`, {
-      method: 'DELETE'
+      method: "DELETE",
     });
   }
 
   // Appointment Statuses
   async getAppointmentStatuses(): Promise<AppointmentStatus[]> {
     try {
-      const response = await this.request<{ data: AppointmentStatus[]; total: number; page: number; limit: number }>('/talonstatuses');
+      const response = await this.request<{
+        data: AppointmentStatus[];
+        total: number;
+        page: number;
+        limit: number;
+      }>("/talonstatuses");
       return response.data || [];
     } catch (error) {
-      console.warn('API недоступен для статусов записей, возвращаем пустой массив:', error);
+      console.warn(
+        "API недоступен для статусов записей, возвращаем пустой массив:",
+        error,
+      );
       return [];
     }
   }
@@ -862,7 +1133,7 @@ class ArchimedService {
     try {
       return await this.request<AppointmentStatus>(`/talonstatuses/${id}`);
     } catch (error) {
-      console.warn('API недоступен для статуса записи:', error);
+      console.warn("API недоступен для статуса записи:", error);
       throw error;
     }
   }
@@ -880,27 +1151,43 @@ class ArchimedService {
   // Groupservices API methods
   async getServiceGroups(): Promise<GroupServiceInfo[]> {
     try {
-      const response = await this.request<{ data: GroupServiceInfo[] }>('/groupservices');
+      const response = await this.request<{ data: GroupServiceInfo[] }>(
+        "/groupservices",
+      );
       return response.data || [];
     } catch (error) {
-      console.warn('API недоступен для групп услуг, возвращаем пустой массив:', error);
+      console.warn(
+        "API недоступен для групп услуг, возвращаем пустой массив:",
+        error,
+      );
       return [];
     }
   }
 
-  async getGroupServices(groupId: number, page = 1): Promise<GroupServicesResponse> {
+  async getGroupServices(
+    groupId: number,
+    page = 1,
+  ): Promise<GroupServicesResponse> {
     try {
       const response = await this.request<GroupServicesResponse>(
         `/groupservices/${groupId}?page=${page}`,
-        { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS }
+        { timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS },
       );
       return response;
     } catch (error) {
-      console.warn(`API недоступен для услуг группы ${groupId}, страница ${page}:`, error);
-      return { data: [], meta: { pagination: { page: 1, pageCount: 1, pageSize: 100, total: 0 } } };
+      console.warn(
+        `API недоступен для услуг группы ${groupId}, страница ${page}:`,
+        error,
+      );
+      return {
+        data: [],
+        meta: {
+          pagination: { page: 1, pageCount: 1, pageSize: 100, total: 0 },
+        },
+      };
     }
   }
 }
 
 export const archimedService = new ArchimedService();
-export default archimedService; 
+export default archimedService;

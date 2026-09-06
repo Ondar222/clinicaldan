@@ -25,6 +25,75 @@ app.use((req, res, next) => {
     }
     next();
 });
+// Сгруппированный прайс: бэкенд сам агрегирует услуги и группы Archimed.
+// Токен хранится только на сервере и подставляется здесь — фронт запрашивает без авторизации.
+app.get('/api/archimed/services', async (req, res) => {
+    try {
+        const headers = { Accept: 'application/json' };
+        if (archimedApiToken)
+            headers.Authorization = `Bearer ${archimedApiToken}`;
+        const fetchJson = async (url) => {
+            const r = await fetch(url, { headers });
+            if (!r.ok)
+                throw new Error(`Upstream ${r.status}`);
+            return r.json();
+        };
+        // Все услуги постранично (одна большая выгрузка вместо десятков запросов с фронта)
+        const PAGE_LIMIT = 500;
+        const first = await fetchJson(`${archimedApiUrl}/services?page=1&limit=${PAGE_LIMIT}`);
+        const total = Number.parseInt(String(first.total ?? first.data?.length ?? 0), 10) || 0;
+        const limit = first.limit ?? PAGE_LIMIT;
+        const all = Array.isArray(first.data) ? [...first.data] : [];
+        const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
+        const cappedPages = Math.min(totalPages, 50);
+        for (let p = 2; p <= cappedPages; p++) {
+            try {
+                const page = await fetchJson(`${archimedApiUrl}/services?page=${p}&limit=${limit}`);
+                if (!Array.isArray(page.data) || page.data.length === 0)
+                    break;
+                all.push(...page.data);
+                if (page.data.length < limit)
+                    break;
+            }
+            catch {
+                break;
+            }
+        }
+        // Справочник групп для имён и иерархии
+        let groupIndex = [];
+        try {
+            const g = await fetchJson(`${archimedApiUrl}/groupservices?limit=100`);
+            groupIndex = Array.isArray(g.data) ? g.data : [];
+        }
+        catch {
+            // без справочника используем group_name из самих услуг
+        }
+        const groupById = new Map(groupIndex.map((g) => [Number(g.id), g]));
+        const grouped = new Map();
+        for (const s of all) {
+            const gid = Number(s.group_id ?? 0);
+            if (!grouped.has(gid)) {
+                const meta = groupById.get(gid);
+                const parent = meta ? groupById.get(Number(meta.owner)) : undefined;
+                grouped.set(gid, {
+                    id: gid,
+                    code: meta?.code ?? '',
+                    name: meta?.name ?? s.group_name ?? '',
+                    parent_id: parent?.id ?? null,
+                    parent_name: parent?.name ?? null,
+                    services: [],
+                });
+            }
+            grouped.get(gid).services.push(s);
+        }
+        const data = Array.from(grouped.values()).sort((a, b) => String(a.name).localeCompare(String(b.name), 'ru'));
+        res.json({ data, total: all.length, groups: data.length });
+    }
+    catch (error) {
+        console.error('[Server] grouped services error:', error);
+        res.status(502).json({ error: 'Failed to build grouped services' });
+    }
+});
 // Archimed API proxy
 const archimedApiUrl = process.env.ARCHIMED_API_URL || 'https://newapi.archimed-soft.ru/api/v5';
 const archimedApiToken = process.env.ARCHIMED_API_TOKEN || '';
