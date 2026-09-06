@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const slides = [
@@ -20,7 +20,37 @@ const slides = [
       "Современные программы комплексного обследования организма позволяют выявить заболевания на ранних стадиях и предотвратить их развитие. Индивидуальный подход к каждому пациенту.",
     buttonText: "ПОДРОБНЕЕ",
     buttonLink: "/prices",
-    image: "/bg-hero.jpg",
+    image: "/bg_6.jpeg",
+  },
+  {
+    id: 3,
+    title: "Опытные врачи",
+    subtitle: "Забота о вашем здоровье",
+    description:
+      "Более 30 специалистов: кардиологи, неврологи, урологи, гинекологи, врачи УЗИ и другие. Запишитесь на приём онлайн или по телефону — подберём удобное время.",
+    buttonText: "НАШИ ВРАЧИ",
+    buttonLink: "/doctors",
+    image: "/bg_3.png",
+  },
+  {
+    id: 4,
+    title: "Направления и услуги",
+    subtitle: "Широкий спектр помощи",
+    description:
+      "От консультаций узких специалистов и лабораторной диагностики до хирургии, косметологии и физиотерапии — всё в одной клинике.",
+    buttonText: "ВСЕ НАПРАВЛЕНИЯ",
+    buttonLink: "/directions",
+    image: "/bg_4.png",
+  },
+  {
+    id: 5,
+    title: "Чекапы организма",
+    subtitle: "Проверьтесь вовремя",
+    description:
+      "Готовые комплексные программы: кардиологические, сосудистые, гастро, гинекологические и онкоскрининг. Выявим риски до появления симптомов.",
+    buttonText: "ВЫБРАТЬ ЧЕКАП",
+    buttonLink: "/checkups",
+    image: "/bg_5.png",
   },
 ];
 
@@ -54,7 +84,7 @@ export default function Hero() {
 
   const prevSlide = () => {
     handleSlideChange(
-      currentSlide === 0 ? slides.length - 1 : currentSlide - 1
+      currentSlide === 0 ? slides.length - 1 : currentSlide - 1,
     );
   };
 
