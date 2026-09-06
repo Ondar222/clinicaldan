@@ -84,7 +84,7 @@ export default function CosmetologyServicePage({
   // Если услуга не найдена - показываем 404 или список
   if (!isLoading && !service) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-12">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-2xl font-bold text-dark mb-4">
             Услуга не найдена
@@ -211,7 +211,7 @@ export default function CosmetologyServicePage({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
@@ -228,7 +228,7 @@ export default function CosmetologyServicePage({
         breadcrumbs={breadcrumbs}
       />
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
         {/* Хлебные крошки */}
         <div className="bg-white border-b">
           <div className="container mx-auto px-4 py-3">

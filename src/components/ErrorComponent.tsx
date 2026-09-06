@@ -12,7 +12,7 @@ export default function ErrorComponent({
   onRetry 
 }: ErrorComponentProps) {
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-12">
       <div className="container mx-auto px-4">
         <div className="max-w-md mx-auto text-center">
           <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg mb-6">

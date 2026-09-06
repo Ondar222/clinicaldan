@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { tools } from "../data/tools";
 import ErrorComponent from "./ErrorComponent";
 
@@ -19,7 +19,7 @@ export default function ToolDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 md:py-12">
+    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-8 md:py-12">
       <div className="container mx-auto px-4">
         {/* Back Button */}
         <div className="mb-6">

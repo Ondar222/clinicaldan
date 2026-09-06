@@ -1,10 +1,10 @@
 import type React from "react";
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import prodoctorovData from "../data/prodoctorov.json";
 import archimedService from "../services/archimed";
 import type { ArchimedDoctor } from "../types/cms";
 import AppointmentModal from "./AppointmentModal";
-import prodoctorovData from "../data/prodoctorov.json";
 import { SeoHead } from "./SeoHead";
 
 // Создаем мапу фото из prodoctorov.json
@@ -45,7 +45,7 @@ const DoctorDetailsPage: React.FC = () => {
         // Сначала проверяем кэш
         const cachedDoctors = archimedService.getDoctorsCache();
         const cachedDoctor = cachedDoctors.find(
-          (d) => d.id === Number.parseInt(id)
+          (d) => d.id === Number.parseInt(id),
         );
 
         if (cachedDoctor) {
@@ -92,11 +92,13 @@ const DoctorDetailsPage: React.FC = () => {
   // Получение фото врача: приоритеты
   const getDoctorPhoto = (doctor: ArchimedDoctor): string | null => {
     if (doctor.photo && doctor.photo.length > 10) {
-      if (doctor.photo.startsWith('http') || doctor.photo.startsWith('/')) {
+      if (doctor.photo.startsWith("http") || doctor.photo.startsWith("/")) {
         return doctor.photo;
       }
       if (doctor.photo.length > 50) {
-        return doctor.photo.startsWith('data:') ? doctor.photo : `data:image/bmp;base64,${doctor.photo}`;
+        return doctor.photo.startsWith("data:")
+          ? doctor.photo
+          : `data:image/bmp;base64,${doctor.photo}`;
       }
     }
 
@@ -153,85 +155,103 @@ const DoctorDetailsPage: React.FC = () => {
   return (
     <>
       {/* SEO мета-теги для страницы врача */}
-      <SeoHead 
+      <SeoHead
         pageData={{
           title: `${getDoctorFullName(doctor)} — ${formatSpecialtyName(doctor.type)} в Кызыле | Клиника Алдан`,
           description: `${getDoctorFullName(doctor)}, ${formatSpecialtyName(doctor.type)}. Запись на прием в Клинике Алдан по телефону +7 (923) 317-60-60. Высококвалифицированный специалист с многолетним опытом работы.`,
           canonical: `/doctors/${doctor.id}`,
-          ogType: 'profile'
+          ogType: "profile",
         }}
       />
-      
-      <div className="min-h-screen bg-gray-50">
-      {/* Хлебные крошки */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link to="/" className="hover:text-primary">
-              Главная
-            </Link>
-            <span>/</span>
-            <Link to="/doctors" className="hover:text-primary">
-              Врачи
-            </Link>
-            <span>/</span>
-            <span className="text-gray-900">{getDoctorInitials(doctor)}</span>
-          </nav>
+
+      <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
+        {/* Хлебные крошки */}
+        <div className="bg-white border-b">
+          <div className="container mx-auto px-4 py-4">
+            <nav className="flex items-center space-x-2 text-sm text-gray-600">
+              <Link to="/" className="hover:text-primary">
+                Главная
+              </Link>
+              <span>/</span>
+              <Link to="/doctors" className="hover:text-primary">
+                Врачи
+              </Link>
+              <span>/</span>
+              <span className="text-gray-900">{getDoctorInitials(doctor)}</span>
+            </nav>
+          </div>
         </div>
-      </div>
 
-      {/* Back button */}
-      <div className="container mx-auto px-4 py-3">
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center text-primary hover:text-primaryDark text-sm bg-transparent border-none cursor-pointer p-0"
-        >
-          <svg
-            className="w-4 h-4 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        {/* Back button */}
+        <div className="container mx-auto px-4 py-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center text-primary hover:text-primaryDark text-sm bg-transparent border-none cursor-pointer p-0"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          Назад
-        </button>
-      </div>
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            Назад
+          </button>
+        </div>
 
-      {/* Основная информация о враче */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Фото врача */}
-              <div className="md:col-span-1">
-                <div className="w-full h-80 bg-gray-100 rounded-lg overflow-hidden shadow-md">
-                  {(() => {
-                    const photoUrl = getDoctorPhoto(doctor);
-                    return photoUrl ? (
-                      <>
-                        <img
-                          src={photoUrl}
-                          alt={getDoctorFullName(doctor)}
-                          className="w-full h-full object-cover object-[50%_30%]"
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                            const nextElement = e.currentTarget
-                              .nextElementSibling as HTMLElement;
-                            if (nextElement) {
-                              nextElement.style.display = "flex";
-                            }
-                          }}
-                        />
-                        <div
-                          className="w-full h-full flex items-center justify-center text-gray-400"
-                          style={{ display: "none" }}
-                        >
+        {/* Основная информация о враче */}
+        <section className="py-12 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="grid md:grid-cols-3 gap-8">
+                {/* Фото врача */}
+                <div className="md:col-span-1">
+                  <div className="w-full h-80 bg-gray-100 rounded-lg overflow-hidden shadow-md">
+                    {(() => {
+                      const photoUrl = getDoctorPhoto(doctor);
+                      return photoUrl ? (
+                        <>
+                          <img
+                            src={photoUrl}
+                            alt={getDoctorFullName(doctor)}
+                            className="w-full h-full object-cover object-[50%_30%]"
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                              const nextElement = e.currentTarget
+                                .nextElementSibling as HTMLElement;
+                              if (nextElement) {
+                                nextElement.style.display = "flex";
+                              }
+                            }}
+                          />
+                          <div
+                            className="w-full h-full flex items-center justify-center text-gray-400"
+                            style={{ display: "none" }}
+                          >
+                            <div className="text-center p-4">
+                              <svg
+                                className="w-16 h-16 mx-auto mb-2"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              <p className="text-sm">Фото недоступно</p>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-primary/20 to-primaryDark/20">
                           <div className="text-center p-4">
                             <svg
                               className="w-16 h-16 mx-auto mb-2"
@@ -244,170 +264,162 @@ const DoctorDetailsPage: React.FC = () => {
                                 clipRule="evenodd"
                               />
                             </svg>
-                            <p className="text-sm">Фото недоступно</p>
+                            <p className="text-sm">Фото отсутствует</p>
                           </div>
                         </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-primary/20 to-primaryDark/20">
-                        <div className="text-center p-4">
-                          <svg
-                            className="w-16 h-16 mx-auto mb-2"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          <p className="text-sm">Фото отсутствует</p>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
-
-              {/* Информация о враче */}
-              <div className="md:col-span-2">
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                  {getDoctorFullName(doctor)}
-                </h1>
-
-                <div className="space-y-4">
-                  {/* Основная специализация */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Специализация
-                    </h3>
-                    <p className="text-gray-700">
-                      {formatSpecialtyName(doctor.type)}
-                    </p>
+                      );
+                    })()}
                   </div>
-
-                  {/* Категория */}
-                  {doctor.category && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Категория
-                      </h3>
-                      <p className="text-gray-700">
-                        {formatSpecialtyName(doctor.category)}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Ученая степень */}
-                  {doctor.scientific_degree && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Ученая степень
-                      </h3>
-                      <p className="text-gray-700">
-                        {doctor.scientific_degree}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Время приема по умолчанию */}
-                  {doctor.max_time && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Время приема
-                      </h3>
-                      <p className="text-gray-700">{doctor.max_time} минут</p>
-                    </div>
-                  )}
-
-                  {/* Отделение */}
-                  {doctor.branch && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Отделение
-                      </h3>
-                      <p className="text-gray-700">{doctor.branch}</p>
-                    </div>
-                  )}
-
-                  {/* Адрес */}
-                  {doctor.address && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Адрес
-                      </h3>
-                      <p className="text-gray-700">{doctor.address}</p>
-                    </div>
-                  )}
-
-                  {/* Дополнительная информация */}
-                  {doctor.info && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Дополнительная информация
-                      </h3>
-                      <p className="text-gray-700 whitespace-pre-line">
-                        {doctor.info}
-                      </p>
-                    </div>
-                  )}
                 </div>
+
+                {/* Информация о враче */}
+                <div className="md:col-span-2">
+                  <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                    {getDoctorFullName(doctor)}
+                  </h1>
+
+                  <div className="space-y-4">
+                    {/* Основная специализация */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Специализация
+                      </h3>
+                      <p className="text-gray-700">
+                        {formatSpecialtyName(doctor.type)}
+                      </p>
+                    </div>
+
+                    {/* Категория */}
+                    {doctor.category && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          Категория
+                        </h3>
+                        <p className="text-gray-700">
+                          {formatSpecialtyName(doctor.category)}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Ученая степень */}
+                    {doctor.scientific_degree && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          Ученая степень
+                        </h3>
+                        <p className="text-gray-700">
+                          {doctor.scientific_degree}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Время приема по умолчанию */}
+                    {doctor.max_time && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          Время приема
+                        </h3>
+                        <p className="text-gray-700">{doctor.max_time} минут</p>
+                      </div>
+                    )}
+
+                    {/* Отделение */}
+                    {doctor.branch && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          Отделение
+                        </h3>
+                        <p className="text-gray-700">{doctor.branch}</p>
+                      </div>
+                    )}
+
+                    {/* Адрес */}
+                    {doctor.address && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          Адрес
+                        </h3>
+                        <p className="text-gray-700">{doctor.address}</p>
+                      </div>
+                    )}
+
+                    {/* Дополнительная информация */}
+                    {doctor.info && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          Дополнительная информация
+                        </h3>
+                        <p className="text-gray-700 whitespace-pre-line">
+                          {doctor.info}
+                        </p>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Кнопка записи */}
-                <div className="mt-8">
-                  <button
-                    onClick={handleAppointmentClick}
-                    className="w-full px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primaryDark transition-colors shadow-lg flex items-center justify-center gap-2"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Записаться на прием
-                  </button>
-                  <p className="text-xs text-gray-500 mt-3 text-center">
-                    Запишитесь на прием к врачу через онлайн-форму
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Все специализации врача */}
-      {doctor.types && doctor.types.length > 1 && (
-        <section className="py-12 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold text-gray-900 mb-8">
-                Все специализации
-              </h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {doctor.types.map((type) => (
-                  <div
-                    key={type.id}
-                    className="bg-white p-4 rounded-lg shadow-sm"
-                  >
-                    <p className="text-gray-700">
-                      {formatSpecialtyName(type.name)}
+                  <div className="mt-8">
+                    <button
+                      onClick={handleAppointmentClick}
+                      className="w-full px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primaryDark transition-colors shadow-lg flex items-center justify-center gap-2"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Записаться на прием
+                    </button>
+                    <p className="text-xs text-gray-500 mt-3 text-center">
+                      Запишитесь на прием к врачу через онлайн-форму
                     </p>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
-      )}
 
-      {/* Модальное окно записи на прием */}
-      <AppointmentModal
-        isOpen={appointmentModal.isOpen}
-        onClose={() => setAppointmentModal({ isOpen: false })}
-        doctor={appointmentModal.doctor}
-        onSuccess={handleAppointmentSuccess}
-      />
-    </div>
+        {/* Все специализации врача */}
+        {doctor.types && doctor.types.length > 1 && (
+          <section className="py-12 bg-gray-50">
+            <div className="container mx-auto px-4">
+              <div className="max-w-4xl mx-auto">
+                <h2 className="text-2xl font-bold text-gray-900 mb-8">
+                  Все специализации
+                </h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {doctor.types.map((type) => (
+                    <div
+                      key={type.id}
+                      className="bg-white p-4 rounded-lg shadow-sm"
+                    >
+                      <p className="text-gray-700">
+                        {formatSpecialtyName(type.name)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Модальное окно записи на прием */}
+        <AppointmentModal
+          isOpen={appointmentModal.isOpen}
+          onClose={() => setAppointmentModal({ isOpen: false })}
+          doctor={appointmentModal.doctor}
+          onSuccess={handleAppointmentSuccess}
+        />
+      </div>
     </>
   );
 };

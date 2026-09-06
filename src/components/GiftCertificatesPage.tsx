@@ -1,6 +1,9 @@
 import type React from "react";
 import { useState } from "react";
-import certificateService, { type CreateCertificateRequest, type Customer } from "../services/certificates";
+import certificateService, {
+  type CreateCertificateRequest,
+  type Customer,
+} from "../services/certificates";
 
 interface CertificateForm {
   recipientName: string;
@@ -41,14 +44,19 @@ export default function GiftCertificatesPage() {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target as HTMLInputElement;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "amount"
-        ? Number.isNaN(Number.parseInt(value)) ? prev.amount : Number.parseInt(value)
-        : (type === 'checkbox' ? (e.target as HTMLInputElement).checked : value),
+      [name]:
+        name === "amount"
+          ? Number.isNaN(Number.parseInt(value))
+            ? prev.amount
+            : Number.parseInt(value)
+          : type === "checkbox"
+            ? (e.target as HTMLInputElement).checked
+            : value,
     }));
 
     // Очищаем ошибку поля при изменении
@@ -71,14 +79,16 @@ export default function GiftCertificatesPage() {
     if (!formData.amount || Number.isNaN(formData.amount)) {
       errors.push("Укажите сумму сертификата");
     } else if (formData.amount < minAmount || formData.amount > maxAmount) {
-      errors.push(`Сумма должна быть от ${minAmount.toLocaleString('ru-RU')} до ${maxAmount.toLocaleString('ru-RU')} ₽`);
+      errors.push(
+        `Сумма должна быть от ${minAmount.toLocaleString("ru-RU")} до ${maxAmount.toLocaleString("ru-RU")} ₽`,
+      );
     }
 
     if (!formData.recipientName.trim()) {
       errors.push("Имя получателя обязательно");
       fieldErrors.recipientName = "Имя получателя обязательно";
     } else {
-      const recipientNameParts = formData.recipientName.trim().split(' ');
+      const recipientNameParts = formData.recipientName.trim().split(" ");
       if (recipientNameParts.length < 2 || !recipientNameParts[1].trim()) {
         errors.push("Укажите имя и фамилию получателя");
         fieldErrors.recipientName = "Укажите имя и фамилию получателя";
@@ -97,7 +107,7 @@ export default function GiftCertificatesPage() {
       errors.push("Ваше имя обязательно");
       fieldErrors.senderName = "Ваше имя обязательно";
     } else {
-      const senderNameParts = formData.senderName.trim().split(' ');
+      const senderNameParts = formData.senderName.trim().split(" ");
       if (senderNameParts.length < 2 || !senderNameParts[1].trim()) {
         errors.push("Укажите ваше имя и фамилию");
         fieldErrors.senderName = "Укажите ваше имя и фамилию";
@@ -131,7 +141,9 @@ export default function GiftCertificatesPage() {
 
     try {
       // Подготовка данных клиента (получателя)
-      const customerName = certificateService.parseFullName(formData.recipientName);
+      const customerName = certificateService.parseFullName(
+        formData.recipientName,
+      );
       const customer: Customer = {
         firstName: customerName.firstName,
         lastName: customerName.lastName,
@@ -140,11 +152,14 @@ export default function GiftCertificatesPage() {
 
       // Подготовка данных спонсора (отправителя) - если это подарочный сертификат
       let sponsor: Customer | undefined;
-      const isSelfCertificate = formData.senderEmail === formData.recipientEmail && 
-                               formData.senderName === formData.recipientName;
-      
+      const isSelfCertificate =
+        formData.senderEmail === formData.recipientEmail &&
+        formData.senderName === formData.recipientName;
+
       if (!isSelfCertificate) {
-        const sponsorName = certificateService.parseFullName(formData.senderName);
+        const sponsorName = certificateService.parseFullName(
+          formData.senderName,
+        );
         sponsor = {
           firstName: sponsorName.firstName,
           lastName: sponsorName.lastName,
@@ -162,19 +177,21 @@ export default function GiftCertificatesPage() {
       const requestData: CreateCertificateRequest = {
         amount,
         customer: {
-          firstName: customer.firstName.trim() || '—',
-          lastName: customer.lastName.trim() || '—',
+          firstName: customer.firstName.trim() || "—",
+          lastName: customer.lastName.trim() || "—",
           email: customer.email.trim(),
           ...(customer.phone ? { phone: customer.phone } : {}),
         },
-        ...(sponsor ? {
-          sponsor: {
-            firstName: sponsor.firstName.trim() || '—',
-            lastName: sponsor.lastName.trim() || '—',
-            email: sponsor.email.trim(),
-            ...(sponsor.phone ? { phone: sponsor.phone } : {}),
-          },
-        } : {}),
+        ...(sponsor
+          ? {
+              sponsor: {
+                firstName: sponsor.firstName.trim() || "—",
+                lastName: sponsor.lastName.trim() || "—",
+                email: sponsor.email.trim(),
+                ...(sponsor.phone ? { phone: sponsor.phone } : {}),
+              },
+            }
+          : {}),
         greetingText: formData.message?.trim() || undefined,
       };
 
@@ -189,7 +206,10 @@ export default function GiftCertificatesPage() {
       window.location.href = paymentUrl;
     } catch (error) {
       console.error("Ошибка при оформлении сертификата:", error);
-      const errorMessage = error instanceof Error ? error.message : "Произошла ошибка при создании платежа";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Произошла ошибка при создании платежа";
       setError(errorMessage + ". Попробуйте еще раз.");
       setIsSubmitting(false);
     }
@@ -210,7 +230,7 @@ export default function GiftCertificatesPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8 text-center">
             <div className="text-green-500 mb-4">
@@ -249,7 +269,7 @@ export default function GiftCertificatesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 md:py-12">
+    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-8 md:py-12">
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         <div className="text-center mb-8 md:mb-10">
@@ -497,7 +517,9 @@ export default function GiftCertificatesPage() {
                         className="w-40 px-4 py-2 border rounded focus:outline-none focus:border-primary border-gray-300"
                         placeholder="Напр.: 7000"
                       />
-                      <span className="text-sm text-gray-500">₽ (от 1 000 до 50 000)</span>
+                      <span className="text-sm text-gray-500">
+                        ₽ (от 1 000 до 50 000)
+                      </span>
                     </div>
                   )}
                 </div>
@@ -640,7 +662,9 @@ export default function GiftCertificatesPage() {
               </div>
 
               <div>
-                <label className={`flex items-start space-x-3 ${!formData.agreeToSiteConsent && error ? 'text-red-600' : ''}`}>
+                <label
+                  className={`flex items-start space-x-3 ${!formData.agreeToSiteConsent && error ? "text-red-600" : ""}`}
+                >
                   <input
                     type="checkbox"
                     name="agreeToSiteConsent"
@@ -648,20 +672,21 @@ export default function GiftCertificatesPage() {
                     onChange={handleChange}
                     className={`mt-1 h-4 w-4 text-primary focus:ring-primary rounded ${
                       !formData.agreeToSiteConsent && error
-                        ? 'border-red-300 focus:ring-red-500'
-                        : 'border-gray-300'
+                        ? "border-red-300 focus:ring-red-500"
+                        : "border-gray-300"
                     }`}
                     required
                   />
                   <span className="text-sm text-gray-700">
-                    Я согласен с условиями обработки персональных данных на сайте согласно{' '}
+                    Я согласен с условиями обработки персональных данных на
+                    сайте согласно{" "}
                     <a
                       href="/documents/согласие_на_персданные_на_сайт.docx"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline"
                     >
-                     согласию на обработку персональных данных
+                      согласию на обработку персональных данных
                     </a>
                   </span>
                 </label>
@@ -682,15 +707,16 @@ export default function GiftCertificatesPage() {
             </form>
 
             <div className="mt-4 text-sm text-gray-600">
-              Оформляя сертификат, вы подтверждаете согласие с{' '}
+              Оформляя сертификат, вы подтверждаете согласие с{" "}
               <a
                 href="/documents/utverzhdeno.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"
               >
-             Политики защиты и обработки персональных данных
-              </a>.
+                Политики защиты и обработки персональных данных
+              </a>
+              .
             </div>
 
             <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">

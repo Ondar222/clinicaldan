@@ -83,7 +83,7 @@ export default function DirectionsPage() {
   }, [searchQuery]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
       {/* Hero */}
       <section
         className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"

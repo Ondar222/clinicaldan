@@ -5,7 +5,7 @@ import type { ToolItem } from "../data/tools";
 
 export default function ToolsPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-8 md:py-12">
+    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-8 md:py-12">
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         <div className="text-center mb-10 md:mb-16">
@@ -13,8 +13,8 @@ export default function ToolsPage() {
             Наши инструменты
           </h1>
           <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
-            В нашей клинике используется современное медицинское оборудование для
-            точной диагностики и эффективного лечения.
+            В нашей клинике используется современное медицинское оборудование
+            для точной диагностики и эффективного лечения.
           </p>
         </div>
 

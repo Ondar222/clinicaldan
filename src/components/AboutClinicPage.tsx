@@ -4,7 +4,7 @@ import { tools } from "../data/tools";
 
 export default function AboutClinicPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-8 md:py-12">
+    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-8 md:py-12">
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         <div className="text-center mb-10 md:mb-16">
@@ -25,7 +25,7 @@ export default function AboutClinicPage() {
             {/* Decorative Elements */}
             <div className="absolute -left-4 top-0 w-12 h-12 bg-primary/10 rounded-full blur-xl" />
             <div className="absolute -right-4 bottom-0 w-16 h-16 bg-primary/5 rounded-full blur-xl" />
-            
+
             <div className="relative flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3">
@@ -35,7 +35,11 @@ export default function AboutClinicPage() {
                   </h2>
                 </div>
                 <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl">
-                  В нашей клинике используется <span className="font-medium text-dark">передовое медицинское оборудование</span> для точной диагностики и эффективного лечения
+                  В нашей клинике используется{" "}
+                  <span className="font-medium text-dark">
+                    передовое медицинское оборудование
+                  </span>{" "}
+                  для точной диагностики и эффективного лечения
                 </p>
               </div>
               <Link
@@ -93,7 +97,7 @@ export default function AboutClinicPage() {
                 ))}
               </div>
             </div>
-            
+
             {/* Desktop: Grid layout */}
             <div className="hidden sm:grid grid-cols-5 gap-4 mb-8">
               {tools.slice(-5).map((tool, index) => (

@@ -330,7 +330,7 @@ const ServicePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
       {/* Хлебные крошки */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">

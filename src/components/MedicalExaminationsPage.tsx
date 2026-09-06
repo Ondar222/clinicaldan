@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import AppointmentModal from "./AppointmentModal";
+import prodoctorovData from "../data/prodoctorov.json";
 import archimedService from "../services/archimed";
 import type { ArchimedDoctor } from "../types/cms";
-import prodoctorovData from "../data/prodoctorov.json";
 import { getDoctorExperience } from "../utils/doctorExperience";
+import AppointmentModal from "./AppointmentModal";
 
 interface CheckupType {
   id: string;
@@ -30,7 +30,8 @@ const checkupTypes: CheckupType[] = [
   {
     id: "sanatorium",
     title: "Для санаторно-курортного лечения",
-    description: "Справка по форме №070/у. Обследование для получения путёвки в санаторий.",
+    description:
+      "Справка по форме №070/у. Обследование для получения путёвки в санаторий.",
     price: 2200,
     duration: "1-2 дня",
     features: [
@@ -64,7 +65,8 @@ const checkupTypes: CheckupType[] = [
   {
     id: "sanatorium-card",
     title: "Санаторно-курортная карта",
-    description: "По форме №072/у. Комплексное обследование для лечения в санатории.",
+    description:
+      "По форме №072/у. Комплексное обследование для лечения в санатории.",
     price: 3500,
     duration: "2-3 дня",
     features: [
@@ -99,7 +101,8 @@ const checkupTypes: CheckupType[] = [
   {
     id: "gibdd",
     title: "В ГИБДД",
-    description: "По форме №003-в/у. Для получения/замены водительского удостоверения.",
+    description:
+      "По форме №003-в/у. Для получения/замены водительского удостоверения.",
     price: 1800,
     duration: "1-2 часа",
     features: [
@@ -114,7 +117,8 @@ const checkupTypes: CheckupType[] = [
   {
     id: "civil-service",
     title: "При поступлении на гос.службу",
-    description: "По форме № 001-ГС/у. Для кандидатов на государственную службу.",
+    description:
+      "По форме № 001-ГС/у. Для кандидатов на государственную службу.",
     price: 2000,
     duration: "1-2 дня",
     features: [
@@ -236,7 +240,8 @@ const getDoctorPhotoUrl = (doctor: ArchimedDoctor): string => {
     return photoFromMap.startsWith("/") ? photoFromMap : photoFromMap;
   }
 
-  const initials = `${doctor.name1?.charAt(0) || ""}${doctor.name2?.charAt(0) || ""}`.toUpperCase();
+  const initials =
+    `${doctor.name1?.charAt(0) || ""}${doctor.name2?.charAt(0) || ""}`.toUpperCase();
   return `https://placehold.co/300x400/e0f2f1/00695c?text=${initials || "Врач"}`;
 };
 
@@ -264,7 +269,7 @@ const formatSpecialtyName = (raw: string | undefined | null): string => {
 
 export default function MedicalExaminationsPage() {
   const [selectedCheckup, setSelectedCheckup] = useState<CheckupType | null>(
-    null
+    null,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCheckupTitle, setSelectedCheckupTitle] = useState<string>("");
@@ -288,8 +293,8 @@ export default function MedicalExaminationsPage() {
               d.name.trim() !== "" &&
               !/массажист/i.test(d?.type || "") &&
               !/(администратор|archimed|арбаев)/i.test(
-                `${d?.name || ""} ${d?.name1 || ""} ${d?.name2 || ""}`.toLowerCase()
-              )
+                `${d?.name || ""} ${d?.name1 || ""} ${d?.name2 || ""}`.toLowerCase(),
+              ),
           )
           .slice(0, 8);
         setDoctors(filtered);
@@ -321,7 +326,7 @@ export default function MedicalExaminationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary to-primaryDark text-white py-16 md:py-20">
         <div className="container mx-auto px-4">
@@ -349,8 +354,6 @@ export default function MedicalExaminationsPage() {
           </div>
         </div>
       </section>
-
-   
 
       {/* Checkup Types */}
       <section id="checkups" className="py-12 md:py-16 bg-gray-50">
@@ -454,7 +457,6 @@ export default function MedicalExaminationsPage() {
               <p className="text-sm md:text-lg text-gray-700 mb-4 md:mb-6">
                 Мы проводим медицинские осмотры для сотрудников организаций:
                 предварительные (при приёме на работу) и периодические.
-           
               </p>
               <ul className="list-disc list-inside text-gray-700 mb-4 md:mb-6 space-y-1 md:space-y-2 text-sm md:text-base">
                 <li>Медосмотр при приёме на работу (форма 086/у)</li>
@@ -607,27 +609,26 @@ export default function MedicalExaminationsPage() {
                     </p>
 
                     <div className="space-y-1 md:space-y-1.5 text-xs md:text-sm text-gray-600 mb-3 flex-grow">
-                      {doctor.branch &&
-                        !/алдан/i.test(doctor.branch || "") && (
-                          <div className="flex items-center">
-                            <svg
-                              className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                              />
-                            </svg>
-                            <span className="leading-relaxed">
-                              {doctor.branch}
-                            </span>
-                          </div>
-                        )}
+                      {doctor.branch && !/алдан/i.test(doctor.branch || "") && (
+                        <div className="flex items-center">
+                          <svg
+                            className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                            />
+                          </svg>
+                          <span className="leading-relaxed">
+                            {doctor.branch}
+                          </span>
+                        </div>
+                      )}
                       {(() => {
                         const years = getExperienceYears(doctor);
                         if (!years && years !== 0) return null;
@@ -735,10 +736,7 @@ export default function MedicalExaminationsPage() {
 
       {/* Appointment Modal */}
       {isModalOpen && (
-        <AppointmentModal
-          isOpen={isModalOpen}
-          onClose={handleModalClose}
-        />
+        <AppointmentModal isOpen={isModalOpen} onClose={handleModalClose} />
       )}
 
       {/* Doctor Appointment Modal */}

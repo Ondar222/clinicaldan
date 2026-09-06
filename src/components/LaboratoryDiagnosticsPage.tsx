@@ -139,7 +139,7 @@ const LaboratoryDiagnosticsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-6 sm:py-8 md:py-12">
+      <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-6 sm:py-8 md:py-12">
         <div className="container mx-auto px-3 sm:px-4">
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dark mb-3 sm:mb-4">
@@ -156,7 +156,7 @@ const LaboratoryDiagnosticsPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-6 sm:py-8 md:py-12">
+      <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-6 sm:py-8 md:py-12">
         <div className="container mx-auto px-3 sm:px-4">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-dark mb-4">
@@ -176,7 +176,7 @@ const LaboratoryDiagnosticsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
       {/* Герой-секция */}
       <section
         className="py-12 sm:py-16 md:py-20 bg-cover bg-center relative"

@@ -99,7 +99,7 @@ export default function ContactsPage() {
                     src="https://yandex.ru/map-widget/v1/?um=constructor%3Ad2e4685aaf3109b93382144c62e33c664310acfba9a40f0943bec22ae4f9d8f5&amp;source=constructor&amp;z=17"
                     width="100%"
                     height="100%"
-                    className="rounded-lg"
+                    className="rounded-lg grayscale-[0.4] opacity-95 transition-all duration-300"
                     title="Карта расположения клиники"
                   />
                 </div>

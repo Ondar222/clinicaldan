@@ -93,7 +93,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/"
-                  className="text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Главная
                 </Link>
@@ -101,7 +101,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/about"
-                  className="text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   О клинике
                 </Link>
@@ -109,7 +109,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/doctors"
-                  className="text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Врачи
                 </Link>
@@ -117,7 +117,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/directions"
-                  className="text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Направления
                 </Link>
@@ -125,7 +125,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/services/cosmetology"
-                  className="text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Косметология
                 </Link>
@@ -133,7 +133,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/prices"
-                  className="text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Прайс
                 </Link>
@@ -141,7 +141,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/stock"
-                  className="text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Акции
                 </Link>
@@ -149,7 +149,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/news"
-                  className="text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] md:text-xs lg:text-[11px] xl:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Новости
                 </Link>
@@ -161,7 +161,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/certificates"
-                  className="text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Сертификаты
                 </Link>
@@ -169,7 +169,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/checkups"
-                  className="text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Медосмотры
                 </Link>
@@ -177,7 +177,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/reviews"
-                  className="text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Отзывы
                 </Link>
@@ -185,7 +185,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/questions"
-                  className="text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Вопросы
                 </Link>
@@ -193,7 +193,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/documents"
-                  className="text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Документы
                 </Link>
@@ -201,7 +201,7 @@ export default function Header() {
               <li>
                 <Link
                   to="/contacts"
-                  className="text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
+                  className="nav-underline text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Контакты
                 </Link>

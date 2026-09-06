@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface Testimonial {
   id: number;
@@ -30,18 +30,26 @@ const testimonials: Testimonial[] = [
 
 export default function Testimonials() {
   const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   const goToPrevTestimonial = () => {
     setActiveTestimonialIndex((prevIndex) =>
-      prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1
+      prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1,
     );
   };
 
   const goToNextTestimonial = () => {
     setActiveTestimonialIndex((prevIndex) =>
-      prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
+      prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1,
     );
   };
+
+  // Автосмена отзывов, ставится на паузу при наведении/касании
+  useEffect(() => {
+    if (isPaused || testimonials.length < 2) return;
+    const id = window.setInterval(goToNextTestimonial, 6000);
+    return () => window.clearInterval(id);
+  }, [isPaused]);
 
   return (
     <section
@@ -57,7 +65,12 @@ export default function Testimonials() {
           Отзывы пациентов
         </h2>
 
-        <div className="max-w-3xl mx-auto relative">
+        <div
+          className="max-w-3xl mx-auto relative"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+        >
           {/* Testimonial card */}
           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-xl p-4 sm:p-6 border border-white/20">
             <div className="flex justify-center mb-3 sm:mb-4">
