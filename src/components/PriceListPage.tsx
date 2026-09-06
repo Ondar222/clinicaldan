@@ -259,6 +259,7 @@ export default function PriceListPage() {
   const [categories, setCategories] = useState<PriceCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const load = async () => {
@@ -316,6 +317,50 @@ export default function PriceListPage() {
     () => categories.reduce((sum, c) => sum + c.count, 0),
     [categories],
   );
+
+  // Постраничный вывод: одна категория за раз, внутри неё услуги по PAGE_SIZE.
+  // При «Все услуги» показываем список категорий-ссылок вместо простыни.
+  const PAGE_SIZE = 100;
+
+  const activeCategory =
+    selectedCategory === "all" ? null : (visibleCategories[0] ?? null);
+
+  const pagedSubgroups = useMemo(() => {
+    if (!activeCategory) return [];
+    let remaining = (page - 1) * PAGE_SIZE;
+    const result: Array<{ group: PriceSubgroup; slice: ApiService[] }> = [];
+    for (const g of activeCategory.subgroups) {
+      if (remaining >= g.services.length) {
+        remaining -= g.services.length;
+        continue;
+      }
+      const take = Math.min(PAGE_SIZE, g.services.length - remaining);
+      result.push({
+        group: g,
+        slice: g.services.slice(remaining, remaining + take),
+      });
+      remaining = 0;
+      if (result.reduce((sum, r) => sum + r.slice.length, 0) >= PAGE_SIZE)
+        break;
+    }
+    return result;
+  }, [activeCategory, page]);
+
+  const totalPages = activeCategory
+    ? Math.max(1, Math.ceil(activeCategory.count / PAGE_SIZE))
+    : 0;
+
+  // Сброс страницы при смене категории или поискового запроса
+  useEffect(() => {
+    setPage(1);
+  }, [selectedCategory, searchQuery]);
+
+  const goToPage = (p: number) => {
+    setPage(p);
+    document
+      .getElementById("price-categories")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const ServiceRow = ({ service }: { service: ApiService }) => {
     const price = getServicePrice(service);
@@ -417,7 +462,10 @@ export default function PriceListPage() {
         </section>
 
         {/* Прайс по категориям */}
-        <section className="py-8 sm:py-10 md:py-12 bg-gray-50">
+        <section
+          id="price-categories"
+          className="py-8 sm:py-10 md:py-12 bg-gray-50"
+        >
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6 max-w-5xl mx-auto">
@@ -491,47 +539,127 @@ export default function PriceListPage() {
                       По вашему запросу ничего не найдено.
                     </p>
                   </div>
-                ) : (
-                  <div className="space-y-6 sm:space-y-8">
+                ) : selectedCategory === "all" ? (
+                  /* Обзор всех категорий: компактный список-меню */
+                  <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 divide-y divide-gray-100">
                     {visibleCategories.map((category) => (
-                      <div
+                      <button
                         key={category.id}
-                        className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm border border-gray-100"
+                        onClick={() => setSelectedCategory(category.id)}
+                        className="w-full flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 text-left hover:bg-gray-50 transition-colors"
                       >
+                        <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary shrink-0 [&>svg]:h-5 [&>svg]:w-5">
+                          {category.icon}
+                        </span>
+                        <span className="flex-grow min-w-0">
+                          <span className="block text-sm sm:text-base font-medium text-gray-900 truncate">
+                            {category.name}
+                          </span>
+                          <span className="block text-xs text-gray-500">
+                            {category.count} услуг
+                          </span>
+                        </span>
+                        <svg
+                          className="w-5 h-5 text-gray-400 shrink-0"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  activeCategory && (
+                    <div className="space-y-6">
+                      <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm border border-gray-100">
                         <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
                           <span className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-primary/10 text-primary shrink-0 [&>svg]:h-5 [&>svg]:w-5 sm:[&>svg]:h-6 sm:[&>svg]:w-6">
-                            {category.icon}
+                            {activeCategory.icon}
                           </span>
                           <div>
                             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900">
-                              {category.name}
+                              {activeCategory.name}
                             </h2>
                             <p className="text-xs sm:text-sm text-gray-500">
-                              {category.count} услуг
+                              {activeCategory.count} услуг
                             </p>
                           </div>
                         </div>
 
-                        {category.subgroups.map((g) => (
-                          <div key={g.name} className="mb-6 last:mb-0">
-                            {g.name && category.subgroups.length > 1 && (
+                        {pagedSubgroups.map(({ group, slice }) => (
+                          <div key={group.name} className="mb-6 last:mb-0">
+                            {group.name && pagedSubgroups.length > 0 && (
                               <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 pb-2 border-b border-gray-100">
-                                {g.name}
+                                {group.name}
                                 <span className="text-xs sm:text-sm text-gray-500 font-normal ml-2">
-                                  {g.services.length}
+                                  {group.services.length}
                                 </span>
                               </h3>
                             )}
                             <div className="divide-y divide-gray-100">
-                              {g.services.map((s) => (
+                              {slice.map((s) => (
                                 <ServiceRow key={s.id} service={s} />
                               ))}
                             </div>
                           </div>
                         ))}
                       </div>
-                    ))}
-                  </div>
+
+                      {/* Пагинация */}
+                      {totalPages > 1 && (
+                        <div className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
+                          <button
+                            onClick={() => goToPage(page - 1)}
+                            disabled={page <= 1}
+                            className="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium border border-gray-200 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                          >
+                            ← Назад
+                          </button>
+                          {Array.from({ length: totalPages }, (_, i) => i + 1)
+                            .filter(
+                              (p) =>
+                                p === 1 ||
+                                p === totalPages ||
+                                Math.abs(p - page) <= 1,
+                            )
+                            .map((p, idx, arr) => (
+                              <span
+                                key={p}
+                                className="flex items-center gap-1 sm:gap-2"
+                              >
+                                {idx > 0 && arr[idx - 1] < p - 1 && (
+                                  <span className="text-gray-400 px-1">…</span>
+                                )}
+                                <button
+                                  onClick={() => goToPage(p)}
+                                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                                    p === page
+                                      ? "bg-primary text-white shadow-md"
+                                      : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-100"
+                                  }`}
+                                >
+                                  {p}
+                                </button>
+                              </span>
+                            ))}
+                          <button
+                            onClick={() => goToPage(page + 1)}
+                            disabled={page >= totalPages}
+                            className="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium border border-gray-200 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                          >
+                            Вперёд →
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )
                 )}
               </div>
             )}
