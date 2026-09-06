@@ -24,6 +24,30 @@ function getServicePrice(service: ApiService): number {
   return service.cito_cost > 0 ? service.cito_cost : service.base_cost;
 }
 
+// Нормализация для поиска: нижний регистр, ё→е, латинские двойники → кириллица
+const LATIN_TO_CYR: Record<string, string> = {
+  a: "а",
+  b: "в",
+  c: "с",
+  e: "е",
+  h: "н",
+  k: "к",
+  m: "м",
+  o: "о",
+  p: "р",
+  t: "т",
+  x: "х",
+  y: "у",
+};
+
+function normalizeSearch(s: string): string {
+  return (s || "")
+    .toLowerCase()
+    .replace(/ё/g, "е")
+    .replace(/[abcehkmopxy]/g, (ch) => LATIN_TO_CYR[ch] ?? ch)
+    .trim();
+}
+
 // Иконки в стиле Heroicons (outline, 24x24) — как в остальной вёрстке сайта
 function CategoryIcon({ d, className }: { d: string; className?: string }) {
   return (
@@ -258,11 +282,16 @@ export default function PriceListPage() {
 
   // Поиск фильтрует услуги, пустые подкатегории и категории скрываются
   const filteredCategories = useMemo(() => {
-    const query = searchQuery.toLowerCase().trim();
+    const query = normalizeSearch(searchQuery);
     if (!query) return categories;
-    const match = (s: ApiService) =>
-      s.name.toLowerCase().includes(query) ||
-      (s.altname || "").toLowerCase().includes(query);
+    const terms = query.split(/\s+/).filter(Boolean);
+    const match = (s: ApiService) => {
+      const haystack = normalizeSearch(
+        `${s.name} ${s.altname || ""} ${s.group_name || ""}`,
+      );
+      // Каждое слово запроса должно встретиться (порядок не важен)
+      return terms.every((t) => haystack.includes(t));
+    };
 
     return categories
       .map((c) => ({
