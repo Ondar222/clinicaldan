@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import archimedService from "../services/archimed";
 import {
   DIRECTIONS,
-  keywordMatch,
   type DirectionConfig,
+  keywordMatch,
 } from "../services/directions";
 import type { ApiService } from "../types/cms";
 import ServiceGrid from "./ServiceGrid";
@@ -15,13 +15,13 @@ function getServicePrice(service: ApiService): number {
 
 function getServicesForDirection(
   allServices: ApiService[],
-  direction: DirectionConfig
+  direction: DirectionConfig,
 ): ApiService[] {
   return allServices.filter(
     (s) =>
       keywordMatch(s.group_name, direction.serviceKeywords) ||
       keywordMatch(s.name, direction.serviceKeywords) ||
-      keywordMatch(s.altname, direction.serviceKeywords)
+      keywordMatch(s.altname, direction.serviceKeywords),
   );
 }
 
@@ -78,7 +78,7 @@ export default function DirectionsPage() {
     return DIRECTIONS.filter(
       (d) =>
         d.title.toLowerCase().includes(query) ||
-        (d.description && d.description.toLowerCase().includes(query))
+        (d.description && d.description.toLowerCase().includes(query)),
     );
   }, [searchQuery]);
 
@@ -133,8 +133,18 @@ export default function DirectionsPage() {
                   onClick={() => setSearchQuery("")}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               )}
@@ -163,7 +173,8 @@ export default function DirectionsPage() {
             <div className="space-y-4 sm:space-y-5">
               {filteredDirections.map((direction) => {
                 const isOpen = openSlug === direction.slug;
-                const dirServices = servicesByDirection.get(direction.slug) || [];
+                const dirServices =
+                  servicesByDirection.get(direction.slug) || [];
                 const shown = dirServices.slice(0, 12);
 
                 return (
@@ -175,7 +186,7 @@ export default function DirectionsPage() {
                       type="button"
                       onClick={() =>
                         setOpenSlug((prev) =>
-                          prev === direction.slug ? null : direction.slug
+                          prev === direction.slug ? null : direction.slug,
                         )
                       }
                       className="w-full px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
@@ -246,12 +257,11 @@ export default function DirectionsPage() {
                                         <div className="text-gray-900 text-sm sm:text-base leading-snug">
                                           {s.name}
                                         </div>
-                                        {s.altname &&
-                                          s.altname !== s.name && (
-                                            <div className="text-gray-500 text-xs sm:text-sm italic mt-0.5 line-clamp-2">
-                                              {s.altname}
-                                            </div>
-                                          )}
+                                        {s.altname && s.altname !== s.name && (
+                                          <div className="text-gray-500 text-xs sm:text-sm italic mt-0.5 line-clamp-2">
+                                            {s.altname}
+                                          </div>
+                                        )}
                                       </div>
                                       <div className="shrink-0 text-primary font-semibold text-xs sm:text-sm whitespace-nowrap">
                                         {priceText}
@@ -263,7 +273,8 @@ export default function DirectionsPage() {
 
                               <div className="mt-3 flex items-center justify-between">
                                 <div className="text-gray-600 text-xs sm:text-sm">
-                                  Показано: {shown.length} из {dirServices.length}
+                                  Показано: {shown.length} из{" "}
+                                  {dirServices.length}
                                 </div>
                                 <Link
                                   to={`/services/${direction.slug}`}
@@ -287,7 +298,3 @@ export default function DirectionsPage() {
     </div>
   );
 }
-
-
-
-
