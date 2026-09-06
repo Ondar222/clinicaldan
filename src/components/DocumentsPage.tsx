@@ -13,7 +13,8 @@ export default function DocumentsPage() {
     {
       id: 2,
       title: "Свидетельство о государственной регистрации",
-      description: "Свидетельство о государственной регистрации юридического лица",
+      description:
+        "Свидетельство о государственной регистрации юридического лица",
       fileType: "JPG",
       fileSize: "—",
       downloadUrl: "/documents/document4.jpg",
@@ -44,8 +45,10 @@ export default function DocumentsPage() {
     },
     {
       id: 6,
-      title: "ПРАВИЛА ВНУТРЕННЕГО РАСПОРЯДКА ДЛЯ ПАЦИЕНТОВ МЕДИЦИНСКОГО ЦЕНТРА ООО «АЛДАН»",
-      description: "ПРАВИЛА ВНУТРЕННЕГО РАСПОРЯДКА ДЛЯ ПАЦИЕНТОВ МЕДИЦИНСКОГО ЦЕНТРА ООО «АЛДАН»",
+      title:
+        "ПРАВИЛА ВНУТРЕННЕГО РАСПОРЯДКА ДЛЯ ПАЦИЕНТОВ МЕДИЦИНСКОГО ЦЕНТРА ООО «АЛДАН»",
+      description:
+        "ПРАВИЛА ВНУТРЕННЕГО РАСПОРЯДКА ДЛЯ ПАЦИЕНТОВ МЕДИЦИНСКОГО ЦЕНТРА ООО «АЛДАН»",
       fileType: "DOCX",
       fileSize: "—",
       downloadUrl: "/documents/document1.docx",
@@ -53,7 +56,8 @@ export default function DocumentsPage() {
     {
       id: 7,
       title: "Порядок записи на первичный прием (консультацию, обследование)",
-      description: "Порядок записи на первичный прием (консультацию, обследование)",
+      description:
+        "Порядок записи на первичный прием (консультацию, обследование)",
       fileType: "DOCX",
       fileSize: "—",
       downloadUrl: "/documents/document2.docx",
@@ -69,7 +73,8 @@ export default function DocumentsPage() {
     {
       id: 9,
       title: "Свидетельство о государственной регистрации юридического лица",
-      description: "Свидетельство о государственной регистрации юридического лица",
+      description:
+        "Свидетельство о государственной регистрации юридического лица",
       fileType: "JPG",
       fileSize: "—",
       downloadUrl: "/documents/document4.jpg",
@@ -93,7 +98,8 @@ export default function DocumentsPage() {
     {
       id: 12,
       title: "Согласие на обработку персональных данных на сайте",
-      description: "Согласие на обработку персональных данных, размещенных на сайте",
+      description:
+        "Согласие на обработку персональных данных, размещенных на сайте",
       fileType: "DOCX",
       fileSize: "—",
       downloadUrl: "/documents/согласие_на_персданные_на_сайт.docx",
@@ -101,14 +107,17 @@ export default function DocumentsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-lightTeal py-8 md:py-12">
+    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-8 md:py-12">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 md:mb-8">Документы</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 md:mb-8">
+            Документы
+          </h1>
 
           <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
             <p className="text-gray-600 text-sm sm:text-base text-center mb-6 md:mb-8">
-              На этой странице вы можете ознакомиться с основными документами клиники
+              На этой странице вы можете ознакомиться с основными документами
+              клиники
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">

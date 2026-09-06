@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface Doctor {
   id: number;
@@ -15,164 +15,180 @@ interface Doctor {
 }
 
 export default function Specialists() {
-  const [selectedSpecialty, setSelectedSpecialty] = useState<string>('all');
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string>("all");
 
   const specialties = [
-    'all',
-    'Терапевт',
-    'Кардиолог',
-    'Невролог',
-    'Офтальмолог',
-    'Стоматолог',
-    'Дерматолог',
-    'Гинеколог',
-    'Уролог',
-    'Эндокринолог',
-    'Педиатр'
+    "all",
+    "Терапевт",
+    "Кардиолог",
+    "Невролог",
+    "Офтальмолог",
+    "Стоматолог",
+    "Дерматолог",
+    "Гинеколог",
+    "Уролог",
+    "Эндокринолог",
+    "Педиатр",
   ];
 
   const doctors: Doctor[] = [
     {
       id: 1,
-      name: 'Иванова Анна Петровна',
-      specialty: 'Терапевт',
+      name: "Иванова Анна Петровна",
+      specialty: "Терапевт",
       experience: 15,
       rating: 4.9,
-      image: '/images/doctor1.jpg',
-      description: 'Высококвалифицированный терапевт с большим опытом работы. Специализируется на лечении и профилактике заболеваний внутренних органов.',
-      education: ['МГМУ им. И.М. Сеченова', 'Клиническая ординатура по терапии'],
-      languages: ['Русский', 'Английский'],
+      image: "/images/doctor1.jpg",
+      description:
+        "Высококвалифицированный терапевт с большим опытом работы. Специализируется на лечении и профилактике заболеваний внутренних органов.",
+      education: [
+        "МГМУ им. И.М. Сеченова",
+        "Клиническая ординатура по терапии",
+      ],
+      languages: ["Русский", "Английский"],
       isAvailable: true,
-      price: '2 500 ₽'
+      price: "2 500 ₽",
     },
     {
       id: 2,
-      name: 'Петров Сергей Владимирович',
-      specialty: 'Кардиолог',
+      name: "Петров Сергей Владимирович",
+      specialty: "Кардиолог",
       experience: 20,
       rating: 4.8,
-      image: '/images/doctor2.jpg',
-      description: 'Ведущий кардиолог клиники. Специализируется на лечении ишемической болезни сердца, аритмий и гипертонии.',
-      education: ['РНИМУ им. Н.И. Пирогова', 'Доктор медицинских наук'],
-      languages: ['Русский', 'Немецкий'],
+      image: "/images/doctor2.jpg",
+      description:
+        "Ведущий кардиолог клиники. Специализируется на лечении ишемической болезни сердца, аритмий и гипертонии.",
+      education: ["РНИМУ им. Н.И. Пирогова", "Доктор медицинских наук"],
+      languages: ["Русский", "Немецкий"],
       isAvailable: true,
-      price: '3 500 ₽'
+      price: "3 500 ₽",
     },
     {
       id: 3,
-      name: 'Смирнова Елена Александровна',
-      specialty: 'Невролог',
+      name: "Смирнова Елена Александровна",
+      specialty: "Невролог",
       experience: 12,
       rating: 4.7,
-      image: '/images/doctor3.jpg',
-      description: 'Специалист по лечению заболеваний нервной системы. Владеет современными методами диагностики и лечения.',
-      education: ['СПбГМУ им. И.П. Павлова', 'Кандидат медицинских наук'],
-      languages: ['Русский', 'Французский'],
+      image: "/images/doctor3.jpg",
+      description:
+        "Специалист по лечению заболеваний нервной системы. Владеет современными методами диагностики и лечения.",
+      education: ["СПбГМУ им. И.П. Павлова", "Кандидат медицинских наук"],
+      languages: ["Русский", "Французский"],
       isAvailable: true,
-      price: '2 800 ₽'
+      price: "2 800 ₽",
     },
     {
       id: 4,
-      name: 'Козлов Дмитрий Игоревич',
-      specialty: 'Офтальмолог',
+      name: "Козлов Дмитрий Игоревич",
+      specialty: "Офтальмолог",
       experience: 18,
       rating: 4.9,
-      image: '/images/doctor4.jpg',
-      description: 'Эксперт в области диагностики и лечения заболеваний глаз. Проводит лазерные операции и коррекцию зрения.',
-      education: ['МГМСУ им. А.И. Евдокимова', 'Профессор'],
-      languages: ['Русский', 'Английский', 'Испанский'],
+      image: "/images/doctor4.jpg",
+      description:
+        "Эксперт в области диагностики и лечения заболеваний глаз. Проводит лазерные операции и коррекцию зрения.",
+      education: ["МГМСУ им. А.И. Евдокимова", "Профессор"],
+      languages: ["Русский", "Английский", "Испанский"],
       isAvailable: true,
-      price: '3 200 ₽'
+      price: "3 200 ₽",
     },
     {
       id: 5,
-      name: 'Волкова Мария Сергеевна',
-      specialty: 'Стоматолог',
+      name: "Волкова Мария Сергеевна",
+      specialty: "Стоматолог",
       experience: 10,
       rating: 4.8,
-      image: '/images/doctor5.jpg',
-      description: 'Специалист по эстетической стоматологии и имплантации. Владеет современными методиками лечения.',
-      education: ['МГМСУ им. А.И. Евдокимова', 'Кандидат медицинских наук'],
-      languages: ['Русский', 'Английский'],
+      image: "/images/doctor5.jpg",
+      description:
+        "Специалист по эстетической стоматологии и имплантации. Владеет современными методиками лечения.",
+      education: ["МГМСУ им. А.И. Евдокимова", "Кандидат медицинских наук"],
+      languages: ["Русский", "Английский"],
       isAvailable: true,
-      price: '2 900 ₽'
+      price: "2 900 ₽",
     },
     {
       id: 6,
-      name: 'Белов Александр Николаевич',
-      specialty: 'Дерматолог',
+      name: "Белов Александр Николаевич",
+      specialty: "Дерматолог",
       experience: 14,
       rating: 4.7,
-      image: '/images/doctor6.jpg',
-      description: 'Эксперт в области дерматологии и косметологии. Специализируется на лечении кожных заболеваний.',
-      education: ['РНИМУ им. Н.И. Пирогова', 'Доктор медицинских наук'],
-      languages: ['Русский', 'Английский'],
+      image: "/images/doctor6.jpg",
+      description:
+        "Эксперт в области дерматологии и косметологии. Специализируется на лечении кожных заболеваний.",
+      education: ["РНИМУ им. Н.И. Пирогова", "Доктор медицинских наук"],
+      languages: ["Русский", "Английский"],
       isAvailable: true,
-      price: '2 600 ₽'
+      price: "2 600 ₽",
     },
     {
       id: 7,
-      name: 'Григорьева Ольга Викторовна',
-      specialty: 'Гинеколог',
+      name: "Григорьева Ольга Викторовна",
+      specialty: "Гинеколог",
       experience: 16,
       rating: 4.9,
-      image: '/images/doctor7.jpg',
-      description: 'Специалист по гинекологии и репродуктологии. Владеет современными методами диагностики и лечения.',
-      education: ['МГМУ им. И.М. Сеченова', 'Профессор'],
-      languages: ['Русский', 'Английский'],
+      image: "/images/doctor7.jpg",
+      description:
+        "Специалист по гинекологии и репродуктологии. Владеет современными методами диагностики и лечения.",
+      education: ["МГМУ им. И.М. Сеченова", "Профессор"],
+      languages: ["Русский", "Английский"],
       isAvailable: true,
-      price: '3 000 ₽'
+      price: "3 000 ₽",
     },
     {
       id: 8,
-      name: 'Морозов Иван Петрович',
-      specialty: 'Уролог',
+      name: "Морозов Иван Петрович",
+      specialty: "Уролог",
       experience: 13,
       rating: 4.8,
-      image: '/images/doctor8.jpg',
-      description: 'Специалист по урологии и андрологии. Проводит современные методы диагностики и лечения.',
-      education: ['СПбГМУ им. И.П. Павлова', 'Кандидат медицинских наук'],
-      languages: ['Русский', 'Английский'],
+      image: "/images/doctor8.jpg",
+      description:
+        "Специалист по урологии и андрологии. Проводит современные методы диагностики и лечения.",
+      education: ["СПбГМУ им. И.П. Павлова", "Кандидат медицинских наук"],
+      languages: ["Русский", "Английский"],
       isAvailable: true,
-      price: '2 700 ₽'
+      price: "2 700 ₽",
     },
     {
       id: 9,
-      name: 'Соколова Татьяна Михайловна',
-      specialty: 'Эндокринолог',
+      name: "Соколова Татьяна Михайловна",
+      specialty: "Эндокринолог",
       experience: 17,
       rating: 4.9,
-      image: '/images/doctor9.jpg',
-      description: 'Эксперт в области эндокринологии. Специализируется на лечении сахарного диабета и заболеваний щитовидной железы.',
-      education: ['МГМУ им. И.М. Сеченова', 'Доктор медицинских наук'],
-      languages: ['Русский', 'Английский', 'Немецкий'],
+      image: "/images/doctor9.jpg",
+      description:
+        "Эксперт в области эндокринологии. Специализируется на лечении сахарного диабета и заболеваний щитовидной железы.",
+      education: ["МГМУ им. И.М. Сеченова", "Доктор медицинских наук"],
+      languages: ["Русский", "Английский", "Немецкий"],
       isAvailable: true,
-      price: '3 100 ₽'
+      price: "3 100 ₽",
     },
     {
       id: 10,
-      name: 'Кузнецов Андрей Сергеевич',
-      specialty: 'Педиатр',
+      name: "Кузнецов Андрей Сергеевич",
+      specialty: "Педиатр",
       experience: 11,
       rating: 4.8,
-      image: '/images/doctor10.jpg',
-      description: 'Специалист по педиатрии. Владеет современными методами диагностики и лечения детских заболеваний.',
-      education: ['РНИМУ им. Н.И. Пирогова', 'Кандидат медицинских наук'],
-      languages: ['Русский', 'Английский'],
+      image: "/images/doctor10.jpg",
+      description:
+        "Специалист по педиатрии. Владеет современными методами диагностики и лечения детских заболеваний.",
+      education: ["РНИМУ им. Н.И. Пирогова", "Кандидат медицинских наук"],
+      languages: ["Русский", "Английский"],
       isAvailable: true,
-      price: '2 400 ₽'
-    }
+      price: "2 400 ₽",
+    },
   ];
 
-  const filteredDoctors = selectedSpecialty === 'all' 
-    ? doctors 
-    : doctors.filter(doctor => doctor.specialty === selectedSpecialty);
+  const filteredDoctors =
+    selectedSpecialty === "all"
+      ? doctors
+      : doctors.filter((doctor) => doctor.specialty === selectedSpecialty);
 
   return (
-    <section className="py-12 bg-lightTeal">
+    <section className="py-12 bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">Наши специалисты</h2>
-        
+        <h2 className="text-3xl font-bold text-center mb-8">
+          Наши специалисты
+        </h2>
+
         {/* Specialty filter */}
         <div className="flex flex-wrap justify-center gap-4 mb-8">
           {specialties.map((specialty) => (
@@ -181,11 +197,11 @@ export default function Specialists() {
               onClick={() => setSelectedSpecialty(specialty)}
               className={`px-4 py-2 rounded-full ${
                 selectedSpecialty === specialty
-                  ? 'bg-teal text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                  ? "bg-teal text-white"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
             >
-              {specialty === 'all' ? 'Все специалисты' : specialty}
+              {specialty === "all" ? "Все специалисты" : specialty}
             </button>
           ))}
         </div>
@@ -193,7 +209,10 @@ export default function Specialists() {
         {/* Doctors grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredDoctors.map((doctor) => (
-            <div key={doctor.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div
+              key={doctor.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden"
+            >
               <div className="relative">
                 <img
                   src={doctor.image}
@@ -211,7 +230,9 @@ export default function Specialists() {
                 <div className="flex items-center mb-2">
                   <span className="text-gray-600">{doctor.specialty}</span>
                   <span className="mx-2">•</span>
-                  <span className="text-gray-600">{doctor.experience} лет опыта</span>
+                  <span className="text-gray-600">
+                    {doctor.experience} лет опыта
+                  </span>
                 </div>
                 <div className="flex items-center mb-4">
                   <div className="flex items-center">
@@ -220,8 +241,8 @@ export default function Specialists() {
                         key={i}
                         className={`w-5 h-5 ${
                           i < Math.floor(doctor.rating)
-                            ? 'text-yellow-400'
-                            : 'text-gray-300'
+                            ? "text-yellow-400"
+                            : "text-gray-300"
                         }`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
