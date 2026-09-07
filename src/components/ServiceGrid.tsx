@@ -225,7 +225,7 @@ export default function ServiceGrid() {
     ),
     color: 'bg-primary',
     hoverColor: 'hover:bg-primaryDark',
-    link: '/checkups',
+    link: '/medical-examinations',
   };
 
   const priorityTitles = [

@@ -168,7 +168,7 @@ export default function Header() {
               </li>
               <li>
                 <Link
-                  to="/checkups"
+                  to="/medical-examinations"
                   className="nav-underline text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
                 >
                   Медосмотры
@@ -384,7 +384,7 @@ export default function Header() {
             </li>
             <li>
               <Link
-                to="/checkups"
+                to="/medical-examinations"
                 className="block py-2 text-dark text-base hover:text-primary transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
