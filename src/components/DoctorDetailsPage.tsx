@@ -165,31 +165,14 @@ const DoctorDetailsPage: React.FC = () => {
       />
 
       <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
-        {/* Хлебные крошки */}
-        <div className="bg-white border-b">
-          <div className="container mx-auto px-4 py-4">
-            <nav className="flex items-center space-x-2 text-sm text-gray-600">
-              <Link to="/" className="hover:text-primary">
-                Главная
-              </Link>
-              <span>/</span>
-              <Link to="/doctors" className="hover:text-primary">
-                Врачи
-              </Link>
-              <span>/</span>
-              <span className="text-gray-900">{getDoctorInitials(doctor)}</span>
-            </nav>
-          </div>
-        </div>
-
         {/* Back button */}
-        <div className="container mx-auto px-4 py-3">
+        <div className="container mx-auto px-4 py-4">
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center text-primary hover:text-primaryDark text-sm bg-transparent border-none cursor-pointer p-0"
+            className="inline-flex items-center text-primary hover:text-primaryDark text-sm font-medium group"
           >
             <svg
-              className="w-4 h-4 mr-2"
+              className="w-4 h-4 mr-1.5 transform group-hover:-translate-x-1 transition-transform"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -201,18 +184,18 @@ const DoctorDetailsPage: React.FC = () => {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Назад
+            Назад к списку врачей
           </button>
         </div>
 
         {/* Основная информация о враче */}
-        <section className="py-12 bg-white">
+        <section className="py-8 sm:py-10 md:py-12">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="grid md:grid-cols-3 gap-8">
+            <div className="max-w-5xl mx-auto">
+              <div className="grid md:grid-cols-3 gap-6 md:gap-8">
                 {/* Фото врача */}
                 <div className="md:col-span-1">
-                  <div className="w-full h-80 bg-gray-100 rounded-lg overflow-hidden shadow-md">
+                  <div className="w-full h-80 bg-white rounded-2xl shadow-lg overflow-hidden">
                     {(() => {
                       const photoUrl = getDoctorPhoto(doctor);
                       return photoUrl ? (
@@ -251,10 +234,10 @@ const DoctorDetailsPage: React.FC = () => {
                           </div>
                         </>
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-primary/20 to-primaryDark/20">
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primaryDark/20">
                           <div className="text-center p-4">
                             <svg
-                              className="w-16 h-16 mx-auto mb-2"
+                              className="w-16 h-16 mx-auto mb-2 text-primary"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
@@ -264,7 +247,7 @@ const DoctorDetailsPage: React.FC = () => {
                                 clipRule="evenodd"
                               />
                             </svg>
-                            <p className="text-sm">Фото отсутствует</p>
+                            <p className="text-sm text-primary">Фото отсутствует</p>
                           </div>
                         </div>
                       );
@@ -274,28 +257,28 @@ const DoctorDetailsPage: React.FC = () => {
 
                 {/* Информация о враче */}
                 <div className="md:col-span-2">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
                     {getDoctorFullName(doctor)}
                   </h1>
 
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     {/* Основная специализация */}
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    <div className="bg-white rounded-xl p-4 shadow-sm border border-primary/10">
+                      <h3 className="text-sm font-semibold text-gray-500 mb-1 uppercase tracking-wide">
                         Специализация
                       </h3>
-                      <p className="text-gray-700">
+                      <p className="text-gray-900 font-medium">
                         {formatSpecialtyName(doctor.type)}
                       </p>
                     </div>
 
                     {/* Категория */}
                     {doctor.category && (
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      <div className="bg-white rounded-xl p-4 shadow-sm border border-primary/10">
+                        <h3 className="text-sm font-semibold text-gray-500 mb-1 uppercase tracking-wide">
                           Категория
                         </h3>
-                        <p className="text-gray-700">
+                        <p className="text-gray-900">
                           {formatSpecialtyName(doctor.category)}
                         </p>
                       </div>
@@ -303,50 +286,50 @@ const DoctorDetailsPage: React.FC = () => {
 
                     {/* Ученая степень */}
                     {doctor.scientific_degree && (
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      <div className="bg-white rounded-xl p-4 shadow-sm border border-primary/10">
+                        <h3 className="text-sm font-semibold text-gray-500 mb-1 uppercase tracking-wide">
                           Ученая степень
                         </h3>
-                        <p className="text-gray-700">
+                        <p className="text-gray-900">
                           {doctor.scientific_degree}
                         </p>
                       </div>
                     )}
 
-                    {/* Время приема по умолчанию */}
+                    {/* Время приема */}
                     {doctor.max_time && (
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      <div className="bg-white rounded-xl p-4 shadow-sm border border-primary/10">
+                        <h3 className="text-sm font-semibold text-gray-500 mb-1 uppercase tracking-wide">
                           Время приема
                         </h3>
-                        <p className="text-gray-700">{doctor.max_time} минут</p>
+                        <p className="text-gray-900">{doctor.max_time} минут</p>
                       </div>
                     )}
 
                     {/* Отделение */}
                     {doctor.branch && (
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      <div className="bg-white rounded-xl p-4 shadow-sm border border-primary/10">
+                        <h3 className="text-sm font-semibold text-gray-500 mb-1 uppercase tracking-wide">
                           Отделение
                         </h3>
-                        <p className="text-gray-700">{doctor.branch}</p>
+                        <p className="text-gray-900">{doctor.branch}</p>
                       </div>
                     )}
 
                     {/* Адрес */}
                     {doctor.address && (
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      <div className="bg-white rounded-xl p-4 shadow-sm border border-primary/10">
+                        <h3 className="text-sm font-semibold text-gray-500 mb-1 uppercase tracking-wide">
                           Адрес
                         </h3>
-                        <p className="text-gray-700">{doctor.address}</p>
+                        <p className="text-gray-900">{doctor.address}</p>
                       </div>
                     )}
 
                     {/* Дополнительная информация */}
                     {doctor.info && (
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      <div className="bg-white rounded-xl p-4 shadow-sm border border-primary/10">
+                        <h3 className="text-sm font-semibold text-gray-500 mb-1 uppercase tracking-wide">
                           Дополнительная информация
                         </h3>
                         <p className="text-gray-700 whitespace-pre-line">
@@ -360,7 +343,7 @@ const DoctorDetailsPage: React.FC = () => {
                   <div className="mt-8">
                     <button
                       onClick={handleAppointmentClick}
-                      className="w-full px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primaryDark transition-colors shadow-lg flex items-center justify-center gap-2"
+                      className="w-full px-8 py-3 bg-white border-2 border-primary text-primary font-semibold rounded-xl hover:bg-primary hover:text-white transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center gap-2"
                     >
                       <svg
                         className="w-5 h-5"
@@ -389,19 +372,19 @@ const DoctorDetailsPage: React.FC = () => {
 
         {/* Все специализации врача */}
         {doctor.types && doctor.types.length > 1 && (
-          <section className="py-12 bg-gray-50">
+          <section className="py-8 sm:py-10 md:py-12">
             <div className="container mx-auto px-4">
-              <div className="max-w-4xl mx-auto">
-                <h2 className="text-2xl font-bold text-gray-900 mb-8">
+              <div className="max-w-5xl mx-auto">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">
                   Все специализации
                 </h2>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                   {doctor.types.map((type) => (
                     <div
                       key={type.id}
-                      className="bg-white p-4 rounded-lg shadow-sm"
+                      className="bg-white p-4 rounded-xl shadow-sm border border-primary/10 hover:shadow-md transition-shadow"
                     >
-                      <p className="text-gray-700">
+                      <p className="text-gray-700 font-medium">
                         {formatSpecialtyName(type.name)}
                       </p>
                     </div>

@@ -330,9 +330,13 @@ const ServicePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
+    <div className="relative min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] overflow-hidden">
+      {/* Мягкие декоративные пятна */}
+      <div className="fixed -left-20 top-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed -right-10 bottom-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
       {/* Хлебные крошки */}
-      <div className="bg-white border-b">
+      <div className="bg-white/90 border-b border-primary/10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <nav className="flex items-center space-x-2 text-sm text-gray-600">
             <Link
@@ -370,33 +374,37 @@ const ServicePage: React.FC = () => {
         </Link>
       </div>
 
-      {/* Герой-секция направления */}
+      {/* Hero */}
       <section
         className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"
-        style={{ backgroundImage: `url(/bg-hero.jpg)` }}
+        style={{ backgroundImage: "url(/bg_8.avif)" }}
       >
-        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="absolute inset-0 bg-black/50" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2 sm:mb-3 md:mb-4 leading-tight">
+          <div className="inline-block mb-4">
+            <svg className="w-10 h-10 mx-auto text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 leading-tight">
             {direction.title}
           </h1>
+          <p className="text-white/90 max-w-2xl mx-auto text-sm sm:text-base">
+            Направления лечения в Клинике Алдан
+          </p>
         </div>
       </section>
 
       {/* Описание направления */}
       {direction.description && (
-        <section className="py-6 sm:py-8 md:py-10 lg:py-12 bg-white">
+        <section className="py-8 sm:py-10 md:py-12">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-              {/* Описание с красивыми отступами */}
-              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-sm border border-gray-100 mb-6 sm:mb-8">
-                <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
-                  <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed sm:leading-loose mb-0 indent-0 sm:indent-0">
-                    {direction.description}
-                  </p>
-                </div>
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-sm border border-primary/10">
+              <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+                <p className="text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed sm:leading-loose mb-0">
+                  {direction.description}
+                </p>
               </div>
-
               {/* Специальный контент для кардиологии */}
               {direction.slug === "cardiology" && (
                 <div className="space-y-6 sm:space-y-8">

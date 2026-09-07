@@ -269,26 +269,28 @@ export default function GiftCertificatesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-8 md:py-12">
-      <div className="container mx-auto px-4">
-        {/* Hero Section */}
-        <div className="text-center mb-8 md:mb-10">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dark mb-3 md:mb-4">
+    <div className="relative min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] overflow-hidden">
+      {/* Мягкие декоративные пятна */}
+      <div className="fixed -left-20 top-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed -right-10 bottom-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Hero */}
+      <section
+        className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"
+        style={{ backgroundImage: "url(/bg_8.avif)" }}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
             Подарочные сертификаты
           </h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
-            Не знаете какой подарок преподнести? Подарочный сертификат на услуги
-            клиники - идеальный выбор для любого торжества!
+          <p className="text-white/90 max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+            Идеальный подарок — забота о здоровье близких
           </p>
-
-          {/* Индикатор среды */}
-          {/* {!isProduction && (
-            <div className="mt-4 inline-block bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-2 rounded-lg">
-              <span className="font-medium">🧪 ТЕСТОВАЯ СРЕДА</span>
-              <span className="text-sm ml-2">(платежи не списываются)</span>
-            </div>
-          )} */}
         </div>
+      </section>
+
+      <div className="container mx-auto px-4 relative z-10 py-8 sm:py-10 md:py-12">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
           {/* Left Column - Benefits */}

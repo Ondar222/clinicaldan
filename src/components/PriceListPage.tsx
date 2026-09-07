@@ -348,7 +348,7 @@ export default function PriceListPage() {
         {/* Hero */}
         <section
           className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"
-          style={{ backgroundImage: "url(/bg-hero.jpg)" }}
+          style={{ backgroundImage: "url(/bg_8.avif)" }}
         >
           <div className="absolute inset-0 bg-black/50" />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">

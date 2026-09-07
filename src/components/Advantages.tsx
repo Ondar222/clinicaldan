@@ -46,30 +46,22 @@ const advantages: Advantage[] = [
 
 export default function Advantages() {
   return (
-    <section
-      className="py-6 sm:py-8 relative"
-      style={{
-        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9)), url('https://clinicaldan.ru/upload/iblock/37e/37ee47227d019ba56cb6a41102fea374.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center 30%',
-        backgroundAttachment: 'fixed',
-      }}
-    >
-      <div className="container mx-auto px-3 sm:px-4 relative z-10">
-        <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8 text-dark">Наши преимущества</h2>
+    <section className="py-6 sm:py-8 relative">
+      <div className="container mx-auto px-3 sm:px-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8 bg-gradient-to-r from-dark to-primary bg-clip-text text-transparent">Наши преимущества</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
           {advantages.map((advantage) => (
             <div
               key={advantage.id}
-              className="rounded-md sm:rounded-lg overflow-hidden shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl hover:bg-white transition-all duration-200 transform hover:-translate-y-1"
+              className="rounded-xl sm:rounded-2xl overflow-hidden shadow-sm bg-white/80 backdrop-blur-sm border border-primary/10 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
             >
-              <div className={`${advantage.color} p-3 sm:p-4 text-white flex justify-center`}>
+              <div className="bg-gradient-to-br from-primary/10 to-primary/20 p-3 sm:p-4 text-primary flex justify-center">
                 {advantage.icon}
               </div>
-              <div className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm">
+              <div className="p-3 sm:p-4">
                 <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2 text-dark">{advantage.title}</h3>
-                <p className="text-gray-700 leading-relaxed text-xs sm:text-sm">{advantage.description}</p>
+                <p className="text-gray-600 leading-relaxed text-xs sm:text-sm">{advantage.description}</p>
               </div>
             </div>
           ))}

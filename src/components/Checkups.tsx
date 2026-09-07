@@ -220,7 +220,7 @@ export default function Checkups() {
                 </div>
                 <button
                   type="button"
-                  className="mt-auto w-full inline-flex items-center justify-center px-3 py-2 text-xs sm:text-sm bg-primary text-white rounded-lg hover:bg-primaryDark transition-colors"
+                  className="mt-auto w-full inline-flex items-center justify-center px-3 py-2 text-xs sm:text-sm bg-white/90 backdrop-blur-sm border-2 border-primary/30 text-primary hover:bg-primary hover:text-white hover:border-primary rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md"
                   onClick={() => setSelected(item)}
                   aria-haspopup="dialog"
                   aria-controls="checkup-modal"

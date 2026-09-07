@@ -47,17 +47,17 @@ export default function FloatingBooking({ className }: FloatingBookingProps) {
             <div className="p-5 space-y-3">
               <button
                 onClick={openDoctorModal}
-                className="w-full flex items-center justify-between px-4 py-3 bg-primary text-white rounded-lg hover:bg-primaryDark transition-colors"
+                className="w-full flex items-center justify-between px-4 py-3 bg-white/90 border-2 border-primary/30 text-primary rounded-xl hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 shadow-sm"
               >
                 <span className="flex items-center gap-3">
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/20">👩‍⚕️</span>
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">👩‍⚕️</span>
                   К врачу
                 </span>
                 <span>→</span>
               </button>
               <button
                 onClick={openServiceModal}
-                className="w-full flex items-center justify-between px-4 py-3 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-colors"
+                className="w-full flex items-center justify-between px-4 py-3 bg-white/90 border-2 border-primary/30 text-primary rounded-xl hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 shadow-sm"
               >
                 <span className="flex items-center gap-3">
                   <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">🧾</span>

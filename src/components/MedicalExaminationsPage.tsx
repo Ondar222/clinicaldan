@@ -26,6 +26,66 @@ if (Array.isArray(prodoctorovData)) {
   });
 }
 
+// SVG иконки для медосмотров
+const checkupIcons: Record<string, React.ReactNode> = {
+  "sanatorium": (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  "vuz": (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 14l9-5-9-5-9 5 9 5z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+    </svg>
+  ),
+  "sanatorium-card": (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  ),
+  "investigative": (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+    </svg>
+  ),
+  "gibdd": (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+    </svg>
+  ),
+  "civil-service": (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    </svg>
+  ),
+  "pool": (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  "dormitory": (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+    </svg>
+  ),
+  "foreign-vuz": (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  "state-secret": (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    </svg>
+  ),
+  "employment": (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    </svg>
+  ),
+};
+
 const checkupTypes: CheckupType[] = [
   {
     id: "sanatorium",
@@ -42,7 +102,7 @@ const checkupTypes: CheckupType[] = [
       "ЭКГ",
       "Осмотр гинеколога (для женщин)",
     ],
-    icon: "🏖️",
+    icon: "sanatorium",
   },
   {
     id: "vuz",
@@ -60,7 +120,7 @@ const checkupTypes: CheckupType[] = [
       "Общий анализ крови",
       "Общий анализ мочи",
     ],
-    icon: "🎓",
+    icon: "vuz",
   },
   {
     id: "sanatorium-card",
@@ -79,7 +139,7 @@ const checkupTypes: CheckupType[] = [
       "УЗИ органов брюшной полости",
       "Осмотр гинеколога (для женщин)",
     ],
-    icon: "📋",
+    icon: "sanatorium-card",
   },
   {
     id: "investigative",
@@ -96,7 +156,7 @@ const checkupTypes: CheckupType[] = [
       "Флюорография",
       "Анализы крови и мочи",
     ],
-    icon: "⚖️",
+    icon: "investigative",
   },
   {
     id: "gibdd",
@@ -112,7 +172,7 @@ const checkupTypes: CheckupType[] = [
       "Осмотр психиатром",
       "Осмотр наркологом",
     ],
-    icon: "🚗",
+    icon: "gibdd",
   },
   {
     id: "civil-service",
@@ -129,7 +189,7 @@ const checkupTypes: CheckupType[] = [
       "Флюорография",
       "Анализы крови и мочи",
     ],
-    icon: "🏛️",
+    icon: "civil-service",
   },
   {
     id: "pool",
@@ -142,7 +202,7 @@ const checkupTypes: CheckupType[] = [
       "Соскоб на энтеробиоз",
       "Анализ на яйцеглист",
     ],
-    icon: "🏊",
+    icon: "pool",
   },
   {
     id: "dormitory",
@@ -156,7 +216,7 @@ const checkupTypes: CheckupType[] = [
       "Анализ крови",
       "Осмотр дерматолога",
     ],
-    icon: "🏠",
+    icon: "dormitory",
   },
   {
     id: "foreign-vuz",
@@ -174,7 +234,7 @@ const checkupTypes: CheckupType[] = [
       "Развёрнутые анализы крови",
       "Перевод на иностранный язык",
     ],
-    icon: "🌍",
+    icon: "foreign-vuz",
   },
   {
     id: "state-secret",
@@ -191,7 +251,7 @@ const checkupTypes: CheckupType[] = [
       "Анализы крови и мочи",
       "ЭКГ",
     ],
-    icon: "🔒",
+    icon: "state-secret",
   },
   {
     id: "employment",
@@ -209,7 +269,7 @@ const checkupTypes: CheckupType[] = [
       "Общий анализ крови",
       "Общий анализ мочи",
     ],
-    icon: "💼",
+    icon: "employment",
   },
 ];
 
@@ -326,39 +386,50 @@ export default function MedicalExaminationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-primaryDark text-white py-16 md:py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6">
-              Центр медосмотров
-            </h1>
-            <p className="text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 opacity-90">
-              Комплексные медицинские осмотры для граждан и организаций
-            </p>
-            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-              <a
-                href="#checkups"
-                className="bg-white text-primary px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-sm md:text-base"
-              >
-                Виды медосмотров
-              </a>
-              <a
-                href="#specialists"
-                className="bg-transparent border-2 border-white text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors text-sm md:text-base"
-              >
-                Наши специалисты
-              </a>
-            </div>
+    <div className="relative min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] overflow-hidden">
+      {/* Мягкие декоративные пятна */}
+      <div className="fixed -left-20 top-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed -right-10 bottom-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Hero */}
+      <section
+        className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"
+        style={{ backgroundImage: "url(/bg_8.avif)" }}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
+          <div className="inline-block mb-4 md:mb-6">
+            <svg className="w-10 h-10 md:w-12 md:h-12 mx-auto text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
+            Центр медосмотров
+          </h1>
+          <p className="text-white/90 max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed mb-6 sm:mb-8">
+            Комплексные медицинские осмотры для граждан и организаций
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+            <a
+              href="#checkups"
+              className="bg-white/90 border-2 border-white/50 text-primary px-6 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold hover:bg-primary hover:text-white hover:border-primary transition-all text-sm md:text-base shadow-sm"
+            >
+              Виды медосмотров
+            </a>
+            <a
+              href="#specialists"
+              className="bg-white/90 border-2 border-white/50 text-primary px-6 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold hover:bg-primary hover:text-white hover:border-primary transition-all text-sm md:text-base shadow-sm"
+            >
+              Наши специалисты
+            </a>
           </div>
         </div>
       </section>
 
       {/* Checkup Types */}
-      <section id="checkups" className="py-12 md:py-16 bg-gray-50">
+      <section id="checkups" className="py-8 sm:py-10 md:py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-3 md:mb-4 text-dark">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-3 md:mb-4 bg-gradient-to-r from-dark to-primary bg-clip-text text-transparent">
             Виды медосмотров
           </h2>
           <p className="text-gray-600 text-center mb-10 md:mb-12 max-w-3xl mx-auto text-sm md:text-base">
@@ -370,16 +441,16 @@ export default function MedicalExaminationsPage() {
             {checkupTypes.map((checkup) => (
               <div
                 key={checkup.id}
-                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow"
+                className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-primary/10"
               >
-                <div className="bg-gradient-to-r from-primary to-primaryDark text-white p-4 md:p-6">
-                  <div className="text-3xl md:text-4xl mb-2 md:mb-3">
-                    {checkup.icon}
+                <div className="bg-gradient-to-br from-primary/10 to-primary/20 text-primary p-4 md:p-6 flex flex-col items-center text-center">
+                  <div className="w-12 h-12 bg-white/80 rounded-full flex items-center justify-center mb-3 shadow-sm">
+                    {checkupIcons[checkup.icon]}
                   </div>
                   <h3 className="text-base md:text-lg font-bold mb-2">
                     {checkup.title}
                   </h3>
-                  <p className="text-white/90 text-xs md:text-sm">
+                  <p className="text-gray-700 text-xs md:text-sm">
                     {checkup.description}
                   </p>
                 </div>
@@ -390,7 +461,7 @@ export default function MedicalExaminationsPage() {
                       <span className="text-gray-500 text-xs md:text-sm">
                         Стоимость:
                       </span>
-                      <div className="text-lg md:text-2xl font-bold text-primary">
+                      <div className="text-lg md:text-2xl font-bold bg-gradient-to-r from-primary to-primaryDark bg-clip-text text-transparent">
                         {formatPrice(checkup.price)}
                       </div>
                     </div>
@@ -415,7 +486,7 @@ export default function MedicalExaminationsPage() {
                           className="flex items-start gap-2 text-gray-600 text-xs md:text-sm"
                         >
                           <svg
-                            className="w-4 h-4 md:w-5 md:h-5 text-green-500 mt-0.5 flex-shrink-0"
+                            className="w-4 h-4 md:w-5 md:h-5 text-primary mt-0.5 flex-shrink-0"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -435,7 +506,7 @@ export default function MedicalExaminationsPage() {
 
                   <button
                     onClick={() => handleBookAppointment(checkup.title)}
-                    className="w-full bg-primary text-white py-2.5 md:py-3 rounded-lg font-semibold hover:bg-primaryDark transition-colors text-sm md:text-base"
+                    className="w-full bg-white/90 backdrop-blur-sm border-2 border-primary/30 text-primary py-2.5 md:py-3 rounded-xl font-semibold hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 text-sm md:text-base shadow-sm hover:shadow-md"
                   >
                     Записаться
                   </button>
@@ -447,58 +518,52 @@ export default function MedicalExaminationsPage() {
       </section>
 
       {/* For Organizations */}
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-8 sm:py-10 md:py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-dark">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 bg-gradient-to-r from-dark to-primary bg-clip-text text-transparent">
               Организациям
             </h2>
-            <div className="bg-gradient-to-r from-primary/10 to-primaryDark/10 rounded-xl p-6 md:p-8">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-primary/10 shadow-sm">
               <p className="text-sm md:text-lg text-gray-700 mb-4 md:mb-6">
                 Мы проводим медицинские осмотры для сотрудников организаций:
                 предварительные (при приёме на работу) и периодические.
               </p>
-              <ul className="list-disc list-inside text-gray-700 mb-4 md:mb-6 space-y-1 md:space-y-2 text-sm md:text-base">
-                <li>Медосмотр при приёме на работу (форма 086/у)</li>
-                <li>Периодические медосмотры для работающих</li>
-                <li>Медосмотр для гос. службы (форма 001-ГС/у)</li>
-                <li>Для работы с гос. тайной (форма 989н)</li>
-                <li>В ГИБДД (форма 003-в/у)</li>
-                <li>Для заселения в общежитие</li>
+              <ul className="space-y-1 md:space-y-2 text-gray-700 mb-4 md:mb-6 text-sm md:text-base">
+                {["Медосмотр при приёме на работу (форма 086/у)", "Периодические медосмотры для работающих", "Медосмотр для гос. службы (форма 001-ГС/у)", "Для работы с гос. тайной (форма 989н)", "В ГИБДД (форма 003-в/у)", "Для заселения в общежитие"].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <div className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
+                      <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    {item}
+                  </li>
+                ))}
               </ul>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl mb-2 md:mb-3">🏢</div>
-                  <h3 className="font-semibold mb-1 md:mb-2 text-dark text-sm md:text-base">
-                    Для организаций
-                  </h3>
-                  <p className="text-gray-600 text-xs md:text-sm">
-                    Специальные цены и условия
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl mb-2 md:mb-3">🚐</div>
-                  <h3 className="font-semibold mb-1 md:mb-2 text-dark text-sm md:text-base">
-                    Выездные осмотры
-                  </h3>
-                  <p className="text-gray-600 text-xs md:text-sm">
-                    Мобильная бригада врачей
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl mb-2 md:mb-3">📑</div>
-                  <h3 className="font-semibold mb-1 md:mb-2 text-dark text-sm md:text-base">
-                    Документы
-                  </h3>
-                  <p className="text-gray-600 text-xs md:text-sm">
-                    Полный пакет закрывающих документов
-                  </p>
-                </div>
+                {[
+                  { icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />, title: "Для организаций", desc: "Специальные цены и условия" },
+                  { icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />, title: "Выездные осмотры", desc: "Мобильная бригада врачей" },
+                  { icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />, title: "Документы", desc: "Полный пакет закрывающих документов" },
+                ].map((item, i) => (
+                  <div key={i} className="text-center bg-gradient-to-br from-[#fdf2f4] to-white rounded-xl p-4 border border-primary/10">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 text-primary">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{item.icon}</svg>
+                    </div>
+                    <h3 className="font-semibold mb-1 md:mb-2 text-dark text-sm md:text-base">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-600 text-xs md:text-sm">
+                      {item.desc}
+                    </p>
+                  </div>
+                ))}
               </div>
               <div className="text-center">
                 <a
-                  href="tel:+73953123456"
-                  className="inline-flex items-center gap-2 bg-primary text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-primaryDark transition-colors text-sm md:text-base"
+                  href="tel:+79233816060"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primaryDark text-white px-6 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold hover:shadow-lg transition-all text-sm md:text-base shadow-md"
                 >
                   <svg
                     className="w-4 h-4 md:w-5 md:h-5"
@@ -506,12 +571,7 @@ export default function MedicalExaminationsPage() {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
                   +7 (923) 381-60-60
                 </a>
@@ -522,9 +582,9 @@ export default function MedicalExaminationsPage() {
       </section>
 
       {/* Specialists */}
-      <section id="specialists" className="py-12 md:py-16 bg-gray-50">
+      <section id="specialists" className="py-8 sm:py-10 md:py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-3 md:mb-4 text-dark">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-3 md:mb-4 bg-gradient-to-r from-dark to-primary bg-clip-text text-transparent">
             Врачи Клиники
           </h2>
           <p className="text-gray-600 text-center mb-10 md:mb-12 max-w-3xl mx-auto text-sm md:text-base">
@@ -541,9 +601,9 @@ export default function MedicalExaminationsPage() {
               {doctors.map((doctor) => (
                 <div
                   key={`doctor-${doctor.id}`}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full"
+                  className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-primary/10 flex flex-col h-full"
                 >
-                  <div className="h-32 md:h-44 bg-gradient-to-br from-primary to-primaryDark flex items-center justify-center">
+                  <div className="h-32 md:h-44 bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
                     {(() => {
                       const photoUrl = getDoctorPhotoUrl(doctor);
                       return photoUrl ? (
@@ -551,7 +611,7 @@ export default function MedicalExaminationsPage() {
                           <img
                             src={photoUrl}
                             alt={getDoctorFullName(doctor)}
-                            className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full object-cover object-[50%_30%] border-2 md:border-3 lg:border-4 border-white"
+                            className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full object-cover object-[50%_30%] border-2 md:border-3 lg:border-4 border-white/80 shadow-lg"
                             onError={(e) => {
                               e.currentTarget.style.display = "none";
                               const nextElement = e.currentTarget
@@ -562,11 +622,11 @@ export default function MedicalExaminationsPage() {
                             }}
                           />
                           <div
-                            className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center"
+                            className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full bg-primary/10 flex items-center justify-center"
                             style={{ display: "none" }}
                           >
                             <svg
-                              className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-white"
+                              className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-primary"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -581,9 +641,9 @@ export default function MedicalExaminationsPage() {
                           </div>
                         </>
                       ) : (
-                        <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
+                        <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full bg-primary/10 flex items-center justify-center">
                           <svg
-                            className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-white"
+                            className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-primary"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -612,7 +672,7 @@ export default function MedicalExaminationsPage() {
                       {doctor.branch && !/алдан/i.test(doctor.branch || "") && (
                         <div className="flex items-center">
                           <svg
-                            className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0"
+                            className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0 text-primary"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -635,7 +695,7 @@ export default function MedicalExaminationsPage() {
                         return (
                           <div className="flex items-center">
                             <svg
-                              className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0"
+                              className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0 text-primary"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -655,7 +715,7 @@ export default function MedicalExaminationsPage() {
                       })()}
                       <div className="flex items-center">
                         <svg
-                          className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0"
+                          className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0 text-primary"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -676,13 +736,13 @@ export default function MedicalExaminationsPage() {
                     <div className="flex flex-col space-y-1 md:space-y-0 md:flex-row md:space-x-2 mt-auto">
                       <Link
                         to={`/doctors/${doctor.id}`}
-                        className="w-full md:w-auto px-3 md:px-4 py-1.5 md:py-2 border border-primary text-primary hover:bg-primary hover:text-white rounded-lg font-medium transition-colors text-xs md:text-sm text-center"
+                        className="w-full md:w-auto px-3 md:px-4 py-1.5 md:py-2 border border-primary/30 text-primary hover:bg-primary hover:text-white rounded-xl font-medium transition-all text-xs md:text-sm text-center shadow-sm"
                       >
                         Подробнее
                       </Link>
                       <button
                         onClick={() => handleAppointmentClick(doctor)}
-                        className="w-full md:w-auto px-3 md:px-4 py-1.5 md:py-2 bg-primary text-white hover:bg-primaryDark rounded-lg font-medium transition-colors text-xs md:text-sm"
+                        className="w-full md:w-auto px-3 md:px-4 py-1.5 md:py-2 bg-white/90 border-2 border-primary/30 text-primary hover:bg-primary hover:text-white hover:border-primary rounded-xl font-medium transition-all text-xs md:text-sm shadow-sm"
                       >
                         Записаться
                       </button>
@@ -696,40 +756,47 @@ export default function MedicalExaminationsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 md:py-16 bg-gradient-to-r from-primary to-primaryDark text-white">
+      <section className="py-12 md:py-16 bg-gradient-to-b from-white to-[#fdf2f4]">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">
-            Остались вопросы?
-          </h2>
-          <p className="text-base md:text-xl mb-6 md:mb-8 opacity-90">
-            Свяжитесь с нами — мы поможем подобрать подходящий вид медосмотра
-          </p>
-          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-            <a
-              href="tel:+73953123456"
-              className="bg-white text-primary px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center gap-2 text-sm md:text-base"
-            >
-              <svg
-                className="w-4 h-4 md:w-5 md:h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                />
+          <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-8 md:p-10 border border-primary/10 shadow-sm">
+            <div className="w-14 h-14 bg-gradient-to-br from-primary/10 to-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
-              +7 (923) 381-60-60
-            </a>
-            <button
-              onClick={() => handleBookAppointment("Консультация")}
-              className="bg-transparent border-2 border-white text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors text-sm md:text-base"
-            >
-              Заказать звонок
-            </button>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-dark to-primary bg-clip-text text-transparent">
+              Остались вопросы?
+            </h2>
+            <p className="text-base md:text-xl mb-6 md:mb-8 text-gray-600">
+              Свяжитесь с нами — мы поможем подобрать подходящий вид медосмотра
+            </p>
+            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+              <a
+                href="tel:+79233816060"
+                className="bg-gradient-to-r from-primary to-primaryDark text-white px-6 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold hover:shadow-lg transition-all inline-flex items-center gap-2 text-sm md:text-base shadow-md"
+              >
+                <svg
+                  className="w-4 h-4 md:w-5 md:h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+                +7 (923) 381-60-60
+              </a>
+              <button
+                onClick={() => handleBookAppointment("Консультация")}
+                className="bg-white/90 border-2 border-primary/30 text-primary px-6 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold hover:bg-primary hover:text-white hover:border-primary transition-all text-sm md:text-base shadow-sm hover:shadow-md"
+              >
+                Заказать звонок
+              </button>
+            </div>
           </div>
         </div>
       </section>

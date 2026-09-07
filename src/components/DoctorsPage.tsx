@@ -299,19 +299,31 @@ export default function DoctorsPage() {
   return (
     <>
       <SeoHead pageData={seoData} />
-      <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-6 sm:py-8 md:py-12">
-        <div className="container mx-auto px-3 sm:px-4">
-          <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dark mb-3 sm:mb-4">
+      <div className="relative min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] overflow-hidden">
+        {/* Мягкие декоративные пятна */}
+        <div className="fixed -left-20 top-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="fixed -right-10 bottom-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+        {/* Hero */}
+        <section
+          className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"
+          style={{ backgroundImage: "url(/bg_8.avif)" }}
+        >
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="container mx-auto px-3 sm:px-4 text-center text-white relative z-10">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
               Наши специалисты
             </h1>
-            <p className="text-sm sm:text-base md:text-xl text-gray-600 max-w-3xl mx-auto">
-              Высококвалифицированные врачи клиники Алдан с многолетним опытом
-              работы.
+            <p className="text-white/90 max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+              Высококвалифицированные врачи клиники Алдан с многолетним опытом работы.
             </p>
           </div>
+        </section>
 
-          <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
+        <div className="container mx-auto px-3 sm:px-4 relative z-10 py-6 sm:py-8 md:py-12">
+
+          {/* Filters */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/10 p-4 sm:p-6 mb-6 sm:mb-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
               <div className="md:col-span-2">
                 <label
@@ -327,10 +339,10 @@ export default function DoctorsPage() {
                     placeholder="Введите ФИО, специальность или отделение..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 pl-8 sm:pl-10 border border-gray-300 rounded focus:outline-none focus:border-primary text-sm sm:text-base"
+                    className="w-full px-3 sm:px-4 py-2 pl-8 sm:pl-10 border-2 border-primary/20 rounded-xl focus:outline-none focus:border-primary/50 text-sm sm:text-base bg-white/60 placeholder-gray-400"
                   />
                   <svg
-                    className="absolute left-2 sm:left-3 top-2.5 h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
+                    className="absolute left-2 sm:left-3 top-2.5 h-4 w-4 sm:h-5 sm:w-5 text-primary/50"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -356,7 +368,7 @@ export default function DoctorsPage() {
                   id="branch"
                   value={selectedBranch}
                   onChange={(e) => setSelectedBranch(e.target.value)}
-                  className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-primary text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 border-2 border-primary/20 rounded-xl focus:outline-none focus:border-primary/50 text-sm sm:text-base bg-white/60"
                 >
                   <option value="all">Все отделения</option>
                   {branches.map((branch) => (
@@ -378,7 +390,7 @@ export default function DoctorsPage() {
                   id="category"
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-primary text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 border-2 border-primary/20 rounded-xl focus:outline-none focus:border-primary/50 text-sm sm:text-base bg-white/60"
                 >
                   <option value="all">Все категории</option>
                   {categories.map((category) => (
@@ -393,20 +405,22 @@ export default function DoctorsPage() {
 
           <div className="space-y-4 sm:space-y-6">
             {filteredDoctors.length === 0 ? (
-              <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 text-center">
-                <svg
-                  className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-3 sm:mb-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/10 p-6 sm:p-8 text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-primary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                </div>
                 <h3 className="text-base sm:text-lg font-semibold text-dark mb-2">
                   Врачи не найдены
                 </h3>
@@ -415,13 +429,13 @@ export default function DoctorsPage() {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-5">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
                 {paginatedDoctors?.map((doctor: ArchimedDoctor) => (
                   <div
                     key={`doctor-${doctor.id}`}
-                    className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col h-full"
+                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-primary/10 flex flex-col h-full"
                   >
-                    <div className="h-28 sm:h-44 bg-gradient-to-br from-primary to-primaryDark flex items-center justify-center">
+                    <div className="h-28 sm:h-44 bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center relative">
                       {(() => {
                         const photoUrl = getDoctorPhoto(doctor);
                         return photoUrl ? (
@@ -429,7 +443,7 @@ export default function DoctorsPage() {
                             <img
                               src={photoUrl}
                               alt={getDoctorFullName(doctor)}
-                              className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover object-[50%_30%] border-3 sm:border-4 border-white"
+                              className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover object-[50%_30%] border-3 sm:border-4 border-white/80 shadow-lg"
                               onError={(e) => {
                                 e.currentTarget.style.display = "none";
                                 const nextElement = e.currentTarget
@@ -440,11 +454,11 @@ export default function DoctorsPage() {
                               }}
                             />
                             <div
-                              className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center"
+                              className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center"
                               style={{ display: "none" }}
                             >
                               <svg
-                                className="w-8 h-8 sm:w-12 sm:h-12 text-white"
+                                className="w-8 h-8 sm:w-12 sm:h-12 text-primary"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -459,9 +473,9 @@ export default function DoctorsPage() {
                             </div>
                           </>
                         ) : (
-                          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
+                          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center">
                             <svg
-                              className="w-8 h-8 sm:w-12 sm:h-12 text-white"
+                              className="w-8 h-8 sm:w-12 sm:h-12 text-primary"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -479,11 +493,11 @@ export default function DoctorsPage() {
                     </div>
 
                     <div className="p-3 sm:p-5 flex flex-col flex-grow">
-                      <h3 className="text-base sm:text-lg font-semibold text-dark mb-1.5">
+                      <h3 className="text-base sm:text-lg font-semibold text-dark mb-1.5 leading-tight">
                         {getDoctorFullName(doctor)}
                       </h3>
                       <p className="text-primary font-medium mb-2 text-xs sm:text-sm">
-                        Направление: {normalize(doctor.type)}
+                        {formatSpecialtyName(doctor.type)}
                       </p>
 
                       <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-600 mb-3 flex-grow">
@@ -491,7 +505,7 @@ export default function DoctorsPage() {
                           !/алдан/i.test(doctor.branch || "") && (
                             <div className="flex items-center">
                               <svg
-                                className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
+                                className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0 text-primary"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -513,7 +527,7 @@ export default function DoctorsPage() {
                           !/отсутств/i.test(doctor.category) && (
                             <div className="flex items-center">
                               <svg
-                                className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
+                                className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0 text-primary"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -526,7 +540,7 @@ export default function DoctorsPage() {
                                 />
                               </svg>
                               <span className="leading-relaxed">
-                                Квалификационная категория: {doctor.category}
+                                Квалиф. категория: {doctor.category}
                               </span>
                             </div>
                           )}
@@ -536,7 +550,7 @@ export default function DoctorsPage() {
                           return (
                             <div className="flex items-center">
                               <svg
-                                className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
+                                className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0 text-primary"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -558,7 +572,7 @@ export default function DoctorsPage() {
                           doctor.scientific_degree !== "Без степени" && (
                             <div className="flex items-center">
                               <svg
-                                className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
+                                className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0 text-primary"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -571,13 +585,13 @@ export default function DoctorsPage() {
                                 />
                               </svg>
                               <span className="leading-relaxed">
-                                Ученая степень: {doctor.scientific_degree}
+                                {doctor.scientific_degree}
                               </span>
                             </div>
                           )}
                         <div className="flex items-center">
                           <svg
-                            className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
+                            className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0 text-primary"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -596,7 +610,7 @@ export default function DoctorsPage() {
                         {doctorServicesCount[doctor.id] && (
                           <div className="flex items-center">
                             <svg
-                              className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0"
+                              className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0 text-primary"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -624,7 +638,7 @@ export default function DoctorsPage() {
                       <div className="flex flex-col space-y-1.5 sm:flex-row sm:space-y-0 sm:space-x-2 mt-auto">
                         <Link
                           to={`/doctors/${doctor.id}`}
-                          className="w-full sm:w-auto px-3 sm:px-4 py-1 sm:py-2 border border-primary text-primary hover:bg-primary hover:text-white rounded-lg font-medium transition-colors text-xs sm:text-sm text-center"
+                          className="w-full sm:w-auto px-3 sm:px-4 py-1.5 sm:py-2 border border-primary/30 text-primary hover:bg-primary hover:text-white rounded-xl font-medium transition-all text-xs sm:text-sm text-center shadow-sm"
                         >
                           Подробнее
                         </Link>
@@ -639,7 +653,7 @@ export default function DoctorsPage() {
           {filteredDoctors.length > pageSize && (
             <div className="mt-6 sm:mt-8 flex items-center justify-center gap-2 sm:gap-3">
               <button
-                className="px-3 py-1.5 sm:px-4 sm:py-2 border border-gray-300 rounded text-sm sm:text-base disabled:opacity-50"
+                className="px-3 py-1.5 sm:px-4 sm:py-2 border border-primary/20 rounded-xl text-sm sm:text-base text-primary hover:bg-primary hover:text-white transition-all disabled:opacity-50"
                 onClick={() => goToPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
               >
@@ -653,7 +667,7 @@ export default function DoctorsPage() {
                     return (
                       <button
                         key={`page-${page}`}
-                        className={`min-w-8 px-2 sm:px-3 py-1 sm:py-1.5 rounded text-sm sm:text-base ${page === currentPage ? "bg-primary text-white" : "border border-gray-300"}`}
+                        className={`min-w-8 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-sm sm:text-base transition-all ${page === currentPage ? "bg-primary text-white shadow-md" : "border border-primary/20 text-primary hover:bg-primary/5"}`}
                         onClick={() => goToPage(page)}
                       >
                         {page}
@@ -665,7 +679,7 @@ export default function DoctorsPage() {
                 )}
                 {totalPages > 7 && (
                   <button
-                    className={`min-w-8 px-2 sm:px-3 py-1 sm:py-1.5 rounded text-sm sm:text-base ${totalPages === currentPage ? "bg-primary text-white" : "border border-gray-300"}`}
+                    className={`min-w-8 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-sm sm:text-base transition-all ${totalPages === currentPage ? "bg-primary text-white shadow-md" : "border border-primary/20 text-primary hover:bg-primary/5"}`}
                     onClick={() => goToPage(totalPages)}
                   >
                     {totalPages}
@@ -673,7 +687,7 @@ export default function DoctorsPage() {
                 )}
               </div>
               <button
-                className="px-3 py-1.5 sm:px-4 sm:py-2 border border-gray-300 rounded text-sm sm:text-base disabled:opacity-50"
+                className="px-3 py-1.5 sm:px-4 sm:py-2 border border-primary/20 rounded-xl text-sm sm:text-base text-primary hover:bg-primary hover:text-white transition-all disabled:opacity-50"
                 onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
               >

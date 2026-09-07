@@ -107,60 +107,41 @@ export default function DocumentsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-8 md:py-12">
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 md:mb-8">
+    <div className="relative min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] overflow-hidden">
+      {/* Мягкие декоративные пятна */}
+      <div className="fixed -left-20 top-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed -right-10 bottom-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Hero */}
+      <section
+        className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"
+        style={{ backgroundImage: "url(/bg_8.avif)" }}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
             Документы
           </h1>
+          <p className="text-white/90 max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+            Лицензии, свидетельства и другие документы клиники Алдан
+          </p>
+        </div>
+      </section>
 
-          <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
-            <p className="text-gray-600 text-sm sm:text-base text-center mb-6 md:mb-8">
-              На этой странице вы можете ознакомиться с основными документами
-              клиники
-            </p>
+      <div className="container mx-auto px-4 relative z-10 py-8 sm:py-10 md:py-12">
+        <div className="max-w-6xl mx-auto">
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-              {documents.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow flex flex-col h-full"
-                >
-                  <div className="flex-grow">
-                    <h3 className="text-sm sm:text-base font-semibold text-dark mb-2 leading-tight line-clamp-3">
-                      {doc.title}
-                    </h3>
-                    <p className="text-gray-600 text-xs sm:text-sm mb-3 leading-relaxed line-clamp-3">
-                      {doc.description}
-                    </p>
-                    <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500 mb-3">
-                      <span className="flex items-center">
-                        <svg
-                          className="w-4 h-4 mr-1 flex-shrink-0"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        {doc.fileType}
-                      </span>
-                      <span>{doc.fileSize}</span>
-                    </div>
-                  </div>
-
-                  <div className="mt-auto pt-3 border-t border-gray-200">
-                    <a
-                      href={doc.downloadUrl}
-                      className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primaryDark text-white text-sm font-medium rounded-lg transition-colors w-full justify-center"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+            {documents.map((doc) => (
+              <div
+                key={doc.id}
+                className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-primary/10 overflow-hidden flex flex-col h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+              >
+                <div className="flex-grow p-3 sm:p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-primary/10 to-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
                       <svg
-                        className="w-4 h-4 mr-2"
+                        className="w-4 h-4 text-primary"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -169,22 +150,54 @@ export default function DocumentsPage() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                         />
                       </svg>
-                      Скачать
-                    </a>
+                    </div>
+                    <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                      {doc.fileType}
+                    </span>
                   </div>
+                  <h3 className="text-sm sm:text-base font-semibold text-dark mb-2 leading-tight line-clamp-3">
+                    {doc.title}
+                  </h3>
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed line-clamp-2">
+                    {doc.description}
+                  </p>
                 </div>
-              ))}
-            </div>
 
-            <div className="mt-6 md:mt-8 p-4 bg-gray-50 rounded-lg">
-              <p className="text-xs sm:text-sm text-gray-600 text-center">
-                Для получения дополнительных документов или справок обращайтесь
-                в администрацию клиники
-              </p>
-            </div>
+                <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-2 border-t border-primary/10 mt-auto">
+                  <a
+                    href={doc.downloadUrl}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary/10 text-primary text-sm font-medium rounded-xl hover:bg-primary hover:text-white transition-all w-full"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    Скачать
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-primary/10">
+            <p className="text-sm text-gray-600 text-center">
+              Для получения дополнительных документов или справок обращайтесь в
+              администрацию клиники
+            </p>
           </div>
         </div>
       </div>

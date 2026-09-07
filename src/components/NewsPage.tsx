@@ -3,21 +3,22 @@ import VkNewsWidget from "./VkNewsWidget";
 
 export default function NewsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
+    <div className="relative min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] overflow-hidden">
+      {/* Мягкие декоративные пятна */}
+      <div className="fixed -left-20 top-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed -right-10 bottom-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
       {/* Hero */}
       <section
-        className="py-10 sm:py-12 md:py-14 bg-cover bg-center relative"
-        style={{ backgroundImage: "url(/bg-hero.jpg)" }}
+        className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"
+        style={{ backgroundImage: "url(/bg_8.avif)" }}
       >
         <div className="absolute inset-0 bg-black/50" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
-          <span className="inline-block px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm text-white/90 text-[11px] sm:text-xs font-semibold tracking-wide uppercase mb-3">
-            Будьте в курсе
-          </span>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
             Новости клиники
           </h1>
-          <p className="text-white/90 max-w-2xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+          <p className="text-white/90 max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
             Актуальные новости, акции и события клиники Алдан
           </p>
         </div>

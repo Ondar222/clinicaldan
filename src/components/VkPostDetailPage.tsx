@@ -359,7 +359,31 @@ export default function VkPostDetailPage() {
   const links = (post.attachments?.filter(a => a.type === 'link') || []) as NonNullable<VkPost['attachments']>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-red-50 py-8">
+    <div className="relative min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] overflow-hidden">
+      {/* Мягкие декоративные пятна */}
+      <div className="fixed -left-20 top-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed -right-10 bottom-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Hero */}
+      <section
+        className="py-10 sm:py-14 md:py-18 bg-cover bg-center relative"
+        style={{ backgroundImage: "url(/bg_8.avif)" }}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
+          <div className="inline-block mb-4">
+            <svg className="w-10 h-10 mx-auto text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 leading-tight">
+            Новости клиники Алдан
+          </h1>
+          <p className="text-white/80 text-sm">Новости, акции и полезные статьи</p>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 relative z-10 py-8 sm:py-10 md:py-12">
       {/* Модальное окно просмотра изображения */}
       {selectedImage && (
         <ImageModal
@@ -368,20 +392,20 @@ export default function VkPostDetailPage() {
         />
       )}
 
-      <div className="max-w-4xl mx-auto px-4">
+      <div className="max-w-4xl mx-auto">
         {/* Кнопка назад */}
         <button
           onClick={() => navigate('/news')}
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-primary transition-colors mb-6 group"
+          className="inline-flex items-center gap-2 text-primary hover:text-primaryDark transition-colors mb-6 group font-medium"
         >
           <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
           </svg>
-          <span className="font-medium">Назад к новостям</span>
+          <span>Назад к новостям</span>
         </button>
 
         {/* Основной контент */}
-        <article className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <article className="bg-white rounded-2xl shadow-lg overflow-hidden border border-primary/10">
           {/* Заголовок с датой */}
           <div className="bg-gradient-to-r from-primary to-primaryDark px-6 py-4">
             <div className="flex items-center justify-between">
@@ -508,6 +532,7 @@ export default function VkPostDetailPage() {
 
         {/* Кнопка назад внизу */}
    
+      </div>
       </div>
     </div>
   );

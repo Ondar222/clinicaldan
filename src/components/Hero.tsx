@@ -137,7 +137,7 @@ export default function Hero() {
                 </p>
                 <Link
                   to={slide.buttonLink}
-                  className="bg-primary hover:bg-primaryDark transition-colors text-white py-[3px] px-2 sm:py-1.5 sm:px-5 inline-block font-medium rounded-md animate-fadeInUp opacity-0 shadow-lg text-[9px] sm:text-xs"
+                  className="inline-block font-medium rounded-md animate-fadeInUp opacity-0 shadow-lg text-[9px] sm:text-xs bg-gradient-to-br from-[#fdf2f4] to-white/90 backdrop-blur-sm border-2 border-primary/20 text-dark hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 py-[3px] px-2 sm:py-1.5 sm:px-5"
                   style={{
                     animationDelay: "0.7s",
                     animationFillMode: "forwards",
@@ -153,7 +153,7 @@ export default function Hero() {
 
       {/* Navigation arrows */}
       <button
-        className="absolute top-1/2 left-2 sm:left-4 -translate-y-1/2 bg-white/30 hover:bg-white/50 p-1.5 sm:p-2 rounded-full text-white transition-colors z-10 backdrop-blur-sm"
+        className="absolute top-1/2 left-2 sm:left-4 -translate-y-1/2 bg-white/90 backdrop-blur-sm border-2 border-primary/20 p-1.5 sm:p-2 rounded-full text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 z-10 shadow-sm hover:shadow-md"
         onClick={prevSlide}
         aria-label="Previous slide"
       >
@@ -173,7 +173,7 @@ export default function Hero() {
         </svg>
       </button>
       <button
-        className="absolute top-1/2 right-2 sm:right-4 -translate-y-1/2 bg-white/30 hover:bg-white/50 p-1.5 sm:p-2 rounded-full text-white transition-colors z-10 backdrop-blur-sm"
+        className="absolute top-1/2 right-2 sm:right-4 -translate-y-1/2 bg-white/90 backdrop-blur-sm border-2 border-primary/20 p-1.5 sm:p-2 rounded-full text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 z-10 shadow-sm hover:shadow-md"
         onClick={nextSlide}
         aria-label="Next slide"
       >
@@ -200,8 +200,8 @@ export default function Hero() {
             key={`slide-indicator-${slide.id}`}
             className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
               slides.indexOf(slide) === currentSlide
-                ? "bg-primary w-6 sm:w-8"
-                : "bg-white/60 hover:bg-white/80"
+                ? "bg-primary w-6 sm:w-8 shadow-md"
+                : "bg-white/80 border-2 border-white/40 hover:bg-white hover:border-primary/30"
             }`}
             onClick={() => goTo(slides.indexOf(slide))}
             aria-label={`Go to slide ${slides.indexOf(slide) + 1}`}

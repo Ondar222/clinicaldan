@@ -180,7 +180,7 @@ const LaboratoryDiagnosticsPage: React.FC = () => {
       {/* Герой-секция */}
       <section
         className="py-12 sm:py-16 md:py-20 bg-cover bg-center relative"
-        style={{ backgroundImage: `url(/bg-hero.jpg)` }}
+        style={{ backgroundImage: "url(/bg_8.avif)" }}
       >
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container mx-auto px-3 sm:px-4 text-center text-white relative z-10">

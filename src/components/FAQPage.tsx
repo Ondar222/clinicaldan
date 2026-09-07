@@ -118,24 +118,40 @@ export default function FAQPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-8 md:py-12">
-      <div className="container mx-auto px-4">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 md:mb-8">
-          Часто задаваемые вопросы
-        </h1>
+    <div className="relative min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] overflow-hidden">
+      {/* Мягкие декоративные пятна */}
+      <div className="fixed -left-20 top-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed -right-10 bottom-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
+      {/* Hero */}
+      <section
+        className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"
+        style={{ backgroundImage: "url(/bg_8.avif)" }}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
+            Часто задаваемые вопросы
+          </h1>
+          <p className="text-white/90 max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+            Ответы на популярные вопросы о клинике Алдан
+          </p>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 relative z-10 py-8 sm:py-10 md:py-12">
         {/* Search and filter section */}
         <div className="max-w-4xl mx-auto mb-8">
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <input
               type="text"
               placeholder="Поиск по вопросам и ответам..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal focus:border-teal"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <select
-              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal focus:border-teal"
+              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
@@ -157,7 +173,7 @@ export default function FAQPage() {
             >
               <div className="p-5 md:p-6 flex flex-col flex-grow">
                 <div className="flex items-center mb-3">
-                  <span className="bg-teal/10 text-teal px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
                     {item.category}
                   </span>
                 </div>
@@ -188,10 +204,10 @@ export default function FAQPage() {
             Свяжитесь с нами, и мы с радостью ответим на все ваши вопросы.
           </p>
           <div className="flex flex-col md:flex-row gap-4">
-            <button className="bg-teal text-white px-6 py-2 rounded-md hover:bg-teal/90 transition-colors">
+            <button className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary/90 transition-colors">
               Написать нам
             </button>
-            <button className="border border-teal text-teal px-6 py-2 rounded-md hover:bg-teal/10 transition-colors">
+            <button className="border border-primary text-primary px-6 py-2 rounded-md hover:bg-primary/10 transition-colors">
               Позвонить
             </button>
           </div>

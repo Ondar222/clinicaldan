@@ -261,9 +261,15 @@ export default function ServiceGrid() {
   const visible = orderedServices.slice(start, start + pageSize);
 
   return (
-    <section className="py-6 sm:py-8 bg-white">
-      <div className="container mx-auto px-3 sm:px-4">
-        <h2 className="text-xl sm:text-2xl font-bold text-center mb-2 sm:mb-3 text-dark">Наши направления</h2>
+    <section className="py-6 sm:py-8 relative overflow-hidden">
+      {/* Мягкие декоративные пятна */}
+      <div className="absolute -left-10 top-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -right-10 bottom-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="container mx-auto px-3 sm:px-4 relative z-10">
+        <h2 className="text-xl sm:text-2xl font-bold text-center mb-2 sm:mb-3 bg-gradient-to-r from-dark to-primary bg-clip-text text-transparent">
+          Наши направления
+        </h2>
         <p className="text-gray-600 text-center max-w-2xl mx-auto mb-6 sm:mb-8 text-xs sm:text-sm">
           Клиника Алдан предлагает широкий спектр медицинских услуг. Выберите интересующее вас направление.
         </p>
@@ -273,25 +279,27 @@ export default function ServiceGrid() {
             <Link
               key={service.link}
               to={service.link}
-              className={`${service.color} ${service.hoverColor} text-white p-2 sm:p-3 flex flex-col items-center text-center rounded-md sm:rounded-lg shadow-sm overflow-hidden group relative transition-all duration-200 ease-in-out hover:shadow-md`}
+              className="bg-gradient-to-br from-[#fdf2f4]/80 to-white/80 backdrop-blur-sm border border-primary/15 rounded-lg p-2 sm:p-3 flex flex-col items-center text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary/30 group relative overflow-hidden"
               style={{ "--delay": `${index * 0.02}s` } as React.CSSProperties}
             >
-              {/* Hover background effect */}
-              <div className="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
+              {/* Hover gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#fdf2f4] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-              {/* Icon with animation */}
-              <div className="mb-1 sm:mb-2 relative z-10 transition-transform duration-200 group-hover:scale-105">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center">
+              {/* Icon with soft background */}
+              <div className="mb-1.5 sm:mb-2 relative z-10">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-primary/10 to-primary/20 rounded-full flex items-center justify-center text-primary group-hover:from-primary/15 group-hover:to-primary/25 transition-all duration-300 group-hover:scale-110">
                   {service.icon}
                 </div>
               </div>
 
               {/* Title */}
-              <h3 className="text-xs sm:text-sm font-medium relative z-10 leading-tight">{service.title}</h3>
+              <h3 className="text-[10px] sm:text-xs font-medium text-dark relative z-10 leading-tight group-hover:text-primary transition-colors duration-300">
+                {service.title}
+              </h3>
 
               {/* Arrow indicator that appears on hover */}
-              <div className="mt-0.5 sm:mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 relative z-10">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="mt-0.5 sm:mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 relative z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4 mx-auto text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </div>
@@ -303,15 +311,15 @@ export default function ServiceGrid() {
           <div className="flex items-center justify-center gap-1 sm:gap-2 mt-4 sm:mt-6">
             <button
               onClick={() => setPage(p => Math.max(0, p - 1))}
-              className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs sm:text-sm border border-primary text-primary rounded disabled:opacity-40 hover:bg-primary hover:text-white transition-colors"
+              className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs sm:text-sm border border-primary/30 text-primary rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-all disabled:opacity-40"
               disabled={page === 0}
             >
               ←
             </button>
-            <div className="text-xs text-gray-600 px-1 sm:px-2">{page + 1} / {totalPages}</div>
+            <div className="text-xs text-gray-500 px-1 sm:px-2">{page + 1} / {totalPages}</div>
             <button
               onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-              className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs sm:text-sm border border-primary text-primary rounded disabled:opacity-40 hover:bg-primary hover:text-white transition-colors"
+              className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs sm:text-sm border border-primary/30 text-primary rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-all disabled:opacity-40"
               disabled={page >= totalPages - 1}
             >
               →

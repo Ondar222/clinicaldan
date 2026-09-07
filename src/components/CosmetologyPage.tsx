@@ -9,6 +9,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { CLINIC_CONFIG, getMailLink, getTelLink } from "../data/clinicConfig";
 import {
   COSMETOLOGY_CATEGORIES,
+  COSMETOLOGY_FAQ,
   type CosmetologyCategory,
   getCategoryBySlug,
   getCosmetologyCategory,
@@ -210,20 +211,15 @@ export default function CosmetologyPage({
       />
 
       <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4]">
-        {/* Блок 1: Первый экран с фоном как в слайдере */}
+        {/* Блок 1: Первый экран с фоном как на /prices */}
         <section
-          className="relative py-16 md:py-24 overflow-hidden"
-          style={{
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.4)), url('/bg-hero.jpg')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center 30%",
-            backgroundAttachment: "fixed",
-          }}
+          className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"
+          style={{ backgroundImage: "url(/bg_8.avif)" }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent" />
-          <div className="container mx-auto px-4 relative z-10">
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
             {/* Хлебные крошки */}
-            <nav className="flex items-center gap-2 text-sm text-white/80 mb-8">
+            <nav className="flex items-center justify-center gap-2 text-sm text-white/80 mb-8">
               <Link to="/" className="hover:text-white transition-colors">
                 Главная
               </Link>
@@ -238,47 +234,22 @@ export default function CosmetologyPage({
               <span className="text-white font-medium">Косметология</span>
             </nav>
 
-            <div className="max-w-4xl">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
-                {currentCategory ? currentCategory.name : "Косметология"}
-              </h1>
-              <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed">
-                {currentCategory
-                  ? currentCategory.description
-                  : "Современная эстетическая медицина в Кызыле. Инъекционная и аппаратная косметология, пилинги, уходовые процедуры от сертифицированных специалистов."}
-              </p>
-
-              <div className="flex flex-wrap gap-4">
-                <button
-                  onClick={() =>
-                    document
-                      .getElementById("cosmetology-services")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                  className="px-8 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
-                >
-                  Смотреть цены
-                </button>
-                <button
-                  onClick={() =>
-                    document
-                      .getElementById("cosmetology-doctors")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                  className="px-8 py-3 border-2 border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all"
-                >
-                  Наши специалисты
-                </button>
-              </div>
-            </div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
+              {currentCategory ? currentCategory.name : "Косметология"}
+            </h1>
+            <p className="text-white/90 max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+              {currentCategory
+                ? currentCategory.description
+                : "Современная эстетическая медицина в Кызыле. Инъекционная и аппаратная косметология, пилинги, уходовые процедуры от сертифицированных специалистов."}
+            </p>
           </div>
         </section>
 
         {/* Блок 4: Врачи */}
-        <section id="cosmetology-doctors" className="py-16 md:py-20 bg-white">
+        <section id="cosmetology-doctors" className="py-8 sm:py-10 md:py-16">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-dark mb-4">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
                 Наши косметологи
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
@@ -310,10 +281,10 @@ export default function CosmetologyPage({
                 {doctors.map((doctor) => (
                   <div
                     key={doctor.id}
-                    className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-100 hover:shadow-lg transition-all duration-300 h-full"
+                    className="bg-white rounded-xl p-4 border border-primary/10 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full"
                   >
                     <div className="flex flex-col items-center text-center h-full">
-                      <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden mb-3">
+                      <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden mb-3">
                         {doctor.photo ? (
                           <img
                             src={doctor.photo}
@@ -337,7 +308,7 @@ export default function CosmetologyPage({
                         )}
                       </div>
                       <div className="flex flex-col flex-1 w-full">
-                        <h3 className="font-semibold text-dark text-sm mb-0.5 leading-tight">
+                        <h3 className="font-semibold text-gray-900 text-sm mb-0.5 leading-tight">
                           {doctor.name} {doctor.name1?.charAt(0)}.{" "}
                           {doctor.name2?.charAt(0)}.
                         </h3>
@@ -378,10 +349,10 @@ export default function CosmetologyPage({
         </section>
 
         {/* Блок 2: Какие задачи мы решаем */}
-        <section className="py-16 md:py-20 bg-white">
+        <section className="py-8 sm:py-10 md:py-16">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-dark mb-4">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
                 Какие задачи мы решаем
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
@@ -573,12 +544,12 @@ export default function CosmetologyPage({
                   onClick={() =>
                     setProblemModal({ isOpen: true, problem: item })
                   }
-                  className="group relative bg-gradient-to-br from-gray-50 to-white p-5 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg transition-all duration-300 text-left w-full"
+                  className="group relative bg-white p-5 rounded-2xl border border-primary/10 hover:border-primary/30 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-left w-full"
                 >
                   <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-3 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                     {item.icon}
                   </div>
-                  <h3 className="font-semibold text-dark mb-1 text-base">
+                  <h3 className="font-semibold text-gray-900 mb-1 text-base">
                     {item.title}
                   </h3>
                   <p className="text-sm text-gray-500">{item.desc}</p>
@@ -618,7 +589,7 @@ export default function CosmetologyPage({
                     {problemModal.problem.icon}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-dark">
+                    <h3 className="text-xl font-bold text-gray-900">
                       {problemModal.problem.title}
                     </h3>
                     <p className="text-sm text-gray-500">
@@ -663,7 +634,7 @@ export default function CosmetologyPage({
         {/* Блок 3: Каталог услуг */}
         <section id="cosmetology-services" className="py-8 md:py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold text-dark mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Услуги косметологии
             </h2>
 
@@ -747,7 +718,7 @@ export default function CosmetologyPage({
                 ))}
               </div>
             ) : filteredServices.length === 0 ? (
-              <div className="bg-white rounded-xl p-12 text-center border border-gray-100">
+              <div className="bg-white rounded-xl p-12 text-center border border-primary/10">
                 <svg
                   className="w-16 h-16 text-gray-300 mx-auto mb-4"
                   fill="none"
@@ -799,7 +770,7 @@ export default function CosmetologyPage({
                           )}
                           <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 pl-8">
                             {service.duration > 0 && (
-                              <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-full">
+                              <span className="flex items-center gap-1.5 bg-primary/5 px-3 py-1.5 rounded-full">
                                 <svg
                                   className="w-4 h-4"
                                   fill="none"
@@ -931,10 +902,10 @@ export default function CosmetologyPage({
         </section>
 
         {/* Блок 5: Оборудование */}
-        <section className="py-16 md:py-20 bg-gray-50">
+        <section className="py-8 sm:py-10 md:py-16">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-dark mb-4">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
                 Оборудование и технологии
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
@@ -975,7 +946,7 @@ export default function CosmetologyPage({
                       />
                     </svg>
                   </div>
-                  <h3 className="font-semibold text-dark text-lg mb-2">
+                  <h3 className="font-semibold text-gray-900 text-lg mb-2">
                     {item.name}
                   </h3>
                   <p className="text-sm text-gray-500">{item.desc}</p>
@@ -986,7 +957,7 @@ export default function CosmetologyPage({
         </section>
 
         {/* Блок 7: Показания и противопоказания */}
-        <section className="py-12 md:py-16 bg-gray-50">
+        <section className="py-8 sm:py-10 md:py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <div className="bg-gradient-to-br from-yellow-50 to-yellow-100/50 border border-yellow-200 rounded-2xl p-6">
@@ -1025,36 +996,16 @@ export default function CosmetologyPage({
         </section>
 
         {/* Блок 8: FAQ */}
-        <section className="py-16 md:py-20 bg-white">
+        <section className="py-8 sm:py-10 md:py-12">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-dark mb-4">
-                Частые вопросы
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Ответы на популярные вопросы о косметологических процедурах
-              </p>
-            </div>
-            <div className="max-w-3xl mx-auto space-y-4">
-              {[
-                {
-                  q: "Как выбрать процедуру косметологии?",
-                  a: "Выбор процедуры зависит от ваших индивидуальных особенностей. На консультации врач проведет диагностику и подберет оптимальный курс.",
-                },
-                {
-                  q: "Нужна ли консультация перед процедурой?",
-                  a: "Да, обязательно. Врач должен убедиться в отсутствии противопоказаний и подобрать подходящую методику.",
-                },
-                {
-                  q: "Когда будет виден эффект?",
-                  a: "Эффект зависит от процедуры. После ботокса — через 2 недели, аппаратные — накопительный, до 3 месяцев.",
-                },
-              ].map((faq, idx) => (
-                <details
-                  key={idx}
-                  className="group bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-100 hover:border-primary/30 transition-all"
-                >
-                  <summary className="cursor-pointer p-5 font-medium text-dark flex justify-between items-center hover:bg-white/50 transition-colors">
+            <div className="max-w-5xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                {COSMETOLOGY_FAQ.map((item) => (
+                  <details
+                    key={item.question}
+                    className="group bg-white rounded-xl border border-primary/10 hover:border-primary/30 transition-all"
+                  >
+                    <summary className="cursor-pointer p-5 font-medium text-gray-900 flex justify-between items-center hover:bg-primary/5 transition-colors">
                     <span className="flex items-center gap-3">
                       <svg
                         className="w-5 h-5 text-primary flex-shrink-0"
@@ -1069,7 +1020,7 @@ export default function CosmetologyPage({
                           d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      {faq.q}
+                      {item.question}
                     </span>
                     <svg
                       className="w-5 h-5 text-primary transition-transform group-open:rotate-180"
@@ -1086,44 +1037,44 @@ export default function CosmetologyPage({
                     </svg>
                   </summary>
                   <div className="px-5 pb-5 pt-0 text-gray-600 leading-relaxed">
-                    {faq.a}
+                    {item.answer}
                   </div>
                 </details>
               ))}
             </div>
           </div>
+          </div>
         </section>
 
         {/* Блок 9: CTA */}
-        <section
-          className="py-16 md:py-24 relative overflow-hidden"
-          style={{
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5)), url('/bg-hero.jpg')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundAttachment: "fixed",
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/20 to-transparent" />
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-4xl font-bold text-white mb-4">
+        <section className="py-8 sm:py-10 md:py-12 bg-gradient-to-b from-white to-[#fdf2f4]">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
+              <div className="w-14 h-14 bg-gradient-to-br from-primary/10 to-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 md:mb-6 bg-gradient-to-r from-dark to-primary bg-clip-text text-transparent">
                 Запишитесь на консультацию косметолога
               </h2>
-              <p className="text-white/90 text-lg mb-8 leading-relaxed">
+              <p className="text-gray-600 text-base sm:text-lg mb-6 sm:mb-8 leading-relaxed">
                 Опытные специалисты Клиники Алдан подберут индивидуальную
                 программу омоложения с учетом особенностей вашей кожи.
               </p>
-              <div className="flex flex-wrap justify-center gap-4">
+              <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
                 <a
                   href={getTelLink()}
-                  className="px-10 py-4 bg-white text-primary font-semibold rounded-xl hover:bg-gray-100 transition-all shadow-xl hover:shadow-2xl text-lg"
+                  className="bg-gradient-to-r from-primary to-primaryDark text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl font-semibold hover:shadow-lg transition-all inline-flex items-center gap-2 text-sm sm:text-base shadow-md"
                 >
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
                   {CLINIC_CONFIG.phoneFormatted}
                 </a>
                 <button
                   onClick={() => handleOpenAppointment()}
-                  className="px-10 py-4 border-2 border-white/40 text-white font-semibold rounded-xl hover:bg-white/10 transition-all text-lg"
+                  className="bg-white/90 border-2 border-primary/30 text-primary px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl font-semibold hover:bg-primary hover:text-white hover:border-primary transition-all text-sm sm:text-base shadow-sm hover:shadow-md"
                 >
                   Записаться онлайн
                 </button>

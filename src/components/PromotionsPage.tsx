@@ -83,20 +83,37 @@ export default function PromotionsPage() {
   }, [uiPromos]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-12">
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 md:mb-8">
+    <div className="relative min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] overflow-hidden">
+      {/* Мягкие декоративные пятна */}
+      <div className="fixed -left-20 top-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed -right-10 bottom-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Hero */}
+      <section
+        className="py-10 sm:py-14 md:py-18 lg:py-20 bg-cover bg-center relative"
+        style={{ backgroundImage: "url(/bg_8.avif)" }}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
             Акции и специальные предложения
           </h1>
+          <p className="text-white/90 max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+            Выгодные предложения и специальные скидки клиники Алдан
+          </p>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 relative z-10 py-8 sm:py-10 md:py-12">
+        <div className="max-w-6xl mx-auto">
 
           {isLoading && (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 text-center border border-primary/10">
               Загрузка...
             </div>
           )}
           {error && (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center text-red-600">
+            <div className="bg-primary/5 rounded-2xl p-8 text-center text-primary border border-primary/20">
               {error}
             </div>
           )}
@@ -110,7 +127,7 @@ export default function PromotionsPage() {
                   return (
                     <div
                       key={promo.id}
-                      className="bg-white rounded-lg shadow-md overflow-hidden"
+                      className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm overflow-hidden border border-primary/10"
                     >
                       <button
                         type="button"
@@ -125,7 +142,7 @@ export default function PromotionsPage() {
                         aria-controls={`promo-body-${key}`}
                       >
                         <div className="flex items-center gap-2">
-                          <span className="bg-teal text-white px-3 py-1 rounded-full text-sm font-medium">
+                          <span className="bg-gradient-to-r from-primary to-primaryDark text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm">
                             {promo.discountLabel}
                           </span>
                           <h3 className="text-base font-semibold text-gray-900 text-left">
@@ -149,10 +166,10 @@ export default function PromotionsPage() {
                       {isOpen && (
                         <div
                           id={`promo-body-${key}`}
-                          className="border-t border-gray-200"
+                          className="border-t border-primary/10"
                         >
                           {promo.imageUrl && (
-                            <div className="relative w-full pt-[100%]">
+                            <div className="relative w-full pt-[100%] bg-gradient-to-br from-[#fdf2f4] to-white">
                               <img
                                 src={promo.imageUrl}
                                 alt={promo.title}
@@ -178,7 +195,7 @@ export default function PromotionsPage() {
                                   className="absolute inset-0 flex items-center justify-center group"
                                   aria-label="Смотреть видео ВКонтакте"
                                 >
-                                  <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/90 text-[#2a5885] group-hover:bg-white transition">
+                                  <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/90 text-[#2a5885] group-hover:bg-white transition shadow-lg">
                                     <svg
                                       width="24"
                                       height="24"
@@ -208,14 +225,14 @@ export default function PromotionsPage() {
                                   href={promo.link}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="bg-teal text-white px-4 py-2 rounded-md font-medium hover:bg-teal/90 transition-colors"
+                                  className="bg-gradient-to-r from-primary to-primaryDark text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg transition-all"
                                 >
                                   {promo.isVideo
                                     ? "Смотреть видео"
                                     : "Подробнее"}
                                 </a>
                               ) : (
-                                <button className="bg-teal text-white px-4 py-2 rounded-md font-medium hover:bg-teal/90 transition-colors">
+                                <button className="bg-gradient-to-r from-primary to-primaryDark text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg transition-all">
                                   Записаться
                                 </button>
                               )}
@@ -232,10 +249,10 @@ export default function PromotionsPage() {
                 {listToRender.map((promo: any) => (
                   <div
                     key={promo.id}
-                    className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full"
+                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm overflow-hidden flex flex-col h-full border border-primary/10 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
                   >
                     {promo.isVideo ? (
-                      <div className="relative w-full pt-[100%]">
+                      <div className="relative w-full pt-[100%] bg-gradient-to-br from-[#fdf2f4] to-white">
                         {promo.imageUrl ? (
                           <img
                             src={promo.imageUrl}
@@ -249,7 +266,7 @@ export default function PromotionsPage() {
                             }}
                           />
                         ) : (
-                          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-[#4c75a3] to-[#2a5885]" />
+                          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary/10 to-primary/5" />
                         )}
                         <button
                           type="button"
@@ -264,7 +281,7 @@ export default function PromotionsPage() {
                           className="absolute inset-0 flex items-center justify-center group"
                           aria-label="Смотреть видео ВКонтакте"
                         >
-                          <span className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/90 text-[#2a5885] group-hover:bg-white transition">
+                          <span className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/90 text-[#2a5885] group-hover:bg-white transition shadow-xl">
                             <svg
                               width="28"
                               height="28"
@@ -276,7 +293,7 @@ export default function PromotionsPage() {
                             </svg>
                           </span>
                         </button>
-                        <div className="absolute top-4 right-4 bg-teal text-white px-3 py-1 rounded-full font-medium">
+                        <div className="absolute top-4 right-4 bg-gradient-to-r from-primary to-primaryDark text-white px-3 py-1 rounded-full font-medium shadow-sm">
                           {promo.discountLabel}
                         </div>
                       </div>
@@ -287,7 +304,7 @@ export default function PromotionsPage() {
                           alt={promo.title}
                           className="w-full h-48 object-cover"
                         />
-                        <div className="absolute top-4 right-4 bg-teal text-white px-3 py-1 rounded-full font-medium">
+                        <div className="absolute top-4 right-4 bg-gradient-to-r from-primary to-primaryDark text-white px-3 py-1 rounded-full font-medium shadow-sm">
                           {promo.discountLabel}
                         </div>
                       </div>
@@ -299,7 +316,7 @@ export default function PromotionsPage() {
                       <p className="text-gray-600 mb-4 leading-relaxed flex-grow">
                         {promo.description}
                       </p>
-                      <div className="mt-auto pt-4 border-t border-gray-200">
+                      <div className="mt-auto pt-4 border-t border-primary/10">
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-500">
                             {promo.validUntil
@@ -311,12 +328,12 @@ export default function PromotionsPage() {
                               href={promo.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="bg-teal text-white px-6 py-2 rounded-lg font-medium hover:bg-teal/90 transition-colors"
+                              className="bg-gradient-to-r from-primary to-primaryDark text-white px-6 py-2 rounded-xl font-medium hover:shadow-lg transition-all"
                             >
                               {promo.isVideo ? "Смотреть видео" : "Подробнее"}
                             </a>
                           ) : (
-                            <button className="bg-teal text-white px-6 py-2 rounded-lg font-medium hover:bg-teal/90 transition-colors">
+                            <button className="bg-gradient-to-r from-primary to-primaryDark text-white px-6 py-2 rounded-xl font-medium hover:shadow-lg transition-all">
                               Записаться
                             </button>
                           )}
