@@ -441,9 +441,9 @@ export default function MedicalExaminationsPage() {
             {checkupTypes.map((checkup) => (
               <div
                 key={checkup.id}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-primary/10"
+                className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-primary/10 flex flex-col"
               >
-                <div className="bg-gradient-to-br from-primary/10 to-primary/20 text-primary p-4 md:p-6 flex flex-col items-center text-center">
+                <div className="bg-gradient-to-br from-primary/10 to-primary/20 text-primary p-4 md:p-6 flex flex-col items-center text-center flex-shrink-0">
                   <div className="w-12 h-12 bg-white/80 rounded-full flex items-center justify-center mb-3 shadow-sm">
                     {checkupIcons[checkup.icon]}
                   </div>
@@ -455,7 +455,7 @@ export default function MedicalExaminationsPage() {
                   </p>
                 </div>
 
-                <div className="p-4 md:p-6">
+                <div className="p-4 md:p-6 flex flex-col flex-grow">
                   <div className="flex justify-between items-center mb-3 md:mb-4">
                     <div>
                       <span className="text-gray-500 text-xs md:text-sm">
@@ -475,7 +475,7 @@ export default function MedicalExaminationsPage() {
                     </div>
                   </div>
 
-                  <div className="mb-4 md:mb-6">
+                  <div className="mb-3 md:mb-4">
                     <h4 className="font-semibold mb-2 md:mb-3 text-dark text-sm md:text-base">
                       В программу входит:
                     </h4>
@@ -506,7 +506,7 @@ export default function MedicalExaminationsPage() {
 
                   <button
                     onClick={() => handleBookAppointment(checkup.title)}
-                    className="w-full bg-white/90 backdrop-blur-sm border-2 border-primary/30 text-primary py-2.5 md:py-3 rounded-xl font-semibold hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 text-sm md:text-base shadow-sm hover:shadow-md"
+                    className="w-full bg-white/90 backdrop-blur-sm border-2 border-primary/30 text-primary py-2.5 md:py-3 rounded-xl font-semibold hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 text-sm md:text-base shadow-sm hover:shadow-md mt-auto"
                   >
                     Записаться
                   </button>
@@ -601,7 +601,7 @@ export default function MedicalExaminationsPage() {
               {doctors.map((doctor) => (
                 <div
                   key={`doctor-${doctor.id}`}
-                  className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-primary/10 flex flex-col h-full"
+                  className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-primary/10 flex flex-col min-h-[380px]"
                 >
                   <div className="h-32 md:h-44 bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
                     {(() => {
@@ -668,69 +668,78 @@ export default function MedicalExaminationsPage() {
                       {formatSpecialtyName(doctor.type)}
                     </p>
 
-                    <div className="space-y-1 md:space-y-1.5 text-xs md:text-sm text-gray-600 mb-3 flex-grow">
-                      {doctor.branch && !/алдан/i.test(doctor.branch || "") && (
-                        <div className="flex items-center">
-                          <svg
-                            className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0 text-primary"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                            />
-                          </svg>
-                          <span className="leading-relaxed">
-                            {doctor.branch}
-                          </span>
-                        </div>
-                      )}
+                    <div className="text-xs md:text-sm text-gray-600 mb-3">
                       {(() => {
+                        const hasBranch = doctor.branch && !/алдан/i.test(doctor.branch || "");
                         const years = getExperienceYears(doctor);
-                        if (!years && years !== 0) return null;
+                        const hasYears = years || years === 0;
+                        const hasMaxTime = doctor.max_time;
+                        
                         return (
-                          <div className="flex items-center">
-                            <svg
-                              className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0 text-primary"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
-                            <span className="leading-relaxed">
-                              Стаж: {years} лет
-                            </span>
-                          </div>
+                          <>
+                            {hasBranch && (
+                              <div className="flex items-center mb-1">
+                                <svg
+                                  className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0 text-primary"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                                  />
+                                </svg>
+                                <span className="leading-relaxed">
+                                  {doctor.branch}
+                                </span>
+                              </div>
+                            )}
+                            {hasYears && (
+                              <div className="flex items-center mb-1">
+                                <svg
+                                  className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0 text-primary"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+                                <span className="leading-relaxed">
+                                  Стаж: {years} лет
+                                </span>
+                              </div>
+                            )}
+                            {hasMaxTime && (
+                              <div className="flex items-center mb-1">
+                                <svg
+                                  className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0 text-primary"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+                                <span className="leading-relaxed">
+                                  Прием: {doctor.max_time} мин
+                                </span>
+                              </div>
+                            )}
+                          </>
                         );
                       })()}
-                      <div className="flex items-center">
-                        <svg
-                          className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 flex-shrink-0 text-primary"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <span className="leading-relaxed">
-                          Прием: {doctor.max_time} мин
-                        </span>
-                      </div>
                     </div>
 
                     <div className="flex flex-col space-y-1 md:space-y-0 md:flex-row md:space-x-2 mt-auto">
