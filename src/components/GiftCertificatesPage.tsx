@@ -1,3 +1,4 @@
+'use client';
 import type React from "react";
 import { useState } from "react";
 import certificateService, {
@@ -33,7 +34,7 @@ export default function GiftCertificatesPage() {
   const [useCustomAmount, setUseCustomAmount] = useState(false);
 
   // Определяем текущую среду
-  const isProduction = import.meta.env.PROD || false;
+  const isProduction = process.env.NODE_ENV === "production" || false;
 
   // Функция валидации email
   const validateEmail = (email: string): boolean => {

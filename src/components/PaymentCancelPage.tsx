@@ -1,5 +1,6 @@
+'use client';
 import React, { useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from '@/lib/navigation';
 
 export default function PaymentCancelPage() {
   const [searchParams] = useSearchParams();

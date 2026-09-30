@@ -1,10 +1,11 @@
+'use client';
 /**
  * Страница конкретной услуги косметологии
  * Полный набор блоков согласно ТЗ
  */
 
 import React, { useState, useEffect, useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from '@/lib/navigation';
 import { CLINIC_CONFIG, getTelLink } from "../data/clinicConfig";
 import {
   COSMETOLOGY_CATEGORIES,

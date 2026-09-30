@@ -1,3 +1,4 @@
+'use client';
 import type React from "react";
 import { useState } from "react";
 import paymentService from "../services/payment";
@@ -25,7 +26,7 @@ export default function PaymentTestPage() {
     orderId?: string;
   } | null>(null);
 
-  const isProduction = import.meta.env.PROD || false;
+  const isProduction = process.env.NODE_ENV === "production" || false;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

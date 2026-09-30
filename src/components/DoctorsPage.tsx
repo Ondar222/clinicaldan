@@ -1,5 +1,6 @@
+'use client';
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from '@/lib/navigation';
 import { CLINIC_CONFIG } from "../data/clinicConfig";
 import { mockBranches } from "../data/mockDoctors";
 import prodoctorovData from "../data/prodoctorov.json";

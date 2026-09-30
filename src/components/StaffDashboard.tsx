@@ -1,3 +1,4 @@
+'use client';
 import type React from 'react';
 import { useState, useEffect } from 'react';
 import type { ArchimedAppointment, ArchimedDoctor, ApiService } from '../types/cms';
@@ -19,6 +20,7 @@ const StaffDashboard: React.FC = () => {
   const [certificatesError, setCertificatesError] = useState<string | null>(null);
   const [transactionsError, setTransactionsError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [appointmentsPage, setAppointmentsPage] = useState<number>(1);
   const [certificateQuery, setCertificateQuery] = useState('');
   const [redeemValues, setRedeemValues] = useState<Record<string, string>>({});
   const [redeemReasons, setRedeemReasons] = useState<Record<string, string>>({});
@@ -372,6 +374,18 @@ const StaffDashboard: React.FC = () => {
     return appointmentDate === selectedDate;
   });
 
+  // Пагинация списка записей
+  const APPOINTMENTS_PER_PAGE = 10;
+  const appointmentsTotalPages = Math.max(
+    1,
+    Math.ceil(filteredAppointments.length / APPOINTMENTS_PER_PAGE),
+  );
+  const appointmentsSafePage = Math.min(appointmentsPage, appointmentsTotalPages);
+  const paginatedAppointments = filteredAppointments.slice(
+    (appointmentsSafePage - 1) * APPOINTMENTS_PER_PAGE,
+    appointmentsSafePage * APPOINTMENTS_PER_PAGE,
+  );
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#fdf2f4] via-white to-[#fdf2f4] py-12">
@@ -412,184 +426,8 @@ const StaffDashboard: React.FC = () => {
           <p className="text-lg text-gray-600">Управление записями пациентов</p>
         </div>
 
-        {/* Date Filter */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <div className="flex items-center space-x-4">
-            <label htmlFor="date-filter" className="text-sm font-medium text-gray-700">
-              Фильтр по дате:
-            </label>
-            <input
-              id="date-filter"
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-          </div>
-        </div>
-
-        {/* Appointments List */}
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="px-6 py-4 bg-primary text-white">
-            <h2 className="text-xl font-semibold">
-              Записи на {formatDate(selectedDate)} ({filteredAppointments.length})
-            </h2>
-          </div>
-
-          {filteredAppointments.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
-              <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <p className="text-lg">На выбранную дату записей нет</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-200">
-              {filteredAppointments.map((appointment) => (
-                <div key={appointment.id} className="p-6 hover:bg-gray-50 transition-colors">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-4 mb-2">
-                        <h3 className="text-lg font-semibold text-dark">
-                          {appointment.patient_name}
-                        </h3>
-                        <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                          ID: {appointment.id}
-                        </span>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-                        <div>
-                          <span className="font-medium">Врач:</span> {getDoctorName(appointment.doctor_id)}
-                        </div>
-                        <div>
-                          <span className="font-medium">Услуга:</span> {getServiceName(appointment.service_id)}
-                        </div>
-                        <div>
-                          <span className="font-medium">Дата:</span> {formatDate(appointment.preferred_date)}
-                        </div>
-                        <div>
-                          <span className="font-medium">Время:</span> {formatTime(appointment.preferred_time)}
-                        </div>
-                        <div>
-                          <span className="font-medium">Телефон:</span> {appointment.patient_phone}
-                        </div>
-                        <div>
-                          <span className="font-medium">Email:</span> {appointment.patient_email}
-                        </div>
-                      </div>
-
-                      {appointment.comments && (
-                        <div className="mt-3">
-                          <span className="font-medium text-gray-700">Комментарии:</span>
-                          <p className="text-gray-600 mt-1">{appointment.comments}</p>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="mt-4 md:mt-0 md:ml-6">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => {
-                            // Handle appointment update
-                            console.log('Update appointment:', appointment.id);
-                          }}
-                          className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                        >
-                          Изменить
-                        </button>
-                        <button
-                          onClick={() => {
-                            // Handle appointment cancellation
-                            console.log('Cancel appointment:', appointment.id);
-                          }}
-                          className="px-4 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-                        >
-                          Отменить
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Транзакции оплаты (как в кабинете банка) */}
-        <div className="mt-10 bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="px-6 py-4 bg-primary text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <h2 className="text-xl font-semibold">Транзакции оплаты сертификатов</h2>
-            <button
-              onClick={() => {
-                loadCertificatesPanel(certificateQuery).catch((err) => {
-                  console.error('Ошибка обновления:', err);
-                });
-              }}
-              className="px-4 py-2 text-sm bg-white text-primary rounded hover:bg-gray-100 transition-colors"
-            >
-              Обновить
-            </button>
-          </div>
-          <p className="px-6 py-3 text-sm text-gray-600 border-b border-gray-200">
-            Последние операции: успешные и отклонённые. Если на бэкенде нет отдельного списка, строки строятся из данных оплаты в списке купленных сертификатов ниже.
-          </p>
-          {transactionsError && (
-            <div className="mx-6 mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-sm">
-              {transactionsError}
-            </div>
-          )}
-          {isTransactionsLoading ? (
-            <div className="p-8 text-center text-gray-600">Загрузка транзакций...</div>
-          ) : transactions.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">Транзакций пока нет</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm text-left">
-                <thead className="bg-gray-100 text-gray-700">
-                  <tr>
-                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Сумма</th>
-                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Статус</th>
-                    <th className="px-4 py-3 font-semibold min-w-[200px]">Код ответа</th>
-                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Номер заказа</th>
-                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Платёжное средство</th>
-                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Сертификат</th>
-                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Дата</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {transactions.map((row) => {
-                    const bankMeta = getBankStatusMeta(row.bankStatus, row.responseCode);
-                    return (
-                      <tr key={row.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 whitespace-nowrap font-medium">
-                          {formatCurrency(row.amount)} {row.currency && row.currency !== 'RUR' ? row.currency : ''}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${bankMeta.className}`}>
-                            {row.statusLabel}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">{row.responseCode || '—'}</td>
-                        <td className="px-4 py-3 font-mono text-xs text-primary break-all max-w-[200px]">
-                          {row.orderId || row.paymentOrderId || '—'}
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">{row.paymentMethod || '—'}</td>
-                        <td className="px-4 py-3 font-mono text-xs">{row.certificateCode || '—'}</td>
-                        <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
-                          {row.createdAt ? formatDateTime(row.createdAt) : '—'}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
         {/* Купленные сертификаты (успешно оплаченные) */}
-        <div className="mt-10 bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="px-6 py-4 bg-primary text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <h2 className="text-xl font-semibold">Все сертификаты</h2>
             <div className="flex gap-2">
@@ -798,6 +636,217 @@ const StaffDashboard: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Транзакции оплаты (как в кабинете банка) */}
+        <div className="mt-10 bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="px-6 py-4 bg-primary text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <h2 className="text-xl font-semibold">Транзакции оплаты сертификатов</h2>
+            <button
+              onClick={() => {
+                loadCertificatesPanel(certificateQuery).catch((err) => {
+                  console.error('Ошибка обновления:', err);
+                });
+              }}
+              className="px-4 py-2 text-sm bg-white text-primary rounded hover:bg-gray-100 transition-colors"
+            >
+              Обновить
+            </button>
+          </div>
+          <p className="px-6 py-3 text-sm text-gray-600 border-b border-gray-200">
+            Последние операции: успешные и отклонённые. Если на бэкенде нет отдельного списка, строки строятся из данных оплаты в списке купленных сертификатов ниже.
+          </p>
+          {transactionsError && (
+            <div className="mx-6 mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-sm">
+              {transactionsError}
+            </div>
+          )}
+          {isTransactionsLoading ? (
+            <div className="p-8 text-center text-gray-600">Загрузка транзакций...</div>
+          ) : transactions.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">Транзакций пока нет</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm text-left">
+                <thead className="bg-gray-100 text-gray-700">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Сумма</th>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Статус</th>
+                    <th className="px-4 py-3 font-semibold min-w-[200px]">Код ответа</th>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Номер заказа</th>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Платёжное средство</th>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Сертификат</th>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">Дата</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {transactions.map((row) => {
+                    const bankMeta = getBankStatusMeta(row.bankStatus, row.responseCode);
+                    return (
+                      <tr key={row.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 whitespace-nowrap font-medium">
+                          {formatCurrency(row.amount)} {row.currency && row.currency !== 'RUR' ? row.currency : ''}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${bankMeta.className}`}>
+                            {row.statusLabel}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-gray-700">{row.responseCode || '—'}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-primary break-all max-w-[200px]">
+                          {row.orderId || row.paymentOrderId || '—'}
+                        </td>
+                        <td className="px-4 py-3 text-gray-700">{row.paymentMethod || '—'}</td>
+                        <td className="px-4 py-3 font-mono text-xs">{row.certificateCode || '—'}</td>
+                        <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                          {row.createdAt ? formatDateTime(row.createdAt) : '—'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Date Filter */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <div className="flex items-center space-x-4">
+            <label htmlFor="date-filter" className="text-sm font-medium text-gray-700">
+              Фильтр по дате:
+            </label>
+            <input
+              id="date-filter"
+              type="date"
+              value={selectedDate}
+              onChange={(e) => {
+                setSelectedDate(e.target.value);
+                setAppointmentsPage(1);
+              }}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        {/* Appointments List */}
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="px-6 py-4 bg-primary text-white">
+            <h2 className="text-xl font-semibold">
+              Записи на {formatDate(selectedDate)} ({filteredAppointments.length})
+            </h2>
+          </div>
+
+          {filteredAppointments.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <p className="text-lg">На выбранную дату записей нет</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {paginatedAppointments.map((appointment) => (
+                <div key={appointment.id} className="p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-4 mb-2">
+                        <h3 className="text-lg font-semibold text-dark">
+                          {appointment.patient_name}
+                        </h3>
+                        <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                          ID: {appointment.id}
+                        </span>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                        <div>
+                          <span className="font-medium">Врач:</span> {getDoctorName(appointment.doctor_id)}
+                        </div>
+                        <div>
+                          <span className="font-medium">Услуга:</span> {getServiceName(appointment.service_id)}
+                        </div>
+                        <div>
+                          <span className="font-medium">Дата:</span> {formatDate(appointment.preferred_date)}
+                        </div>
+                        <div>
+                          <span className="font-medium">Время:</span> {formatTime(appointment.preferred_time)}
+                        </div>
+                        <div>
+                          <span className="font-medium">Телефон:</span> {appointment.patient_phone}
+                        </div>
+                        <div>
+                          <span className="font-medium">Email:</span> {appointment.patient_email}
+                        </div>
+                      </div>
+
+                      {appointment.comments && (
+                        <div className="mt-3">
+                          <span className="font-medium text-gray-700">Комментарии:</span>
+                          <p className="text-gray-600 mt-1">{appointment.comments}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-4 md:mt-0 md:ml-6">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => {
+                            // Handle appointment update
+                            console.log('Update appointment:', appointment.id);
+                          }}
+                          className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                        >
+                          Изменить
+                        </button>
+                        <button
+                          onClick={() => {
+                            // Handle appointment cancellation
+                            console.log('Cancel appointment:', appointment.id);
+                          }}
+                          className="px-4 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                        >
+                          Отменить
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {appointmentsTotalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 px-6 py-4 border-t border-gray-200">
+              <button
+                onClick={() => setAppointmentsPage((p) => Math.max(1, p - 1))}
+                disabled={appointmentsSafePage === 1}
+                className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
+                  appointmentsSafePage === 1
+                    ? 'border-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                Назад
+              </button>
+              <span className="text-sm text-gray-600">
+                Стр. {appointmentsSafePage} из {appointmentsTotalPages}
+              </span>
+              <button
+                onClick={() => setAppointmentsPage((p) => Math.min(appointmentsTotalPages, p + 1))}
+                disabled={appointmentsSafePage === appointmentsTotalPages}
+                className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
+                  appointmentsSafePage === appointmentsTotalPages
+                    ? 'border-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                Вперёд
+              </button>
+            </div>
+          )}
+        </div>
+
+
       </div>
     </div>
   );

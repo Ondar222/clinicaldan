@@ -1,6 +1,7 @@
+'use client';
 import type React from "react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from '@/lib/navigation';
 import prodoctorovData from "../data/prodoctorov.json";
 import archimedService from "../services/archimed";
 import type { ArchimedDoctor } from "../types/cms";

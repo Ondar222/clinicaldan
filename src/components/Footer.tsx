@@ -1,5 +1,6 @@
+'use client';
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from '@/lib/navigation';
 import { CLINIC_CONFIG, getMailLink, getTelLink } from "../data/clinicConfig";
 
 export default function Footer() {

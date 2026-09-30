@@ -14,7 +14,7 @@ export interface VKPostsResponse {
 
 class VKService {
   // Use backend via same origin (Vite proxy in dev, nginx in prod) to avoid CORS
-  private apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '') + '/api/vk';
+  private apiBaseUrl = (process.env.NEXT_PUBLIC_API_BASE_URL || '') + '/api/vk';
 
   /**
    * Получает посты из VK через backend proxy

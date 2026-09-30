@@ -1,3 +1,4 @@
+'use client';
 // Иконки в стиле Heroicons (outline, 24x24) — единый набор для прайс-листа,
 // страниц направлений и лабораторной диагностики
 export function CategoryIcon({

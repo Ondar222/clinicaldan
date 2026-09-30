@@ -34,11 +34,11 @@ class CertificateService {
   constructor() {
     // URL только для API сертификатов/оплаты. Не используем VITE_ARCHIMED_API_URL.
     // Приоритет: VITE_CERTIFICATE_API_URL → VITE_API_URL → в prod HTTPS по умолчанию.
-    const certEnv = import.meta.env.VITE_CERTIFICATE_API_URL ?? import.meta.env.VITE_API_URL;
+    const certEnv = process.env.NEXT_PUBLIC_CERTIFICATE_API_URL ?? process.env.NEXT_PUBLIC_API_URL;
     const raw = typeof certEnv === 'string' ? certEnv.replace(/[\s;]+$/, '').replace(/\/+$/, '') : '';
     const isArchimed = /archimed/i.test(raw);
     // В production используем HTTPS по умолчанию
-    const url = raw && !isArchimed ? raw : (import.meta.env.PROD ? 'https://clinicaldan.ru/api' : '');
+    const url = raw && !isArchimed ? raw : (process.env.NODE_ENV === "production" ? 'https://clinicaldan.ru/api' : '');
     this.apiUrl = url;
   }
 
@@ -48,7 +48,7 @@ class CertificateService {
   async createCertificate(data: CreateCertificateRequest): Promise<CreateCertificateResponse> {
     try {
       // В production всегда используем абсолютный HTTPS URL
-      const url = import.meta.env.PROD
+      const url = process.env.NODE_ENV === "production"
         ? 'https://clinicaldan.ru/api/certificate'
         : (this.apiUrl ? `${this.apiUrl.replace(/\/$/, '')}/certificate` : '/api/certificate');
       const response = await fetch(url, {

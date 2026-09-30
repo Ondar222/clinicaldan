@@ -1,5 +1,6 @@
+'use client';
 import React from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from '@/lib/navigation';
 import { tools } from "../data/tools";
 import ErrorComponent from "./ErrorComponent";
 

@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useState, useRef } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from '@/lib/navigation';
 import certificateService from "../services/certificates";
 
 interface PaymentSuccessPageProps {

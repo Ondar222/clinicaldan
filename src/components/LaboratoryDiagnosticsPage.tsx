@@ -1,6 +1,7 @@
+'use client';
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from '@/lib/navigation';
 import archimedService from "../services/archimed";
 import {
   SERVICE_CATEGORIES,

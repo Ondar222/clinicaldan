@@ -50,11 +50,11 @@ class PaymentService {
   private alfaBankPassword: string;
 
   constructor() {
-    this.apiUrl = import.meta.env.VITE_PAYMENT_API_URL || '';
-    this.apiKey = import.meta.env.VITE_PAYMENT_API_KEY || '';
+    this.apiUrl = process.env.NEXT_PUBLIC_PAYMENT_API_URL || '';
+    this.apiKey = process.env.NEXT_PUBLIC_PAYMENT_API_KEY || '';
     
     // Определяем среду
-    const isProduction = import.meta.env.PROD || false;
+    const isProduction = process.env.NODE_ENV === "production" || false;
     
     if (isProduction) {
       // Продакшн среда
@@ -88,7 +88,7 @@ class PaymentService {
 
       // Используем наш прокси-сервер для обхода CORS
       // В production используем HTTPS по умолчанию
-      const proxyUrl = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://clinicaldan.ru/api' : 'http://localhost:5002');
+      const proxyUrl = process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === "production" ? 'https://clinicaldan.ru/api' : 'http://localhost:5002');
       
       const response = await fetch(`${proxyUrl}/api/payment/register`, {
         method: 'POST',
@@ -127,7 +127,7 @@ class PaymentService {
 
       // Используем наш прокси-сервер для обхода CORS
       // В production используем HTTPS по умолчанию
-      const proxyUrl = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://clinicaldan.ru/api' : 'http://localhost:5002');
+      const proxyUrl = process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === "production" ? 'https://clinicaldan.ru/api' : 'http://localhost:5002');
       
       const response = await fetch(`${proxyUrl}/api/payment/status`, {
         method: 'POST',

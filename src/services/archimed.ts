@@ -19,14 +19,14 @@ import { IndexedDBCache, indexedDBCache } from "./indexedDBCache";
 
 // Archimed API: в dev и prod идём через тот же origin (Vite proxy или nginx), чтобы не было CORS
 const ARCHIMED_API_URL =
-  import.meta.env.VITE_ARCHIMED_API_URL || "/api/archimed";
+  process.env.NEXT_PUBLIC_ARCHIMED_API_URL || "/api/archimed";
 const ARCHIMED_API_TOKEN = ""; // Token handled by backend
 
 console.log("Environment variables:");
-console.log("VITE_ARCHIMED_API_URL:", import.meta.env.VITE_ARCHIMED_API_URL);
+console.log("VITE_ARCHIMED_API_URL:", process.env.NEXT_PUBLIC_ARCHIMED_API_URL);
 console.log(
   "VITE_ARCHIMED_API_TOKEN:",
-  import.meta.env.VITE_ARCHIMED_API_TOKEN,
+  process.env.NEXT_PUBLIC_ARCHIMED_API_TOKEN,
 );
 console.log("Final ARCHIMED_API_URL:", ARCHIMED_API_URL);
 console.log("Final ARCHIMED_API_TOKEN:", ARCHIMED_API_TOKEN);
@@ -582,12 +582,13 @@ class ArchimedService {
   // Branches
   async getBranches(): Promise<ArchimedBranch[]> {
     try {
+      // Бэкенд (NestJS) отдаёт филиалы по /branches (в исходном Archimed API — "branchs").
       const response = await this.request<{
         data: ArchimedBranch[];
         total: number;
         page: number;
         limit: number;
-      }>("/branchs");
+      }>("/branches");
       return response.data || [];
     } catch (error) {
       console.warn(
@@ -1045,27 +1046,83 @@ class ArchimedService {
     page: number;
     limit: number;
   }> {
-    try {
-      const params = new URLSearchParams();
+    // "Сырой" талон Archimed: поля отличаются от фронт-модели
+    // (date dd.mm.yyyy, begintime, info вместо preferred_date/preferred_time/comments).
+    type RawTalon = Partial<ArchimedAppointment> & {
+      date?: string;
+      begintime?: string;
+      info?: string;
+      room_id?: number;
+      creation_datetime?: string;
+      update_datetime?: string;
+    };
 
+    const toIsoDate = (d?: string): string | undefined => {
+      if (!d) return undefined;
+      const m = d.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+      return m ? `${m[3]}-${m[2]}-${m[1]}` : d;
+    };
+
+    const mapTalon = (t: RawTalon): ArchimedAppointment => ({
+      ...t,
+      id: t.id ?? 0,
+      status_id: t.status_id ?? 0,
+      patient_name: t.patient_name ?? "",
+      patient_phone: t.patient_phone ?? "",
+      preferred_date: t.preferred_date ?? toIsoDate(t.date),
+      preferred_time: t.preferred_time ?? t.begintime?.slice(0, 5),
+      comments: t.comments ?? t.info,
+      doctor_id: t.doctor_id ?? t.room_id,
+      created_at: t.created_at ?? t.creation_datetime ?? "",
+      updated_at: t.updated_at ?? t.update_datetime ?? "",
+    });
+
+    try {
+      const limit = filters?.limit ?? 100;
+      const params = new URLSearchParams();
       if (filters?.doctorId)
         params.append("doctor_id", filters.doctorId.toString());
       if (filters?.serviceId)
         params.append("service_id", filters.serviceId.toString());
       if (filters?.statusId)
         params.append("status_id", filters.statusId.toString());
-      if (filters?.page) params.append("page", filters.page.toString());
-      if (filters?.limit) params.append("limit", filters.limit.toString());
+      params.append("limit", limit.toString());
 
-      const queryString = params.toString();
-      const endpoint = queryString ? `/talons?${queryString}` : "/talons";
-
-      return await this.request<{
-        data: ArchimedAppointment[];
-        total: number;
+      // Archimed API игнорирует фильтры и сортировку и отдаёт талоны по возрастанию id,
+      // поэтому свежие записи — на последних страницах. Узнаём total из первого запроса
+      // и тянем последние страницы (последние 2 — чтобы покрыть сегодня и завтра).
+      params.set("page", "1");
+      const first = await this.request<{
+        data: RawTalon[];
+        total: number | string;
         page: number;
         limit: number;
-      }>(endpoint);
+      }>(`/talons?${params.toString()}`, { suppressErrorLog: true });
+
+      const total = Number.parseInt(String(first.total ?? "0"), 10) || 0;
+      const lastPage = Math.max(1, Math.ceil(total / limit));
+
+      let items: RawTalon[] = first.data ?? [];
+      if (lastPage > 1) {
+        const pages = [Math.max(1, lastPage - 1), lastPage];
+        const fetched = await Promise.all(
+          pages.map((p) => {
+            params.set("page", String(p));
+            return this.request<{ data: RawTalon[] }>(
+              `/talons?${params.toString()}`,
+              { suppressErrorLog: true },
+            );
+          }),
+        );
+        items = fetched.flatMap((r) => r.data ?? []);
+      }
+
+      return {
+        data: items.map(mapTalon),
+        total,
+        page: lastPage,
+        limit,
+      };
     } catch (error) {
       console.warn("API недоступен для записей на прием:", error);
       return { data: [], total: 0, page: 1, limit: 100 };

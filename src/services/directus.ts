@@ -13,7 +13,7 @@ import type {
 } from '../types/cms';
 
 // Directus API: относительный путь — в dev прокси Vite на 8055, в prod — nginx
-const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL || '/api/directus';
+const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || '/api/directus';
 const DIRECTUS_TOKEN = ''; // Token handled by backend
 
 class DirectusService {

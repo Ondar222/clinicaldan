@@ -1,9 +1,10 @@
+'use client';
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@/lib/navigation';
 import useSWR from "swr";
 // ввавава
 // Backend API URL - relative path so Vite proxy (dev) or nginx (prod) handles it
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 // VK API - fetch directly from VK through backend proxy
 const VK_API_URL = "/api/vk";

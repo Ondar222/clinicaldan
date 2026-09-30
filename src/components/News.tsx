@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from '@/lib/navigation';
 import vkService, { type VKPost } from "../services/vk";
 
 interface NewsProps {

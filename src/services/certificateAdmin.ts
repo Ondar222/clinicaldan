@@ -131,7 +131,7 @@ class CertificateAdminService {
   private fallbackModeEnabled = false;
 
   constructor() {
-    const certEnv = import.meta.env.VITE_CERTIFICATE_API_URL ?? import.meta.env.VITE_API_URL;
+    const certEnv = process.env.NEXT_PUBLIC_CERTIFICATE_API_URL ?? process.env.NEXT_PUBLIC_API_URL;
     const raw = typeof certEnv === "string" ? certEnv.replace(/[\s;]+$/, "").replace(/\/+$/, "") : "";
     const isArchimed = /archimed/i.test(raw);
     

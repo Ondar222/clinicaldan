@@ -1,5 +1,6 @@
+'use client';
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from '@/lib/navigation';
 import { tools } from "../data/tools";
 import type { ToolItem } from "../data/tools";
 

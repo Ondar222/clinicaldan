@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useMemo, useState } from "react";
 import directusService from "../services/directus";
 import type { Promotion as CmsPromotion } from "../types/cms";
@@ -42,8 +43,8 @@ export default function PromotionsPage() {
     if (image.startsWith("http")) return image;
     // В production используем HTTPS по умолчанию, если переменная окружения не задана
     const base = (
-      import.meta.env.VITE_DIRECTUS_URL ||
-      (import.meta.env.PROD
+      process.env.NEXT_PUBLIC_DIRECTUS_URL ||
+      (process.env.NODE_ENV === "production"
         ? "https://clinicaldan.ru/api/directus"
         : "http://localhost:8055")
     ).replace(/\/$/, "");

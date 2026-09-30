@@ -1,11 +1,13 @@
+'use client';
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import logoUrl from "../assets/Logo.png";
+import { Link } from '@/lib/navigation';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const logoSrc = logoUrl;
+  // В Next.js импорт .png возвращает объект StaticImageData, а не строку,
+  // поэтому используем файл из public/ напрямую (тот же логотип).
+  const logoSrc = "/Logo.png";
   const handleLogoError: React.ReactEventHandler<HTMLImageElement> = (e) => {
     const img = e.currentTarget;
     // Prevent infinite loop if fallback is also missing

@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import { CLINIC_CONFIG, getMailLink, getTelLink } from "../data/clinicConfig";
 import { SeoHead } from "./SeoHead";

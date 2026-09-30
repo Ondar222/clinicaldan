@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+'use client';
+import { Link } from '@/lib/navigation';
 
 export default function NotFoundPage() {
   return (

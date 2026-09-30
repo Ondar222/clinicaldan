@@ -1,10 +1,11 @@
+'use client';
 /**
  * SEO Head Component - управляет мета-тегами для каждой страницы
  * Использует React для обновления тегов, дополняется серверным рендерингом
  */
 
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from '@/lib/navigation';
 import { CLINIC_CONFIG, getTelLink, getMailLink } from '../data/clinicConfig';
 
 export interface SeoPageData {

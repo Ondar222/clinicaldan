@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useMemo, useState } from "react";
 import archimedService from "../services/archimed";
 import type { ApiService, ArchimedDoctor } from "../types/cms";

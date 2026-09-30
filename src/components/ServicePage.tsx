@@ -1,7 +1,8 @@
+'use client';
 // components/ServicePage.tsx
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from '@/lib/navigation';
 import { tools } from "../data/tools";
 import archimedService from "../services/archimed";
 import { getDirectionBySlug, keywordMatch } from "../services/directions";

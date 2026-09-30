@@ -1,3 +1,4 @@
+'use client';
 import type React from 'react';
 import { generatePageSchema, type ClinicInfo, type ServiceData, type DoctorData } from '../utils/schemaOrg';
 import { CLINIC_CONFIG, getAddressForSchema, getGeoForSchema } from '../data/clinicConfig';

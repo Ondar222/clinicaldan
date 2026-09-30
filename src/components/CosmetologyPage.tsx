@@ -1,3 +1,4 @@
+'use client';
 /**
  * Страница отделения косметологии /services/cosmetology
  * Полноценный коммерческий раздел с каталогом услуг
@@ -5,7 +6,7 @@
 
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from '@/lib/navigation';
 import { CLINIC_CONFIG, getMailLink, getTelLink } from "../data/clinicConfig";
 import {
   COSMETOLOGY_CATEGORIES,
