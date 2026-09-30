@@ -10,7 +10,7 @@
  * Импорты в компонентах изменены только с "react-router-dom" на "@/lib/navigation".
  */
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { ComponentProps, ReactNode } from 'react';
 import NextLink from 'next/link';
 import {
@@ -82,10 +82,17 @@ export function useSearchParams(): [URLSearchParams] {
   return [new URLSearchParams(params ? params.toString() : '')];
 }
 
-/** Аналог useLocation() — нужен для ScrollToTop и SeoHead. */
+/**
+ * Аналог useLocation() — нужен для ScrollToTop и SeoHead.
+ * ВАЖНО: не использует useSearchParams() намеренно — иначе каждая страница
+ * с SeoHead попадает в CSR-bailout и `next build` падает на пререндере.
+ * search читается с client-side (после монтирования), pathname — родной хук.
+ */
 export function useLocation() {
   const pathname = usePathname() ?? '';
-  const params = useNextSearchParams();
-  const search = params && params.toString() ? `?${params.toString()}` : '';
+  const [search, setSearch] = useState('');
+  useEffect(() => {
+    setSearch(window.location.search);
+  }, [pathname]);
   return { pathname, search, hash: '' };
 }
