@@ -33,12 +33,8 @@ export default function DirectionsPage() {
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    document.title = "Направления | Клиника Алдан";
-    return () => {
-      document.title = "Клиника Алдан";
-    };
-  }, []);
+  // NOTE: title/canonical отдаёт сервер через Metadata API (src/app/seo.ts) —
+  // document.title здесь не переключаем, чтобы не терять геопривязку «Кызыл».
 
   useEffect(() => {
     const cached = archimedService.getServicesCache();
@@ -97,10 +93,12 @@ export default function DirectionsPage() {
         <div className="absolute inset-0 bg-black/50" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
-            Направления
+            Направления клиники Алдан в Кызыле
           </h1>
           <p className="text-white/90 max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
-            Выберите интересующее направление и посмотрите описание и услуги.
+            Более 25 медицинских направлений в Кызыле (Республика Тыва):
+            консультации, диагностика и лечение. Выберите направление и
+            запишитесь на приём.
           </p>
         </div>
       </section>

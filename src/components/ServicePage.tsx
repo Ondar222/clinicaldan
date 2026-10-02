@@ -391,7 +391,8 @@ const ServicePage: React.FC = () => {
             {direction.title}
           </h1>
           <p className="text-white/90 max-w-2xl mx-auto text-sm sm:text-base">
-            Направления лечения в Клинике Алдан
+            {direction.title} в Кызыле — лечение в Клинике Алдан (Республика
+            Тыва)
           </p>
         </div>
       </section>

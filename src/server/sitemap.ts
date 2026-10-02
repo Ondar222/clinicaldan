@@ -75,11 +75,11 @@ router.get('/sitemap.xml', async (req, res) => {
     
     const urls: SitemapUrl[] = [...STATIC_PAGES];
     
-    // Добавляем направления
+    // Добавляем направления (реальный маршрут — /services/<slug>)
     DIRECTIONS.forEach(direction => {
-      if (!isUrlExcluded(`/directions/${direction.slug}`)) {
+      if (!isUrlExcluded(`/services/${direction.slug}`)) {
         urls.push({
-          url: `/directions/${direction.slug}`,
+          url: `/services/${direction.slug}`,
           priority: '0.8',
           changefreq: 'weekly',
           lastmod: today

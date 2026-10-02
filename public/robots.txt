@@ -30,5 +30,6 @@ Disallow: /certificates/cancel
 Disallow: /api/
 
 Sitemap: https://clinicaldan.ru/api/sitemap.xml
+Sitemap: https://clinicaldan.ru/sitemap.xml
 
 
