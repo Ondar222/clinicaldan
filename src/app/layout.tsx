@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     icon: '/favicon.png',
   },
   other: {
-    'yandex-verification': 'ddb71b8b525e49c3',
+    'yandex-verification': '62eebaedfbfdbc35',
   },
 };
 
