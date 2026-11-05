@@ -75,7 +75,8 @@ app.get('/api/archimed/services', async (req, res) => {
     const groupById = new Map(groupIndex.map((g) => [Number(g.id), g]));
 
     const grouped = new Map<number, { services: Record<string, unknown>[]; [key: string]: unknown }>();
-    for (const s of all) {
+    const visibleServices = all.filter((s) => s.price_web_visible !== false);
+    for (const s of visibleServices) {
       const gid = Number(s.group_id ?? 0);
       if (!grouped.has(gid)) {
         const meta = groupById.get(gid);
@@ -96,7 +97,7 @@ app.get('/api/archimed/services', async (req, res) => {
       String(a.name).localeCompare(String(b.name), 'ru')
     );
 
-    res.json({ data, total: all.length, groups: data.length });
+    res.json({ data, total: visibleServices.length, groups: data.length });
   } catch (error) {
     console.error('[Server] grouped services error:', error);
     res.status(502).json({ error: 'Failed to build grouped services' });

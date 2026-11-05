@@ -238,6 +238,15 @@ export default function PriceListPage() {
     load();
   }, []);
 
+  // Если прайс обновился из Archimed в фоне — перестраиваем категории.
+  useEffect(() => {
+    return archimedService.subscribeServices((updated) => {
+      if (Array.isArray(updated) && updated.length > 0) {
+        setCategories(buildCategories(updated));
+      }
+    });
+  }, []);
+
   // Поиск фильтрует услуги, пустые подкатегории и категории скрываются
   const filteredCategories = useMemo(() => {
     const query = normalizeSearch(searchQuery);

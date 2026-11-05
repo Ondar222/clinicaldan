@@ -33,12 +33,15 @@ console.log("Final ARCHIMED_API_TOKEN:", ARCHIMED_API_TOKEN);
 // Some deployments don't have categories endpoint – disable to avoid 404 requests
 const ARCHIMED_CATEGORIES_ENABLED = false;
 
-// Local cache settings
-const DOCTORS_CACHE_KEY = "archimed_doctors_v5_no_cache";
-const SERVICES_CACHE_KEY = "archimed_services_v2"; // v2 with IndexedDB
-const DOCTORS_CACHE_TTL_MS = 0; // Disabled - always fetch fresh data to ensure blacklist is applied
-const SERVICES_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days (increased for better caching)
-const DEFAULT_REQUEST_TIMEOUT_MS = 30000; // 30s (increased for slow connections)
+// Local cache settings.
+// TTL — это время, в течение которого данные считаются свежими и не запрашиваются
+// повторно. После него список обновляется из Archimed (см. getDoctors/getServices).
+const DOCTORS_CACHE_KEY = "archimed_doctors_v6";
+const SERVICES_CACHE_KEY = "archimed_services_v3";
+const DOCTORS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 минут
+const SERVICES_CACHE_TTL_MS = 5 * 60 * 1000; // 5 минут
+const MAX_CACHE_AGE_MS = 30 * 24 * 60 * 60 * 1000; // храним данные не дольше 30 дней
+const DEFAULT_REQUEST_TIMEOUT_MS = 45000; // 45s: выгрузка врачей с фото бывает медленной
 
 // Old cache keys to clean up
 const OLD_DOCTORS_CACHE_KEYS = [
@@ -47,10 +50,18 @@ const OLD_DOCTORS_CACHE_KEYS = [
   "archimed_doctors_v4",
   "archimed_doctors_v5_no_cache",
 ];
-const OLD_SERVICES_CACHE_KEYS = ["archimed_services_v1"]; // Clean up old localStorage cache
+const OLD_SERVICES_CACHE_KEYS = [
+  "archimed_services_v1",
+  "archimed_services_v2",
+]; // Clean up old caches after switching to v3
 const DEFAULT_API_PAGE_LIMIT = 500; // Increased page size to reduce number of requests
 const MAX_API_PAGES = 50; // hard cap to prevent runaway loops
 const PARALLEL_PAGES = 10; // Increased parallel batches for faster loading
+
+// Archimed помечает услуги, которые не должны отображаться на сайте.
+// Если поле отсутствует (старый бэкенд) — считаем услугу видимой.
+const isServiceVisible = (service: ApiService) =>
+  service.price_web_visible !== false;
 
 // Helpers for name normalization and blacklist
 const normalizeRu = (s: string) =>
@@ -63,27 +74,44 @@ const normalizeRu = (s: string) =>
 const makeFullName = (d: ArchimedDoctor) =>
   normalizeRu([d?.name, d?.name1, d?.name2].filter(Boolean).join(" "));
 
-// Names to exclude from all doctors lists and details
-const NAME_BLACKLIST = new Set<string>([
-  "хорбаа анжела тарасовна",
-  "торуш ш",
-  "монгуш чаяна алексеевна",
-  "байтингер андрей владимирович",
-  "щевелева галина викторовна",
-  "бегзи сай-суу олеговна",
-  "лопсан ай-суу орлановна",
-  "сафин динара адхамович",
-  "арбаев аржан ильич",
-  "дажынай мария владимировна",
-]);
+// Names to exclude from all doctors lists and details.
+// Важно: храним уже нормализованные имена, иначе чёрный список не срабатывает
+// на дефисы/ё и т.п. (раньше из-за этого «скрытые» врачи оставались на сайте).
+const NAME_BLACKLIST = new Set<string>(
+  [
+    "хорбаа анжела тарасовна",
+    "торуш шораана дамдынчаповна",
+    "монгуш чаяна алексеевна",
+    "байтингер андрей владимирович",
+    "щевелева галина викторовна",
+    "бегзи сай суу олеговна",
+    "лопсан айсу орлановна",
+    "сафин динар адхамович",
+    "арбаев аржан ильич",
+    "дажынай мария владимировна",
+    "администратор archimed",
+  ].map(normalizeRu),
+);
+
+// Сотрудники без врачебной специальности не должны попадать в раздел «Врачи».
+const NON_DOCTOR_TYPE_PATTERN =
+  /(администратор|регистратор|рентгенолаборант|лаборант|медсестр|медицинск\w*\s+сестр|санитар|водител|бухгалтер|экономист|юрист|кадровик|инженер|программист|техник)/i;
+
+type DoctorsListener = (doctors: ArchimedDoctor[]) => void;
+type ServicesListener = (services: ApiService[]) => void;
 
 class ArchimedService {
   private baseUrl: string;
   private headers: HeadersInit;
   private servicesCache: ApiService[] = [];
+  private servicesCacheAt = 0;
   private doctorsCache: ArchimedDoctor[] = [];
+  private doctorsCacheAt = 0;
   private servicesFetchPromise: Promise<ApiService[]> | null = null; // Deduplicate concurrent fetches
+  private doctorsFetchPromise: Promise<ArchimedDoctor[]> | null = null;
   private indexedDBAvailable = false;
+  private doctorsListeners = new Set<DoctorsListener>();
+  private servicesListeners = new Set<ServicesListener>();
 
   constructor() {
     this.baseUrl = ARCHIMED_API_URL;
@@ -101,42 +129,68 @@ class ArchimedService {
     this.indexedDBAvailable = IndexedDBCache.isAvailable();
     console.log("IndexedDB available:", this.indexedDBAvailable);
 
-    // Clean up old cache keys to force fresh data with blacklist applied
+    // Clean up only legacy cache keys. Current keys (v6/v3) не трогаем,
+    // иначе кэш будет очищаться при каждой загрузке страницы.
     try {
-      OLD_DOCTORS_CACHE_KEYS.forEach((key) => {
-        try {
-          window.localStorage?.removeItem(key);
-          console.log("Cleared old cache key:", key);
-        } catch {}
-      });
-      // Clean up old services cache to migrate to IndexedDB
-      OLD_SERVICES_CACHE_KEYS.forEach((key) => {
-        try {
-          window.localStorage?.removeItem(key);
-          console.log("Cleared old services cache key:", key);
-        } catch {}
-      });
+      if (typeof window !== "undefined") {
+        OLD_DOCTORS_CACHE_KEYS.forEach((key) => {
+          try {
+            window.localStorage?.removeItem(key);
+          } catch {}
+        });
+        OLD_SERVICES_CACHE_KEYS.forEach((key) => {
+          try {
+            window.localStorage?.removeItem(key);
+          } catch {}
+        });
+      }
 
-      // FORCE CLEAR services cache from IndexedDB (DEBUG - remove after testing)
       if (this.indexedDBAvailable) {
-        indexedDBCache
-          .remove(SERVICES_CACHE_KEY)
-          .then(() => {
-            console.log(
-              "Cleared IndexedDB services cache:",
-              SERVICES_CACHE_KEY,
-            );
-          })
-          .catch((err) => {
-            console.log("IndexedDB remove error:", err);
-          });
+        OLD_SERVICES_CACHE_KEYS.forEach((key) => {
+          indexedDBCache.remove(key).catch(() => {});
+        });
       }
     } catch (error) {
       console.log("Cache cleanup error:", error);
     }
+  }
 
-    // No longer loading from localStorage - always fetch fresh data for doctors
-    console.log("Doctors cache disabled - will always fetch fresh data");
+  /** Подписка на обновление списка врачей из Archimed. */
+  subscribeDoctors(listener: DoctorsListener): () => void {
+    this.doctorsListeners.add(listener);
+    return () => {
+      this.doctorsListeners.delete(listener);
+    };
+  }
+
+  /** Подписка на обновление прайса из Archimed. */
+  subscribeServices(listener: ServicesListener): () => void {
+    this.servicesListeners.add(listener);
+    return () => {
+      this.servicesListeners.delete(listener);
+    };
+  }
+
+  private emitDoctors(): void {
+    const list = this.doctorsCache;
+    this.doctorsListeners.forEach((listener) => {
+      try {
+        listener(list);
+      } catch (error) {
+        console.warn("Doctors listener error:", error);
+      }
+    });
+  }
+
+  private emitServices(): void {
+    const list = this.servicesCache;
+    this.servicesListeners.forEach((listener) => {
+      try {
+        listener(list);
+      } catch (error) {
+        console.warn("Services listener error:", error);
+      }
+    });
   }
 
   private async request<T>(
@@ -211,17 +265,16 @@ class ArchimedService {
     return response.json();
   }
 
-  private readFromStorage<T>(key: string, ttlMs: number): T | null {
+  private readFromStorageWithAge<T>(
+    key: string,
+  ): { data: T; timestamp: number } | null {
     try {
       if (typeof window === "undefined") return null;
-      // If TTL is 0, skip cache entirely and always fetch fresh
-      if (ttlMs === 0) return null;
       const raw = window.localStorage.getItem(key);
       if (!raw) return null;
       const parsed = JSON.parse(raw) as { data: T; timestamp: number };
       if (!parsed || !parsed.data || !parsed.timestamp) return null;
-      const isFresh = Date.now() - parsed.timestamp < ttlMs;
-      return isFresh ? parsed.data : null; // Return null if stale when TTL > 0
+      return parsed;
     } catch {
       return null;
     }
@@ -233,16 +286,131 @@ class ArchimedService {
       const payload = JSON.stringify({ data, timestamp: Date.now() });
       window.localStorage.setItem(key, payload);
     } catch {
-      // ignore storage errors
+      // ignore storage errors (quota exceeded и т.п.)
     }
   }
 
-  // Doctors - load from local files only (no API)
-  async getDoctors(): Promise<ArchimedDoctor[]> {
-    console.log("getDoctors called - loading from local files only (no API)");
+  private async readCachedDoctors(): Promise<{
+    data: ArchimedDoctor[];
+    timestamp: number;
+  } | null> {
+    if (this.indexedDBAvailable) {
+      const entry = await indexedDBCache.getEntry<ArchimedDoctor[]>(
+        DOCTORS_CACHE_KEY,
+      );
+      if (entry?.data?.length) {
+        return {
+          data: entry.data,
+          timestamp: entry.timestamp,
+        };
+      }
+    }
+    return this.readFromStorageWithAge<ArchimedDoctor[]>(DOCTORS_CACHE_KEY);
+  }
 
+  private async persistDoctors(list: ArchimedDoctor[]): Promise<void> {
+    if (this.indexedDBAvailable) {
+      await indexedDBCache.set(DOCTORS_CACHE_KEY, list, MAX_CACHE_AGE_MS);
+    }
+    this.writeToStorage(DOCTORS_CACHE_KEY, list);
+  }
+
+  /**
+   * Врачи из Archimed.
+   *
+   * Стратегия stale-while-revalidate:
+   * 1. Если есть свежий кэш — отдаём его сразу.
+   * 2. Если кэш устарел (или его нет) — показываем сохранённый снимок,
+   *    а данные из Archimed подтягиваем в фоне и сообщаем подписчикам.
+   *
+   * Так изменения из Archimed приходят без ожидания 10+ секунд
+   * на выгрузку фото, но и страница не показывает пустой список.
+   */
+  async getDoctors(): Promise<ArchimedDoctor[]> {
+    const now = Date.now();
+
+    // 1. Память
+    if (this.doctorsCache.length > 0) {
+      if (now - this.doctorsCacheAt >= DOCTORS_CACHE_TTL_MS) {
+        this.refreshDoctorsInBackground();
+      }
+      return this.doctorsCache;
+    }
+
+    // 2. IndexedDB / localStorage
+    const cached = await this.readCachedDoctors();
+    if (cached?.data?.length) {
+      const list = this.applyRemovals(cached.data);
+      this.doctorsCache = list;
+      this.doctorsCacheAt = cached.timestamp;
+      if (now - cached.timestamp >= DOCTORS_CACHE_TTL_MS) {
+        this.refreshDoctorsInBackground();
+      }
+      return list;
+    }
+
+    // 3. Первый визит: локальный снимок для мгновенного отображения,
+    //    актуальные данные — сразу в фоне.
+    const local = await this.loadLocalDoctorsSnapshot();
+    this.doctorsCache = local;
+    this.doctorsCacheAt = 0;
+    this.refreshDoctorsInBackground();
+    return local;
+  }
+
+  async refreshDoctorsIfNeeded(): Promise<void> {
+    if (Date.now() - this.doctorsCacheAt >= DOCTORS_CACHE_TTL_MS) {
+      await this.refreshDoctors().catch(() => {});
+    }
+  }
+
+  private refreshDoctorsInBackground(): void {
+    void this.refreshDoctors().catch((error) => {
+      console.warn("Не удалось обновить врачей из Archimed:", error);
+      // Не долбим API на каждом запросе, если он недоступен:
+      // следующие 5 минут показываем кэш/локальный снимок.
+      this.doctorsCacheAt = Date.now();
+    });
+  }
+
+  private async refreshDoctors(): Promise<ArchimedDoctor[]> {
+    // Не запускаем параллельные одинаковые запросы.
+    if (this.doctorsFetchPromise) return this.doctorsFetchPromise;
+
+    this.doctorsFetchPromise = (async () => {
+      const apiDoctors = await this.fetchAllDoctorsFromAPI();
+      if (!Array.isArray(apiDoctors) || apiDoctors.length === 0) {
+        throw new Error("Archimed API returned no doctors");
+      }
+
+      let doctors = apiDoctors;
+      const proDocs = await this.loadProdoctorovSnapshotStatic();
+      if (proDocs.length > 0) {
+        // ProDoctorov только дополняет карточки (фото, стаж, категория),
+        // но не добавляет врачей, которых нет в Archimed.
+        doctors = this.mergeDoctors(doctors, proDocs, false);
+      }
+
+      doctors = this.applyRemovals(doctors);
+      if (doctors.length === 0) {
+        throw new Error("No visible doctors after filtering");
+      }
+
+      this.doctorsCache = doctors;
+      this.doctorsCacheAt = Date.now();
+      await this.persistDoctors(doctors);
+      this.emitDoctors();
+      console.log("Doctors updated from Archimed:", doctors.length);
+      return doctors;
+    })().finally(() => {
+      this.doctorsFetchPromise = null;
+    });
+
+    return this.doctorsFetchPromise;
+  }
+
+  private async loadLocalDoctorsSnapshot(): Promise<ArchimedDoctor[]> {
     try {
-      // 1) Load from doctors.json (real data snapshot) - using static import
       const raw = doctorsDataRaw as any;
       let localDoctors: ArchimedDoctor[] = Array.isArray(raw)
         ? (raw as ArchimedDoctor[])
@@ -250,56 +418,35 @@ class ArchimedService {
           ? (raw.data as ArchimedDoctor[])
           : [];
 
-      console.log("Loaded from doctors.json:", localDoctors.length);
-
-      // 2) Enrich from ProDoctorov snapshot - using static import
       const proDocs = await this.loadProdoctorovSnapshotStatic();
       if (proDocs.length > 0) {
-        console.log("Enriching with ProDoctorov snapshot:", proDocs.length);
-        localDoctors = this.mergeDoctors(localDoctors, proDocs);
-        console.log("After merge, total doctors:", localDoctors.length);
-      }
-
-      // 3) Apply blacklist to remove unwanted doctors
-      localDoctors = this.applyRemovals(localDoctors);
-      console.log(
-        "After applying blacklist, doctors count:",
-        localDoctors.length,
-      );
-
-      this.doctorsCache = localDoctors;
-      return this.doctorsCache;
-    } catch (e) {
-      console.warn(
-        "Не удалось загрузить doctors.json, используем mockDoctors. Ошибка:",
-        e,
-      );
-      // Fallback to mock data
-      this.doctorsCache = mockDoctors;
-      const proDocs = await this.loadProdoctorovSnapshotStatic();
-      if (proDocs.length > 0) {
-        console.log(
-          "Enriching mock doctors with ProDoctorov snapshot:",
-          proDocs.length,
+        // Если снимок совсем маленький/устаревший — разрешаем дополнить его
+        // врачами из ProDoctorov. Для полного снимка только обогащаем карточки.
+        localDoctors = this.mergeDoctors(
+          localDoctors,
+          proDocs,
+          localDoctors.length < 10,
         );
-        this.doctorsCache = this.mergeDoctors(this.doctorsCache, proDocs);
       }
-      this.doctorsCache = this.applyRemovals(this.doctorsCache);
-      console.log(
-        "After applying blacklist (from mock), doctors count:",
-        this.doctorsCache.length,
-      );
-      return this.doctorsCache;
-    }
-  }
 
-  async refreshDoctorsIfNeeded(): Promise<void> {
-    // Background refresh - no longer used since we always fetch fresh
+      return this.applyRemovals(localDoctors);
+    } catch (error) {
+      console.warn(
+        "Не удалось загрузить снимок врачей, используем mockDoctors:",
+        error,
+      );
+      let fallback = this.mergeDoctors(
+        mockDoctors,
+        await this.loadProdoctorovSnapshotStatic(),
+      );
+      fallback = this.applyRemovals(fallback);
+      return fallback;
+    }
   }
 
   async getDoctor(id: number): Promise<ArchimedDoctor> {
     const doc = await this.request<ArchimedDoctor>(`/doctors/${id}`);
-    if (this.isBlacklisted(doc)) {
+    if (this.isHiddenDoctor(doc)) {
       throw new Error("Archimed API error: 404 - Not found");
     }
     return doc;
@@ -319,82 +466,83 @@ class ArchimedService {
     return data.data;
   }
 
-  // Services (from Archimed) - OPTIMIZED with IndexedDB + Progressive Loading
+  /**
+   * Прайс из Archimed.
+   *
+   * Если кэш свежий (младше 5 минут) — отдаём его. Если устарел — сначала
+   * обновляем данные из Archimed и только потом отдаём (при ошибке
+   * показываем устаревший кэш). Так изменения цен и состава услуг
+   * появляются на сайте без ручной очистки кэша.
+   */
   async getServices(): Promise<ApiService[]> {
-    // 1. Return memory cache immediately (fastest - ~5ms)
-    if (this.servicesCache.length > 0) {
-      this.refreshServices(); // Background refresh
-      return this.servicesCache;
-    }
+    const now = Date.now();
 
-    // 2. Try IndexedDB (fast - ~50-100ms for 3646 services)
-    if (this.indexedDBAvailable) {
-      const fromIndexedDB = await indexedDBCache.get<ApiService[]>(
-        SERVICES_CACHE_KEY,
-        SERVICES_CACHE_TTL_MS,
-      );
-      if (fromIndexedDB && fromIndexedDB.length > 0) {
-        this.servicesCache = fromIndexedDB;
-        this.refreshServices(); // Background refresh
-        console.log("Loaded services from IndexedDB:", fromIndexedDB.length);
+    // 1. Память
+    if (this.servicesCache.length > 0) {
+      if (now - this.servicesCacheAt < SERVICES_CACHE_TTL_MS) {
+        return this.servicesCache;
+      }
+      try {
+        return await this.refreshServices();
+      } catch {
         return this.servicesCache;
       }
     }
 
-    // 3. Try localStorage (slower - ~200-500ms)
-    const fromStorage = this.readFromStorage<ApiService[]>(
-      SERVICES_CACHE_KEY,
-      SERVICES_CACHE_TTL_MS,
-    );
-    if (fromStorage && fromStorage.length > 0) {
-      this.servicesCache = fromStorage;
-      this.refreshServices();
-      console.log("Loaded services from localStorage:", fromStorage.length);
-      return this.servicesCache;
+    // 2. IndexedDB
+    if (this.indexedDBAvailable) {
+      const entry =
+        await indexedDBCache.getEntry<ApiService[]>(SERVICES_CACHE_KEY);
+      if (entry?.data?.length) {
+        this.servicesCache = entry.data;
+        this.servicesCacheAt = entry.timestamp;
+        if (now - entry.timestamp < SERVICES_CACHE_TTL_MS) {
+          console.log("Loaded services from IndexedDB:", entry.data.length);
+          return entry.data;
+        }
+        try {
+          return await this.refreshServices();
+        } catch {
+          return this.servicesCache;
+        }
+      }
     }
 
-    // 4. Deduplicate concurrent fetches
-    if (this.servicesFetchPromise) {
-      return this.servicesFetchPromise;
+    // 3. localStorage
+    const stored =
+      this.readFromStorageWithAge<ApiService[]>(SERVICES_CACHE_KEY);
+    if (stored?.data?.length) {
+      this.servicesCache = stored.data;
+      this.servicesCacheAt = stored.timestamp;
+      if (now - stored.timestamp < SERVICES_CACHE_TTL_MS) {
+        console.log("Loaded services from localStorage:", stored.data.length);
+        return stored.data;
+      }
+      try {
+        return await this.refreshServices();
+      } catch {
+        return this.servicesCache;
+      }
     }
 
-    // 5. Fetch from API with promise tracking
-    this.servicesFetchPromise = this.fetchAllServicesFromAPI()
-      .then((allServices) => {
-        this.servicesCache = allServices;
-        // Save to both IndexedDB and localStorage for compatibility
-        if (this.indexedDBAvailable) {
-          indexedDBCache.set(
-            SERVICES_CACHE_KEY,
-            allServices,
-            SERVICES_CACHE_TTL_MS,
-          );
-        }
-        this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
-        console.log("Loaded services from API:", allServices.length);
-        return this.servicesCache;
-      })
-      .catch((error) => {
-        console.warn(
-          "API недоступен, используем моковые данные для услуг:",
-          error,
-        );
-        this.servicesCache = mockServices;
-        if (this.indexedDBAvailable) {
-          indexedDBCache.set(
-            SERVICES_CACHE_KEY,
-            mockServices,
-            SERVICES_CACHE_TTL_MS,
-          );
-        }
-        this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
-        return this.servicesCache;
-      })
-      .finally(() => {
-        this.servicesFetchPromise = null;
-      });
+    // 4. Кэша нет — грузим из API. Моковые данные не сохраняем в кэш,
+    //    чтобы при следующем запросе снова попробовать Archimed.
+    try {
+      return await this.refreshServices();
+    } catch (error) {
+      console.warn(
+        "API недоступен, используем моковые данные для услуг:",
+        error,
+      );
+      return this.servicesCache.length > 0 ? this.servicesCache : mockServices;
+    }
+  }
 
-    return this.servicesFetchPromise;
+  private async persistServices(list: ApiService[]): Promise<void> {
+    if (this.indexedDBAvailable) {
+      await indexedDBCache.set(SERVICES_CACHE_KEY, list, MAX_CACHE_AGE_MS);
+    }
+    this.writeToStorage(SERVICES_CACHE_KEY, list);
   }
 
   private async fetchAllServicesFromAPI(
@@ -429,6 +577,7 @@ class ArchimedService {
       if (isGroupedFormat) {
         for (const group of grouped.data) {
           for (const s of group.services || []) {
+            if (!isServiceVisible(s)) continue;
             // Услуги из групп без group_name дополняем иерархией групп
             all.push({
               ...s,
@@ -476,7 +625,7 @@ class ArchimedService {
       const limit = first.limit ?? DEFAULT_API_PAGE_LIMIT;
 
       if (Array.isArray(first?.data)) {
-        all.push(...first.data);
+        all.push(...first.data.filter(isServiceVisible));
         // Report progress after first page (show data early!)
         if (onProgress) onProgress(all.length, total, [...all]);
       }
@@ -519,7 +668,7 @@ class ArchimedService {
           // Merge results from this batch
           for (const pageData of results) {
             if (pageData.length > 0) {
-              all.push(...pageData);
+              all.push(...pageData.filter(isServiceVisible));
             }
           }
 
@@ -645,11 +794,6 @@ class ArchimedService {
     return this.doctorsCache;
   }
 
-  // Background refreshers - disabled for doctors (always fetch fresh)
-  private async refreshDoctors(): Promise<void> {
-    // No-op - doctors are always fetched fresh
-  }
-
   private async fetchAllDoctorsFromAPI(): Promise<ArchimedDoctor[]> {
     const all: ArchimedDoctor[] = [];
     let page = 1;
@@ -696,7 +840,13 @@ class ArchimedService {
       console.warn("Error fetching all doctors from API:", e);
     }
 
-    return all;
+    // Archimed иногда отдаёт одну и ту же карточку на границе страниц.
+    const seen = new Set<number>();
+    return all.filter((doctor) => {
+      if (seen.has(doctor.id)) return false;
+      seen.add(doctor.id);
+      return true;
+    });
   }
 
   // Load and map ProDoctorov snapshot if present - using static import for faster loading
@@ -792,6 +942,7 @@ class ArchimedService {
   private mergeDoctors(
     primary: ArchimedDoctor[],
     extra: ArchimedDoctor[],
+    addMissing = true,
   ): ArchimedDoctor[] {
     const normalize = (s: string) =>
       (s || "").toLowerCase().replace(/ё/g, "е").trim();
@@ -894,7 +1045,7 @@ class ArchimedService {
       const existing = byName.get(key);
       if (existing) {
         byName.set(key, mergeOne(existing, add));
-      } else {
+      } else if (addMissing) {
         byName.set(key, add);
       }
     }
@@ -905,16 +1056,29 @@ class ArchimedService {
   private isBlacklisted(doctor: ArchimedDoctor): boolean {
     try {
       const full = makeFullName(doctor);
+      if (!full) return true;
+      if (/администратор|тестов/i.test(full)) return true;
       return NAME_BLACKLIST.has(full);
     } catch {
       return false;
     }
   }
 
+  private isHiddenDoctor(doctor: ArchimedDoctor): boolean {
+    if (this.isBlacklisted(doctor)) return true;
+    const types = [
+      doctor?.type,
+      ...(doctor?.types || []).map((type) => type?.name),
+    ]
+      .filter(Boolean)
+      .join(" ");
+    return NON_DOCTOR_TYPE_PATTERN.test(types);
+  }
+
   private applyRemovals(list: ArchimedDoctor[]): ArchimedDoctor[] {
     try {
       return (Array.isArray(list) ? list : []).filter(
-        (d) => !this.isBlacklisted(d),
+        (d) => !this.isHiddenDoctor(d),
       );
     } catch {
       return Array.isArray(list) ? list : [];
@@ -978,16 +1142,35 @@ class ArchimedService {
     return svcWithDocs;
   }
 
-  private async refreshServices(): Promise<void> {
-    try {
+  private async refreshServices(): Promise<ApiService[]> {
+    if (this.servicesFetchPromise) return this.servicesFetchPromise;
+
+    this.servicesFetchPromise = (async () => {
       const allServices = await this.fetchAllServicesFromAPI();
-      if (Array.isArray(allServices) && allServices.length > 0) {
-        this.servicesCache = allServices;
-        this.writeToStorage(SERVICES_CACHE_KEY, this.servicesCache);
+      if (!Array.isArray(allServices) || allServices.length === 0) {
+        throw new Error("Archimed API returned no services");
       }
-    } catch {
-      // keep stale cache on failure
-    }
+
+      // На всякий случай убираем дубли по id (пагинация Archimed иногда
+      // отдаёт одну и ту же услугу на границе страниц).
+      const seen = new Set<number>();
+      const unique = allServices.filter((s) => {
+        if (seen.has(s.id)) return false;
+        seen.add(s.id);
+        return true;
+      });
+
+      this.servicesCache = unique;
+      this.servicesCacheAt = Date.now();
+      await this.persistServices(unique);
+      this.emitServices();
+      console.log("Services updated from Archimed:", unique.length);
+      return unique;
+    })().finally(() => {
+      this.servicesFetchPromise = null;
+    });
+
+    return this.servicesFetchPromise;
   }
 
   // Appointments

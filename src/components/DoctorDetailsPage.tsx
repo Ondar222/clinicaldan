@@ -60,6 +60,18 @@ const DoctorDetailsPage: React.FC = () => {
         setDoctor(doctorData);
       } catch (e) {
         console.error("Error loading doctor:", e);
+        // Если точечный запрос к Archimed не удался, пробуем найти врача
+        // в локальном снимке/кэше, чтобы страница не падала.
+        try {
+          const list = await archimedService.getDoctors();
+          const fallback = list.find(
+            (d) => d.id === Number.parseInt(String(id)),
+          );
+          if (fallback) {
+            setDoctor(fallback);
+            return;
+          }
+        } catch {}
         setError("Не удалось загрузить информацию о враче");
       } finally {
         setIsLoading(false);
@@ -67,6 +79,14 @@ const DoctorDetailsPage: React.FC = () => {
     };
 
     loadDoctor();
+  }, [id]);
+
+  // Держим карточку врача в актуальном состоянии после фонового обновления.
+  useEffect(() => {
+    return archimedService.subscribeDoctors((list) => {
+      const updated = list.find((d) => d.id === Number.parseInt(String(id)));
+      if (updated) setDoctor(updated);
+    });
   }, [id]);
 
   const handleAppointmentClick = () => {

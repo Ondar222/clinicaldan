@@ -8,7 +8,7 @@ const DB_NAME = 'clinicaldan_cache_v1';
 const DB_VERSION = 1;
 const STORE_NAME = 'data';
 
-interface CacheEntry<T> {
+export interface CacheEntry<T> {
   data: T;
   timestamp: number;
   version?: string;
@@ -73,7 +73,12 @@ class IndexedDBCache {
     }
   }
 
-  async get<T>(key: string, ttlMs: number): Promise<T | null> {
+  /**
+   * Возвращает запись вместе с временем сохранения.
+   * Нужно для stale-while-revalidate: можно показать устаревшие данные
+   * и при этом обновить их в фоне.
+   */
+  async getEntry<T>(key: string): Promise<CacheEntry<T> | null> {
     try {
       await this.init();
       if (!this.db) return null;
@@ -89,14 +94,7 @@ class IndexedDBCache {
             resolve(null);
             return;
           }
-
-          // Check if expired
-          if (Date.now() - result.timestamp > ttlMs) {
-            resolve(null);
-            return;
-          }
-
-          resolve(result.data);
+          resolve(result);
         };
 
         request.onerror = () => {
@@ -108,6 +106,18 @@ class IndexedDBCache {
       console.warn('IndexedDB get failed:', error);
       return null;
     }
+  }
+
+  async get<T>(key: string, ttlMs: number): Promise<T | null> {
+    const entry = await this.getEntry<T>(key);
+    if (!entry) return null;
+
+    // Check if expired
+    if (Date.now() - entry.timestamp > ttlMs) {
+      return null;
+    }
+
+    return entry.data;
   }
 
   async remove(key: string): Promise<void> {

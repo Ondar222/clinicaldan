@@ -45,6 +45,8 @@ export interface ApiService {
   denomination: number;
   unit_id: number | null;
   unit: string | null;
+  /** Признак показа услуги на сайте (из Archimed). false — услугу не показываем. */
+  price_web_visible?: boolean;
 }
 
 export interface ServiceGroup {

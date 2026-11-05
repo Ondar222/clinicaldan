@@ -140,6 +140,16 @@ export default function DoctorsPage() {
     loadData();
   }, []);
 
+  // Archimed обновляется в фоне (stale-while-revalidate) — как только
+  // приходит свежий список врачей, сразу перерисовываем страницу.
+  useEffect(() => {
+    return archimedService.subscribeDoctors((updated) => {
+      if (Array.isArray(updated) && updated.length > 0) {
+        setDoctors(updated);
+      }
+    });
+  }, []);
+
   const normalize = (value: string | number | null | undefined) =>
     value?.toString() || "";
   const normalizeRu = (s: string) =>
