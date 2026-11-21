@@ -17,19 +17,19 @@ import type {
 } from "../types/cms";
 import { IndexedDBCache, indexedDBCache } from "./indexedDBCache";
 
-// Archimed API: в dev и prod идём через тот же origin (Vite proxy или nginx), чтобы не было CORS
+// Archimed API: в dev и prod идём через тот же origin (Next.js rewrite / nginx),
+// чтобы не было CORS. Поддерживаем оба префикса переменных (VITE_* из старых
+// env-файлов и NEXT_PUBLIC_* для Next.js) — next.config.mjs проксирует их в клиент.
 const ARCHIMED_API_URL =
-  process.env.NEXT_PUBLIC_ARCHIMED_API_URL || "/api/archimed";
+  process.env.NEXT_PUBLIC_ARCHIMED_API_URL ||
+  process.env.VITE_ARCHIMED_API_URL ||
+  "/api/archimed";
 const ARCHIMED_API_TOKEN = ""; // Token handled by backend
 
 console.log("Environment variables:");
-console.log("VITE_ARCHIMED_API_URL:", process.env.NEXT_PUBLIC_ARCHIMED_API_URL);
-console.log(
-  "VITE_ARCHIMED_API_TOKEN:",
-  process.env.NEXT_PUBLIC_ARCHIMED_API_TOKEN,
-);
+console.log("NEXT_PUBLIC_ARCHIMED_API_URL:", process.env.NEXT_PUBLIC_ARCHIMED_API_URL);
+console.log("VITE_ARCHIMED_API_URL:", process.env.VITE_ARCHIMED_API_URL);
 console.log("Final ARCHIMED_API_URL:", ARCHIMED_API_URL);
-console.log("Final ARCHIMED_API_TOKEN:", ARCHIMED_API_TOKEN);
 // Some deployments don't have categories endpoint – disable to avoid 404 requests
 const ARCHIMED_CATEGORIES_ENABLED = false;
 
@@ -364,6 +364,36 @@ class ArchimedService {
     }
   }
 
+  /**
+   * Принудительное обновление справочника врачей из Archimed.
+   * Используется админкой: игнорирует TTL и очищает IndexedDB/localStorage,
+   * чтобы правки в Архимеде появились на сайте сразу.
+   */
+  async refreshDoctorsNow(): Promise<ArchimedDoctor[]> {
+    this.doctorsCache = [];
+    this.doctorsCacheAt = 0;
+    try {
+      if (this.indexedDBAvailable) {
+        await indexedDBCache.remove(DOCTORS_CACHE_KEY);
+      }
+      if (typeof window !== "undefined") {
+        window.localStorage?.removeItem(DOCTORS_CACHE_KEY);
+      }
+    } catch (error) {
+      console.warn("Не удалось очистить кэш врачей:", error);
+    }
+    return this.refreshDoctors();
+  }
+
+  /**
+   * Явная ревалидация для публичных страниц (/doctors, /prices).
+   * Не очищает кэш и не блокирует рендер: если Archimed ответил, подписчики
+   * (страницы) получают свежие данные через emitDoctors/emitServices.
+   */
+  revalidateDoctors(): void {
+    this.refreshDoctorsInBackground();
+  }
+
   private refreshDoctorsInBackground(): void {
     void this.refreshDoctors().catch((error) => {
       console.warn("Не удалось обновить врачей из Archimed:", error);
@@ -536,6 +566,47 @@ class ArchimedService {
       );
       return this.servicesCache.length > 0 ? this.servicesCache : mockServices;
     }
+  }
+
+  /**
+   * Принудительное обновление прайса из Archimed (без кэша).
+   */
+  async refreshServicesNow(): Promise<ApiService[]> {
+    this.servicesCache = [];
+    this.servicesCacheAt = 0;
+    try {
+      if (this.indexedDBAvailable) {
+        await indexedDBCache.remove(SERVICES_CACHE_KEY);
+      }
+      if (typeof window !== "undefined") {
+        window.localStorage?.removeItem(SERVICES_CACHE_KEY);
+      }
+    } catch (error) {
+      console.warn("Не удалось очистить кэш услуг:", error);
+    }
+    return this.refreshServices();
+  }
+
+  /** Явная ревалидация прайса при открытии /prices или возврате во вкладку. */
+  revalidateServices(): void {
+    this.refreshServicesInBackground();
+  }
+
+  private refreshServicesInBackground(): void {
+    void this.refreshServices().catch((error) => {
+      console.warn("Не удалось обновить услуги из Archimed:", error);
+      // При ошибке не дёргаем API на каждом рендере в течение TTL.
+      this.servicesCacheAt = Date.now();
+    });
+  }
+
+  /** Обновить и врачей, и услуги одной кнопкой в админке. */
+  async refreshAllNow(): Promise<{ doctors: number; services: number }> {
+    const [doctors, services] = await Promise.all([
+      this.refreshDoctorsNow(),
+      this.refreshServicesNow(),
+    ]);
+    return { doctors: doctors.length, services: services.length };
   }
 
   private async persistServices(list: ApiService[]): Promise<void> {
@@ -1236,6 +1307,9 @@ class ArchimedService {
       begintime?: string;
       info?: string;
       room_id?: number;
+      room?: string;
+      /** Врач в талоне Archimed приходит в массиве docs, а не в doctor_id. */
+      docs?: Array<{ id?: number; name?: string; type?: string }>;
       creation_datetime?: string;
       update_datetime?: string;
     };
@@ -1246,19 +1320,26 @@ class ArchimedService {
       return m ? `${m[3]}-${m[2]}-${m[1]}` : d;
     };
 
-    const mapTalon = (t: RawTalon): ArchimedAppointment => ({
-      ...t,
-      id: t.id ?? 0,
-      status_id: t.status_id ?? 0,
-      patient_name: t.patient_name ?? "",
-      patient_phone: t.patient_phone ?? "",
-      preferred_date: t.preferred_date ?? toIsoDate(t.date),
-      preferred_time: t.preferred_time ?? t.begintime?.slice(0, 5),
-      comments: t.comments ?? t.info,
-      doctor_id: t.doctor_id ?? t.room_id,
-      created_at: t.created_at ?? t.creation_datetime ?? "",
-      updated_at: t.updated_at ?? t.update_datetime ?? "",
-    });
+    const mapTalon = (t: RawTalon): ArchimedAppointment => {
+      const doc = Array.isArray(t.docs) ? t.docs[0] : undefined;
+      return {
+        ...t,
+        id: t.id ?? 0,
+        status_id: t.status_id ?? 0,
+        patient_name: t.patient_name ?? "",
+        patient_phone: t.patient_phone ?? "",
+        preferred_date: t.preferred_date ?? toIsoDate(t.date),
+        preferred_time: t.preferred_time ?? t.begintime?.slice(0, 5),
+        comments: t.comments ?? t.info,
+        // room_id — это кабинет, а не id врача. Врач лежит в docs[0].
+        // Кабинет не подставляем как имя врача: это разные сущности.
+        doctor_id: t.doctor_id ?? doc?.id,
+        doctor_name: t.doctor_name ?? doc?.name ?? undefined,
+        room_name: t.room_name ?? t.room ?? undefined,
+        created_at: t.created_at ?? t.creation_datetime ?? "",
+        updated_at: t.updated_at ?? t.update_datetime ?? "",
+      };
+    };
 
     try {
       const limit = filters?.limit ?? 100;

@@ -132,6 +132,12 @@ export interface ArchimedAppointment {
   comments?: string;
   service_id?: number;
   doctor_id?: number;
+  /** Имя врача из талона Archimed (docs[0]). Используется, если врача нет в справочнике. */
+  doctor_name?: string;
+  /** Кабинет/помещение из талона Archimed. */
+  room_name?: string;
+  /** Наименование услуги, если оно передано в талоне. */
+  service_name?: string;
   status_id: number;
   created_at: string;
   updated_at: string;

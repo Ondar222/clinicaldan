@@ -247,6 +247,19 @@ export default function PriceListPage() {
     });
   }, []);
 
+  // Всегда подтягиваем свежий прайс при открытии /prices и при возврате
+  // во вкладку — изменения цен/услуг из Архимеда не должны ждать 5 минут.
+  useEffect(() => {
+    const revalidate = () => {
+      if (document.visibilityState === "visible") {
+        archimedService.revalidateServices();
+      }
+    };
+    revalidate();
+    document.addEventListener("visibilitychange", revalidate);
+    return () => document.removeEventListener("visibilitychange", revalidate);
+  }, []);
+
   // Поиск фильтрует услуги, пустые подкатегории и категории скрываются
   const filteredCategories = useMemo(() => {
     const query = normalizeSearch(searchQuery);

@@ -3,6 +3,7 @@ import type React from 'react';
 import { useState, useEffect } from 'react';
 import type { ArchimedAppointment, ArchimedDoctor, ApiService } from '../types/cms';
 import archimedService from '../services/archimed';
+import ArchimedAdminPanel from './ArchimedAdminPanel';
 import type { AdminCertificate, CertificateRedeemOperation, CertificateTransactionRow, StaffDashboardResponse } from '../services/certificateAdmin';
 import certificateAdminService from '../services/certificateAdmin';
 
@@ -19,6 +20,9 @@ const StaffDashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [certificatesError, setCertificatesError] = useState<string | null>(null);
   const [transactionsError, setTransactionsError] = useState<string | null>(null);
+  const [archimedRefreshing, setArchimedRefreshing] = useState(false);
+  const [archimedError, setArchimedError] = useState<string | null>(null);
+  const [archimedUpdatedAt, setArchimedUpdatedAt] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [appointmentsPage, setAppointmentsPage] = useState<number>(1);
   const [certificateQuery, setCertificateQuery] = useState('');
@@ -127,16 +131,33 @@ const StaffDashboard: React.FC = () => {
     });
   }, []);
 
-  const getDoctorName = (doctorId?: number) => {
-    if (!doctorId) return 'Неизвестный врач';
-    const doctor = doctors.find(d => d.id === doctorId);
-    return doctor ? `${doctor.name} ${doctor.name1} ${doctor.name2}` : 'Неизвестный врач';
+  const handleArchimedRefresh = async () => {
+    setArchimedRefreshing(true);
+    setArchimedError(null);
+    try {
+      await archimedService.refreshAllNow();
+      setDoctors(archimedService.getDoctorsCache());
+      setServices(archimedService.getServicesCache());
+      setArchimedUpdatedAt(new Date().toLocaleTimeString('ru-RU'));
+      setError(null);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка обновления данных';
+      setArchimedError(`Не удалось обновить данные из Архимеда: ${message}`);
+    } finally {
+      setArchimedRefreshing(false);
+    }
   };
 
-  const getServiceName = (serviceId?: number) => {
-    if (!serviceId) return 'Неизвестная услуга';
+  const getDoctorName = (doctorId?: number, fallbackName?: string) => {
+    const doctor = doctorId ? doctors.find(d => d.id === doctorId) : undefined;
+    if (doctor) return `${doctor.name} ${doctor.name1} ${doctor.name2}`.trim();
+    return fallbackName || 'Врач не указан в Archimed';
+  };
+
+  const getServiceName = (serviceId?: number, fallbackName?: string) => {
+    if (!serviceId) return fallbackName || 'Не указана в Archimed';
     const service = services.find(s => s.id === serviceId);
-    return service ? service.name : 'Неизвестная услуга';
+    return service ? service.name : fallbackName || 'Неизвестная услуга';
   };
 
   const formatDate = (dateString?: string) => {
@@ -423,8 +444,17 @@ const StaffDashboard: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-dark mb-4">Панель сотрудника</h1>
-          <p className="text-lg text-gray-600">Управление записями пациентов</p>
+          <p className="text-lg text-gray-600">Управление записями пациентов и данными Архимеда</p>
         </div>
+
+        <ArchimedAdminPanel
+          doctors={doctors}
+          services={services}
+          onRefresh={handleArchimedRefresh}
+          isRefreshing={archimedRefreshing}
+          lastUpdated={archimedUpdatedAt}
+          error={archimedError}
+        />
 
         {/* Купленные сертификаты (успешно оплаченные) */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -760,10 +790,10 @@ const StaffDashboard: React.FC = () => {
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
                         <div>
-                          <span className="font-medium">Врач:</span> {getDoctorName(appointment.doctor_id)}
+                          <span className="font-medium">Врач:</span> {getDoctorName(appointment.doctor_id, appointment.doctor_name)}
                         </div>
                         <div>
-                          <span className="font-medium">Услуга:</span> {getServiceName(appointment.service_id)}
+                          <span className="font-medium">Услуга:</span> {getServiceName(appointment.service_id, appointment.service_name)}
                         </div>
                         <div>
                           <span className="font-medium">Дата:</span> {formatDate(appointment.preferred_date)}

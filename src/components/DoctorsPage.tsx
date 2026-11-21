@@ -150,6 +150,20 @@ export default function DoctorsPage() {
     });
   }, []);
 
+  // Правки из Архимеда должны появляться на странице без ручной очистки кэша:
+  // обновляем при открытии и при каждом возврате во вкладку (admin меняет данные
+  // в другой вкладке/системе и возвращается на сайт).
+  useEffect(() => {
+    const revalidate = () => {
+      if (document.visibilityState === "visible") {
+        archimedService.revalidateDoctors();
+      }
+    };
+    revalidate();
+    document.addEventListener("visibilitychange", revalidate);
+    return () => document.removeEventListener("visibilitychange", revalidate);
+  }, []);
+
   const normalize = (value: string | number | null | undefined) =>
     value?.toString() || "";
   const normalizeRu = (s: string) =>
