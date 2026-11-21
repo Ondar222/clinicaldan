@@ -318,16 +318,18 @@ export default function CosmetologyPage({
                     className="bg-white rounded-xl p-4 border border-primary/10 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full"
                   >
                     <div className="flex flex-col items-center text-center h-full">
-                      <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden mb-3">
+                      <div className="w-24 h-24 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden mb-3">
                         {photoUrl ? (
                           <img
                             src={photoUrl}
                             alt={doctor.name}
                             className="w-full h-full object-cover"
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
                           />
                         ) : (
                           <svg
-                            className="w-8 h-8 text-primary"
+                            className="w-10 h-10 text-primary"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
