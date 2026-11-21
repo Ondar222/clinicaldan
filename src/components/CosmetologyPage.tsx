@@ -17,11 +17,42 @@ import {
   isExcludedCosmetologyDoctor,
 } from "../data/cosmetology";
 import archimedService from "../services/archimed";
+import prodoctorovData from "../data/prodoctorov.json";
 import type { ApiService, ArchimedDoctor } from "../types/cms";
 import { getDoctorExperience } from "../utils/doctorExperience";
 import AppointmentModal from "./AppointmentModal";
 import SchemaOrg from "./SchemaOrg";
 import { SeoHead } from "./SeoHead";
+
+// Мапа фото из prodoctorov.json для fallback, как на DoctorsPage
+const doctorPhotoMap = new Map<string, string>();
+if (Array.isArray(prodoctorovData)) {
+  prodoctorovData.forEach((doc: any) => {
+    if (doc.fullName && doc.photo) {
+      doctorPhotoMap.set(doc.fullName.toLowerCase(), doc.photo);
+    }
+  });
+}
+
+// Archimed отдаёт photo как base64 BMP без префикса data: — браузер такое
+// не отрисует. Оборачиваем и добавляем fallback на prodoctorov.
+function getDoctorPhoto(doctor: ArchimedDoctor): string | null {
+  if (doctor.photo && doctor.photo.length > 10) {
+    if (doctor.photo.startsWith("http") || doctor.photo.startsWith("/")) {
+      return doctor.photo;
+    }
+    if (doctor.photo.length > 50) {
+      return doctor.photo.startsWith("data:")
+        ? doctor.photo
+        : `data:image/bmp;base64,${doctor.photo}`;
+    }
+  }
+  const fullName = `${doctor.name} ${doctor.name1} ${doctor.name2}`
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+  return doctorPhotoMap.get(fullName) || null;
+}
 
 interface CosmetologyPageProps {
   categorySlug?: string;
@@ -279,16 +310,18 @@ export default function CosmetologyPage({
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {doctors.map((doctor) => (
+                {doctors.map((doctor) => {
+                  const photoUrl = getDoctorPhoto(doctor);
+                  return (
                   <div
                     key={doctor.id}
                     className="bg-white rounded-xl p-4 border border-primary/10 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full"
                   >
                     <div className="flex flex-col items-center text-center h-full">
                       <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden mb-3">
-                        {doctor.photo ? (
+                        {photoUrl ? (
                           <img
-                            src={doctor.photo}
+                            src={photoUrl}
                             alt={doctor.name}
                             className="w-full h-full object-cover"
                           />
@@ -341,9 +374,10 @@ export default function CosmetologyPage({
                           </Link>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                ))}
+                     </div>
+                   </div>
+                  );
+                })}
               </div>
             )}
           </div>

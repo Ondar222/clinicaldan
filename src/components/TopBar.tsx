@@ -58,7 +58,6 @@ export default function TopBar() {
       <div className="top-bar-right">
         <a
           href="http://user.clinicaldan.ru/login"
-          id="authTrigger"
           className="top-bar-icon"
           aria-label="Войти или зарегистрироваться"
         >

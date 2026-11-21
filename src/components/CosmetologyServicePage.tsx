@@ -15,9 +15,38 @@ import {
   isExcludedCosmetologyDoctor,
 } from "../data/cosmetology";
 import archimedService from "../services/archimed";
+import prodoctorovData from "../data/prodoctorov.json";
 import type { ApiService, ArchimedDoctor } from "../types/cms";
 import SchemaOrg from "./SchemaOrg";
 import { SeoHead } from "./SeoHead";
+
+// Мапа фото из prodoctorov.json для fallback
+const doctorPhotoMap = new Map<string, string>();
+if (Array.isArray(prodoctorovData)) {
+  prodoctorovData.forEach((doc: any) => {
+    if (doc.fullName && doc.photo) {
+      doctorPhotoMap.set(doc.fullName.toLowerCase(), doc.photo);
+    }
+  });
+}
+
+function getDoctorPhoto(doctor: ArchimedDoctor): string | null {
+  if (doctor.photo && doctor.photo.length > 10) {
+    if (doctor.photo.startsWith("http") || doctor.photo.startsWith("/")) {
+      return doctor.photo;
+    }
+    if (doctor.photo.length > 50) {
+      return doctor.photo.startsWith("data:")
+        ? doctor.photo
+        : `data:image/bmp;base64,${doctor.photo}`;
+    }
+  }
+  const fullName = `${doctor.name} ${doctor.name1} ${doctor.name2}`
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+  return doctorPhotoMap.get(fullName) || null;
+}
 
 interface CosmetologyServicePageProps {
   categorySlug?: string;
@@ -529,27 +558,30 @@ export default function CosmetologyServicePage({
               </h2>
               <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-primary/10 flex flex-col md:flex-row gap-6 items-start">
                 <div className="w-20 h-20 md:w-24 md:h-24 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  {serviceDoctor.photo ? (
-                    <img
-                      src={serviceDoctor.photo}
-                      alt={serviceDoctor.name}
-                      className="w-full h-full rounded-full object-cover border-2 border-white shadow-md"
-                    />
-                  ) : (
-                    <svg
-                      className="w-10 h-10 md:w-12 md:h-12 text-primary"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  {(() => {
+                    const photoUrl = getDoctorPhoto(serviceDoctor);
+                    return photoUrl ? (
+                      <img
+                        src={photoUrl}
+                        alt={serviceDoctor.name}
+                        className="w-full h-full rounded-full object-cover border-2 border-white shadow-md"
                       />
-                    </svg>
-                  )}
+                    ) : (
+                      <svg
+                        className="w-10 h-10 md:w-12 md:h-12 text-primary"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
+                      </svg>
+                    );
+                  })()}
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900">
