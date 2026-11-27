@@ -44,7 +44,7 @@
 
 **До:**
 ```html
-<a href="https://user.clinicaldan.ru/login" id="authTrigger">
+<a href="http://user.clinicaldan.ru/login" id="authTrigger">
 ```
 
 **После:**

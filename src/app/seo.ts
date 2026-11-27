@@ -114,7 +114,10 @@ export const SEO_PAGES: Record<string, SeoEntry> = {
 export function pageMeta(path: string, seoPath?: string): Metadata {
   const seo = SEO_PAGES[seoPath ?? path] ?? SEO_PAGES['/'];
   const noindex =
-    seo.noindex || path.startsWith('/staff') || path.startsWith('/payment');
+    seo.noindex ||
+    path.startsWith('/staff') ||
+    path.startsWith('/personal-cabinet') ||
+    path.startsWith('/payment');
 
   return {
     title: { absolute: seo.title },

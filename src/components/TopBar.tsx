@@ -56,6 +56,7 @@ export default function TopBar() {
         </div>
       </div>
       <div className="top-bar-right">
+        {/* Старый переход на внешний кабинет пациента пока отключён:
         <a
           href="http://user.clinicaldan.ru/login"
           className="top-bar-icon"
@@ -75,6 +76,26 @@ export default function TopBar() {
             />
           </svg>
         </a>
+        */}
+        <Link
+          href="/personal-cabinet"
+          className="top-bar-icon"
+          aria-label="Личный кабинет администратора"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+        </Link>
         <Link href="/certificates" className="top-bar-icon">
           <svg
             xmlns="http://www.w3.org/2000/svg"

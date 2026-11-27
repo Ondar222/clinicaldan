@@ -1,4 +1,13 @@
-export type CertificateStatus = "active" | "partially_used" | "used" | "expired" | "blocked";
+export type CertificateStatus =
+  | "active"
+  | "partially_used"
+  | "used"
+  | "expired"
+  | "blocked"
+  // Статусы платежей, которые реально приходят из API оплаты
+  | "paid"
+  | "pending"
+  | "failed";
 
 export interface AdminCertificate {
   id: number;
@@ -126,7 +135,6 @@ export interface StaffDashboardParams {
 
 class CertificateAdminService {
   private apiBase: string;
-  private readonly authTokenKey = "auth_token";
   private readonly fallbackStorageKey = "certificate_admin_fallback_data_v1";
   private fallbackModeEnabled = false;
 
@@ -143,10 +151,11 @@ class CertificateAdminService {
   }
 
   private getAuthHeaders(): HeadersInit {
-    const token = typeof window !== "undefined" ? window.localStorage.getItem(this.authTokenKey) : null;
+    // Бекенд использует HttpOnly-cookie (SESSION_COOKIE_NAME). Legacy JWT из
+    // localStorage больше не отправляем: session-guard отклонит его.
     return {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      Accept: "application/json",
     };
   }
 
@@ -475,8 +484,16 @@ class CertificateAdminService {
     };
   }
 
-  async listCertificates(params: ListCertificatesParams = {}): Promise<ListCertificatesResponse> {
-    if (this.fallbackModeEnabled) {
+  /**
+   * @param allowFallback false — никогда не подменять реальные заявки локальными
+   * фикстурами (используется личным кабинетом).
+   */
+  async listCertificates(
+    params: ListCertificatesParams = {},
+    options?: { allowFallback?: boolean },
+  ): Promise<ListCertificatesResponse> {
+    const allowFallback = options?.allowFallback !== false;
+    if (allowFallback && this.fallbackModeEnabled) {
       return this.buildFallbackList(params);
     }
 
@@ -495,8 +512,11 @@ class CertificateAdminService {
 
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
-        this.fallbackModeEnabled = true;
-        return this.buildFallbackList(params);
+        if (allowFallback) {
+          this.fallbackModeEnabled = true;
+          return this.buildFallbackList(params);
+        }
+        throw new Error("Unauthorized: войдите в аккаунт сотрудника, чтобы работать с сертификатами.");
       }
       await this.parseApiError(response);
     }

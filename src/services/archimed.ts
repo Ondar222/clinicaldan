@@ -216,6 +216,8 @@ class ArchimedService {
           Accept: "application/json",
           "Accept-Encoding": "gzip, deflate", // Request compression
         },
+        // /api/archimed/talons теперь защищён сессией — cookie должна уходить с запросом.
+        credentials: "include",
         signal: controller.signal,
         ...options,
       });
