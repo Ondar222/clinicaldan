@@ -35,7 +35,7 @@
 
 **Файлы:** `index.html`, `src/components/PatientCabinetPage.tsx`
 
-**Проблема:** Ссылка `https://user.clinicaldan.ru/login` могла быть недоступна.
+**Проблема:** Ссылка `http://user.clinicaldan.ru/login` могла быть недоступна.
 
 **Решение:**
 - Изменена ссылка на относительный путь `/login`

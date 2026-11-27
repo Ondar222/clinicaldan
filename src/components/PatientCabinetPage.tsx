@@ -20,7 +20,7 @@ export default function PatientCabinetPage() {
           <p className="text-sm text-gray-500">
             Если переход не произошел автоматически, 
             <a 
-              href="/personal-cabinet" 
+              href="http://user.clinicaldan.ru/login" 
               className="text-primary hover:text-primaryDark underline ml-1"
             >
               нажмите здесь

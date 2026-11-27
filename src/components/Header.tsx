@@ -200,14 +200,7 @@ export default function Header() {
                   Документы
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/personal-cabinet"
-                  className="nav-underline text-dark text-[11px] lg:text-xs hover:text-primary transition-colors whitespace-nowrap px-0.5"
-                >
-                  Кабинет
-                </Link>
-              </li>
+         
               <li>
                 <Link
                   to="/contacts"
@@ -430,7 +423,7 @@ export default function Header() {
             </li>
             <li>
               <Link
-                to="/personal-cabinet"
+                to="http://user.clinicaldan.ru/login"
                 className="block py-2 text-dark text-base hover:text-primary transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >

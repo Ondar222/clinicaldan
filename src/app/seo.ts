@@ -116,7 +116,7 @@ export function pageMeta(path: string, seoPath?: string): Metadata {
   const noindex =
     seo.noindex ||
     path.startsWith('/staff') ||
-    path.startsWith('/personal-cabinet') ||
+    path.startsWith('http://user.clinicaldan.ru/login') ||
     path.startsWith('/payment');
 
   return {

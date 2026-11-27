@@ -78,7 +78,7 @@ export default function TopBar() {
         </a>
         */}
         <Link
-          href="/personal-cabinet"
+          href="http://user.clinicaldan.ru/login"
           className="top-bar-icon"
           aria-label="Личный кабинет администратора"
         >

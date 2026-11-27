@@ -35,7 +35,7 @@ const STATIC_PAGES = [
 // URL которые НЕ должны попадать в sitemap
 const EXCLUDED_URLS = [
   '/staff',
-  '/personal-cabinet',
+  'http://user.clinicaldan.ru/login',
   '/payment-',
   '/api/',
   '/vk-post/',
